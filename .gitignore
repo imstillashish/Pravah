@@ -1,0 +1,35 @@
+# Python / Environments
+venv/
+**/venv/
+.venv/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node / Frontend build
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+build/
+
+# Databases & local state
+*.db
+logistics.db
+backend/logistics.db
+
+# Secrets & Environment Variables
+.env
+.env.*
+!.env.example
+
+# Internal LLM scratch & planning files
+.planning/
+.geminirules
+MICROSCOPIC_TASK_BREAKDOWN_PROMPT.md
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
