@@ -32,7 +32,7 @@ interface VariantConfig {
 const VARIANT_CONFIGS: Record<ChartVariant, VariantConfig> = {
   /* Neutral — steady series (bunkers, turnaround) */
   neutral: {
-    stroke: "#1e88e5", // Fathom
+    stroke: "#1565c0", // Slate ink — 5.03:1 on Foam
     strokeWidth: 1.5,
     gradientColor: "#90caf9", // Shallow wash
     gradientOpacity: 0.18,
@@ -41,9 +41,10 @@ const VARIANT_CONFIGS: Record<ChartVariant, VariantConfig> = {
     defaultAreaPath:
       "M0,180 C80,150 165,190 260,130 C345,75 430,165 520,110 C580,75 620,130 653,85 L653,240 L0,240 Z",
   },
-  /* Live — market/forecast signal (BDI, forward curve) */
+  /* Live — market/forecast signal (BDI, forward curve).
+     Fathom, not Deep: Deep is 2.74:1 on Foam, below the 3:1 non-text bar. */
   live: {
-    stroke: "#2196f3", // Deep
+    stroke: "#1e88e5", // Fathom
     strokeWidth: 2,
     gradientColor: "#64b5f6", // Channel wash
     gradientOpacity: 0.26,
