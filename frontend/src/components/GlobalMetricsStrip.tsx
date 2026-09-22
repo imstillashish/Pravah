@@ -6,8 +6,10 @@ import { AnimatedSvgChart } from "./AnimatedSvgChart";
 import { Card, Pill, Skeleton } from "./ui";
 
 /**
- * Global metrics — dense chart-sounding cards. Values in mono 600,
- * deltas as ▲/▼ glyphs with mono weight (never hue — DESIGN.md §7).
+ * Global metrics — dense chart-sounding cards. Values in mono 600.
+ * Deltas: ▲ positive (Glass-100/Sea-800), ⏳ falling-rate caution
+ * (Amber) — a lower freight rate is a closing-window signal, not a
+ * rejection (DESIGN.md §4 monopolies).
  */
 const FALLBACK_METRICS: GlobalMetrics = {
   bdi_index: 1842,
@@ -22,9 +24,9 @@ const FALLBACK_METRICS: GlobalMetrics = {
 function DeltaChip({ pct }: { pct: number }) {
   const positive = pct >= 0;
   return (
-    <Pill tone={positive ? "positive" : "negative"} className="tabular-nums">
+    <Pill tone={positive ? "positive" : "pending"} className="tabular-nums">
       <span aria-hidden="true" className="text-[8px] leading-none">
-        {positive ? "▲" : "▼"}
+        {positive ? "▲" : "⏳"}
       </span>
       {positive ? "+" : ""}
       {pct}%
@@ -87,40 +89,40 @@ export const GlobalMetricsStrip: React.FC = () => {
       <Card className="flex flex-col justify-between p-4">
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink">
+            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
               BALTIC DRY INDEX
             </span>
             <DeltaChip pct={metrics.bdi_change_pct} />
           </div>
-          <div className="font-mono text-2xl font-semibold tabular-nums text-abyss">
+          <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
             {metrics.bdi_index.toLocaleString()}
           </div>
-          <p className="mt-1 text-xs leading-relaxed text-deepsea">
+          <p className="mt-1 text-xs leading-relaxed text-body">
             Global dry bulk freight barometer tracking Capesize &amp; Panamax fixtures.
           </p>
         </div>
-        <AnimatedSvgChart variant="live" height={48} className="mt-2 w-full" />
+        <AnimatedSvgChart variant="forecast" height={48} className="mt-2 w-full" />
       </Card>
 
       {/* 2. Average freight rate */}
       <Card className="flex flex-col justify-between p-4">
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink">
+            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
               AVG FREIGHT RATE
             </span>
             <DeltaChip pct={metrics.freight_change_pct} />
           </div>
-          <div className="font-mono text-2xl font-semibold tabular-nums text-abyss">
+          <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
             ${metrics.current_avg_freight_pmt.toFixed(2)}
-            <span className="text-xs font-normal text-slate-ink"> / MT</span>
+            <span className="text-xs font-normal text-muted"> / MT</span>
           </div>
-          <p className="mt-1 text-xs leading-relaxed text-deepsea">
+          <p className="mt-1 text-xs leading-relaxed text-body">
             Benchmark voyage rate from Australia (Hay Point / Gladstone) to Paradip.
           </p>
         </div>
         <AnimatedSvgChart
-          variant={isFreightSavings ? "live" : "negative"}
+          variant={isFreightSavings ? "forecast" : "negative"}
           height={48}
           className="mt-2 w-full"
         />
@@ -130,7 +132,7 @@ export const GlobalMetricsStrip: React.FC = () => {
       <Card className="flex flex-col justify-between p-4">
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink">
+            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
               BUNKER FUEL · VLSFO
             </span>
             <Pill tone="muted">
@@ -138,19 +140,19 @@ export const GlobalMetricsStrip: React.FC = () => {
               SIN
             </Pill>
           </div>
-          <div className="font-mono text-2xl font-semibold tabular-nums text-abyss">
+          <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
             ${metrics.bunker_vlsfo_pmt.toFixed(2)}
-            <span className="text-xs font-normal text-slate-ink"> / MT</span>
+            <span className="text-xs font-normal text-muted"> / MT</span>
           </div>
-          <p className="mt-1 text-xs leading-relaxed text-deepsea">
+          <p className="mt-1 text-xs leading-relaxed text-body">
             Fuel cost factor calculated in vessel voyage charter operating margins.
           </p>
         </div>
         <div className="mt-2 flex items-center gap-2">
-          <span aria-hidden="true" className="font-mono text-[10px] text-slate-ink">
+          <span aria-hidden="true" className="font-mono text-[10px] text-muted">
             ▼
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink">
+          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
             SINGAPORE HUB · STEADY
           </span>
         </div>
