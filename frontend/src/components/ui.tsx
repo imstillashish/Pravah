@@ -50,14 +50,14 @@ export function SecondaryButton({ className, children, ...props }: ButtonBasePro
   );
 }
 
-/** Text-style tertiary action (Deep signal, like links). */
+/** Text-style tertiary action (Slate ink, like links — Deep fails AA at UI sizes). */
 export function TextButton({ className, children, ...props }: ButtonBaseProps) {
   return (
     <button
       type="button"
       className={cx(
-        "inline-flex items-center gap-1 rounded-sm px-2 py-1 text-sm font-medium text-deep",
-        "transition-colors duration-150 hover:text-fathom",
+        "inline-flex items-center gap-1 rounded-sm px-2 py-1 text-sm font-medium text-slate-ink underline-offset-2 hover:underline",
+        "transition-colors duration-150 hover:text-abyss",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-abyss",
         "disabled:cursor-not-allowed disabled:text-channel",
         className,
@@ -101,7 +101,9 @@ type PillProps = HTMLAttributes<HTMLSpanElement> & {
 
 const PILL_TONES = {
   default: "border-shallow/45 text-deepsea",
-  positive: "border-deep/40 font-medium text-deep",
+  /* Deep #2196f3 is 3.5:1 on Foam — legal only for graphics/large text.
+     UI-scale live text signals use Slate 500 (5.03:1) with a Deep border. */
+  positive: "border-deep/60 font-medium text-slate-ink",
   negative: "border-abyss/40 font-semibold text-abyss",
   muted: "border-shallow/30 text-slate-ink",
 } as const;

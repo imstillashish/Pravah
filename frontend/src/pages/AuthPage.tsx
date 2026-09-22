@@ -253,7 +253,7 @@ export const AuthPage: React.FC = () => {
                 setIsRegister(!isRegister);
                 setErrorMsg(null);
               }}
-              className="cursor-pointer text-sm font-medium text-deep transition-colors duration-150 hover:text-fathom"
+              className="cursor-pointer text-sm font-medium text-slate-ink underline underline-offset-2 transition-colors duration-150 hover:text-abyss"
             >
               {isRegister
                 ? "Already have an account? Sign in here"

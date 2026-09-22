@@ -124,7 +124,8 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
 
       <Card className="mt-4 overflow-hidden rounded-none p-0">
         <div className="flex items-center justify-between border-b border-shallow/45 bg-shoal/60 px-4 py-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink">
+          {/* On washed bands, eyebrow ink steps up to Deep Sea (Slate = 4.45:1 here) */}
+          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-deepsea">
             SIMULATION LOG · {analyses.length} ENTRIES
           </span>
           <SecondaryButton
@@ -140,7 +141,12 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
           </SecondaryButton>
         </div>
 
-        <div className="overflow-x-auto">
+        <div
+          role="region"
+          aria-label="Recent analyses table, scrollable horizontally"
+          tabIndex={0}
+          className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-abyss"
+        >
           <table className="w-full min-w-[720px] border-collapse text-left">
             <thead>
               <tr className="border-b border-shallow/45 font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink">
@@ -219,9 +225,9 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                       </div>
                     </td>
 
-                    {/* Savings */}
+                    {/* Savings — Slate ink: Deep is 3.5:1, below AA at 14px */}
                     <td className="px-3 py-3.5">
-                      <span className="font-mono font-medium tabular-nums text-deep">
+                      <span className="font-mono font-medium tabular-nums text-slate-ink">
                         <span aria-hidden="true" className="mr-0.5 text-[8px]">▲</span>
                         +${Math.round(item.estimated_savings_usd).toLocaleString()}
                       </span>

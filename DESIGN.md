@@ -30,9 +30,12 @@ hue appears, the world collapses into a generic admin — the ban is the design.
 | 9 | `#1e3a8a` | **Deep Sea** | Body copy, secondary headings, filled interactive controls |
 | 10 | `#0d47a1` | **Abyss** | Primary ink: headings, numerals, filled CTAs |
 
-> **Contrast is pre-solved.** Abyss-on-Foam 8.6:1, Slate-on-Foam 6.4:1,
-> Deep-Sea-on-Foam 10.4:1, Deep-on-Foam 3.5:1 — large-text/icon only.
-> Never set body copy in Reef or lighter.
+> **Contrast is pre-solved.** Abyss-on-Foam 7.56:1, Deep-Sea-on-Foam 9.07:1,
+> Slate-on-Foam 5.03:1 — all AA body. Fathom-on-Foam 3.22:1 — large text and
+> non-text graphics only. **Deep-on-Foam is 2.74:1 — never for text and never
+> for a graphic that is the sole carrier of meaning** (pair Deep dots with a
+> text label; chart strokes use Fathom/Slate/Abyss instead). Never set body
+> copy in Reef or lighter.
 
 ## 3. Type — Numerals, Not Prose
 
@@ -43,6 +46,9 @@ hue appears, the world collapses into a generic admin — the ban is the design.
 | Body | Inter | 400 | 14px | weight 400 |
 | Eyebrows | IBM Plex Mono | 400 | 10px | uppercase, letter-spaced, Slate ink |
 | **Banned** | bold/heavy display | 600+ sans | — | Charts don't shout; data does |
+
+> **On washed bands** (Shoal fill / 60% washes), eyebrow ink steps up from
+> Slate to **Deep Sea** — Slate-on-Shoal/60 measures 4.45:1 and fails AA.
 
 The **lightest-weight numeral is the quietest element on screen; the 600
 numeral is the loudest** — that is the whole hierarchy engine. No heading may
