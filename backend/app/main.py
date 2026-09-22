@@ -7,7 +7,7 @@ from app.api.analyses import router as analyses_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="SIH26006 Intelligent Freight Forecasting API")
+app = FastAPI(title="Astitva — Intelligent Freight Forecasting API (SIH26006)")
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,6 +21,7 @@ app.include_router(auth_router)
 app.include_router(metrics_router)
 app.include_router(analyses_router)
 
+@app.get("/health")
 @app.get("/api/health")
 def health_check():
-    return {"status": "ok", "service": "SIH26006 Core API"}
+    return {"status": "ok", "service": "Astitva Core API"}
