@@ -72,14 +72,14 @@ const TONNAGE_QUICK_CHIPS = [
 /* Chart-sheet form-control recipe: recessed Foam well, ruled border,
    Fathom focus. */
 const INPUT_CLASS =
-  "w-full rounded-sm border border-shallow/45 bg-foam px-3 py-2 text-sm " +
-  "text-abyss transition-colors duration-150 hover:border-shallow " +
-  "focus:border-fathom focus:outline-none";
+  "w-full rounded-lg border border-line bg-well px-3 py-2 text-sm " +
+  "text-ink transition-colors duration-150 hover:border-line-strong " +
+  "focus:border-sea-600 focus:outline-none";
 
 const FIELD_LABEL_CLASS =
-  "mb-1 block font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink";
+  "mb-1 block font-mono text-[10px] uppercase tracking-[0.08em] text-muted";
 const GROUP_LABEL_CLASS =
-  "block font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink";
+  "block font-mono text-[10px] uppercase tracking-[0.08em] text-muted";
 
 export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
   isOpen,
@@ -246,7 +246,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
         >
           {/* Backdrop — ink wash on the sheet */}
           <motion.div
-            className="fixed inset-0 bg-deepsea/30"
+            className="fixed inset-0 bg-sea-900/40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -258,23 +258,23 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
           <div className="fixed inset-y-0 right-0 flex max-w-full pl-6 sm:pl-10">
             <motion.div
               ref={sheetRef}
-              className="relative flex h-full w-screen max-w-xl flex-col border-l border-shallow/45 bg-foam"
+              className="relative flex h-full w-screen max-w-xl flex-col border-l border-line bg-card shadow-sheet"
               initial={shouldReduceMotion ? { opacity: 0 } : { x: "100%" }}
               animate={shouldReduceMotion ? { opacity: 1 } : { x: 0 }}
               exit={shouldReduceMotion ? { opacity: 0 } : { x: "100%" }}
               transition={{ duration: shouldReduceMotion ? 0 : 0.28, ease: EASE_PLOTTER }}
             >
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-shallow/45 px-6 py-4">
+              <div className="flex items-center justify-between border-b border-line px-6 py-4">
                 <div>
-                  <div className="mb-0.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink">
+                  <div className="mb-0.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
                     <VerifiedDot />
                     SIMULATION CONSOLE
                   </div>
-                  <h2 id={titleId} className="text-xl font-normal leading-tight text-abyss">
+                  <h2 id={titleId} className="text-xl font-semibold leading-tight text-sea-900">
                     Run New Analysis
                   </h2>
-                  <p className="mt-0.5 text-xs text-deepsea">
+                  <p className="mt-0.5 text-xs text-body">
                     Configure voyage parameters, parcel sizing, and terminal draft clearance.
                   </p>
                 </div>
@@ -282,26 +282,26 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                   type="button"
                   onClick={onClose}
                   aria-label="Close drawer"
-                  className="cursor-pointer rounded-sm p-2 text-slate-ink transition-colors duration-150 hover:bg-shoal hover:text-abyss"
+                  className="cursor-pointer rounded-sm p-2 text-muted transition-colors duration-150 hover:bg-wash hover:text-sea-900"
                 >
                   <X className="size-5" aria-hidden="true" />
                 </button>
               </div>
 
               {/* Form content */}
-              <div className="flex-1 space-y-6 overflow-y-auto bg-shoal/40 p-6">
+              <div className="flex-1 space-y-6 overflow-y-auto bg-canvas p-6">
                 {submitError && (
                   <div
                     role="alert"
-                    className="flex items-center gap-3 rounded-sm border border-dotted border-slate-ink/60 p-3.5"
+                    className="flex items-center gap-3 rounded-sm border border-coral-500/40 bg-coral-100 p-3.5"
                   >
                     <span
                       aria-hidden="true"
-                      className="flex size-5 shrink-0 items-center justify-center rounded-sm border border-abyss/50 font-mono text-xs font-semibold text-abyss"
+                      className="flex size-5 shrink-0 items-center justify-center rounded-sm border border-coral-500/50 font-mono text-xs font-semibold text-coral-700"
                     >
                       !
                     </span>
-                    <span className="text-xs font-semibold text-abyss">{submitError}</span>
+                    <span className="text-xs font-semibold text-coral-700">{submitError}</span>
                   </div>
                 )}
 
@@ -390,7 +390,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                     <label htmlFor="parcel-tonnage" className={GROUP_LABEL_CLASS}>
                       Cargo Volume (Metric Tonnes)
                     </label>
-                    <span className="font-mono text-xs font-medium tabular-nums text-abyss">
+                    <span className="font-mono text-xs font-medium tabular-nums text-sea-900">
                       {parcelTonnage.toLocaleString()} MT
                     </span>
                   </div>
@@ -420,17 +420,17 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                           className={cx(
                             "min-h-11 cursor-pointer rounded-sm border px-2.5 py-2 text-left transition-colors duration-150",
                             isSelected
-                              ? "border-abyss bg-foam shadow-[inset_0_0_0_1px_#0d47a1]"
-                              : "border-shallow/45 bg-foam hover:border-fathom",
+                              ? "border-sea-600 bg-glass-50"
+                              : "border-line bg-card hover:border-sea-600",
                           )}
                         >
-                          <div className="font-mono text-xs font-medium tabular-nums text-abyss">
+                          <div className="font-mono text-xs font-medium tabular-nums text-sea-900">
                             {chip.label}
                           </div>
                           <div
                             className={cx(
                               "mt-0.5 font-mono text-[10px]",
-                              isSelected ? "text-abyss" : "text-slate-ink",
+                              isSelected ? "text-sea-800" : "text-muted",
                             )}
                           >
                             {chip.vessel}
@@ -443,32 +443,32 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
 
                 {/* Real-time heuristic feedback */}
                 <div className="space-y-3 pt-2">
-                  <div className="space-y-3 rounded-md border border-shallow/45 bg-foam p-4">
+                  <div className="space-y-3 rounded-md border border-line bg-card p-4">
                     <div className="flex items-center justify-between">
                       <span className={GROUP_LABEL_CLASS}>Vessel Recommendation</span>
-                      <span className="inline-flex items-center gap-1.5 rounded-sm border border-shallow/45 bg-foam px-2.5 py-1 font-mono text-xs font-medium text-abyss">
-                        <Ship className="size-3.5 text-deep" aria-hidden="true" />
+                      <span className="inline-flex items-center gap-1.5 rounded-sm border border-glass-300 bg-glass-100 px-2.5 py-1 font-mono text-xs font-medium text-sea-800">
+                        <Ship className="size-3.5 text-sea-600" aria-hidden="true" />
                         <span>{recommendedVessel}</span>
                       </span>
                     </div>
-                    <p className="text-xs leading-relaxed text-deepsea">
+                    <p className="text-xs leading-relaxed text-body">
                       Based on{" "}
-                      <span className="font-mono font-medium tabular-nums text-abyss">
+                      <span className="font-mono font-medium tabular-nums text-sea-900">
                         {parcelTonnage.toLocaleString()} MT
                       </span>{" "}
                       shipment to {destinationPort}, the algorithm identifies{" "}
-                      <strong className="font-semibold text-abyss">{recommendedVessel}</strong> as
+                      <strong className="font-semibold text-sea-900">{recommendedVessel}</strong> as
                       the optimal bulk carrier envelope.
                     </p>
 
-                    <div className="mt-3 border-t border-shallow/45 pt-3">
-                      <div className="mb-1.5 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.08em] text-slate-ink">
+                    <div className="mt-3 border-t border-line pt-3">
+                      <div className="mb-1.5 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
                         <span>Forward Rate Trajectory</span>
                         <span>30-DAY MODEL</span>
                       </div>
                       <AnimatedSvgChart
                         key={`${originCountry}-${originPort}-${destinationPort}-${parcelTonnage}`}
-                        variant="live"
+                        variant="forecast"
                         height={72}
                         className="w-full"
                       />
@@ -480,7 +480,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                     {isHaldiaAlert && (
                       <motion.div
                         role="alert"
-                        className="flex items-start gap-3 rounded-sm border border-dotted border-slate-ink/60 bg-foam p-4"
+                        className="flex items-start gap-3 rounded-sm border border-coral-500/40 bg-coral-100 p-4"
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 6 }}
@@ -491,15 +491,15 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                       >
                         <span
                           aria-hidden="true"
-                          className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-sm border border-abyss/50 font-mono text-xs font-semibold text-abyss"
+                          className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-sm border border-coral-500/50 font-mono text-xs font-semibold text-coral-700"
                         >
                           !
                         </span>
                         <div className="space-y-1 text-xs">
-                          <div className="flex items-center gap-1.5 font-semibold text-abyss">
+                          <div className="flex items-center gap-1.5 font-semibold text-coral-700">
                             Terminal Draft Advisory
                           </div>
-                          <p className="leading-relaxed text-deepsea">
+                          <p className="leading-relaxed text-body">
                             Haldia port lock-gate has a 14.5m maximum permissible draft. Parcel
                             will require transshipment at Sagar-Sandheads or lighter vessel sizing.
                           </p>
@@ -511,7 +511,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
               </div>
 
               {/* Footer actions */}
-              <div className="flex flex-col items-center justify-end gap-3 border-t border-shallow/45 bg-foam px-6 py-4 sm:flex-row">
+              <div className="flex flex-col items-center justify-end gap-3 border-t border-line bg-card px-6 py-4 sm:flex-row">
                 <SecondaryButton
                   disabled={isSubmitting}
                   onClick={() => handleSubmit("draft")}
