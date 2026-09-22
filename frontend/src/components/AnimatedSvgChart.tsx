@@ -3,13 +3,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { cx } from "../lib/cn";
 
 /**
- * Sparkline variants for the Admiralty Chart world (DESIGN.md):
- * one hue, ten steps, zero exceptions. Series are differentiated by
- * weight and the mono-blue step — `live` (Deep, 2px) reads as the
- * live-market signal, `negative` (Abyss, 2px + ▼ terminal glyph),
- * `neutral` (Fathom, 1.5px) for steady series. No second hue anywhere.
+ * Sparkline variants for the Sea-Glass world (DESIGN.md §5): forecast
+ * Glass-400, actual Sea-700, negative Coral-500 — differentiated by
+ * lightness + weight, never hue alone.
  */
-export type ChartVariant = "neutral" | "live" | "negative";
+export type ChartVariant = "actual" | "forecast" | "negative";
 
 export interface AnimatedSvgChartProps {
   variant?: ChartVariant;
@@ -28,37 +26,37 @@ interface VariantConfig {
   defaultAreaPath: string;
 }
 
-/* All gradients are blue→transparent washes on Foam (no gray). */
+/* Area washes are Glass/Coral tints fading to transparent. */
 const VARIANT_CONFIGS: Record<ChartVariant, VariantConfig> = {
-  /* Neutral — steady series (bunkers, turnaround) */
-  neutral: {
-    stroke: "#1565c0", // Slate ink — 5.03:1 on Foam
+  /* Actual — benchmark/steady series */
+  actual: {
+    stroke: "#0a5c49", // Sea-700 — 7.95:1 on card
     strokeWidth: 1.5,
-    gradientColor: "#90caf9", // Shallow wash
-    gradientOpacity: 0.18,
+    gradientColor: "#dcf3ea", // Glass-100 wash
+    gradientOpacity: 0.3,
     defaultLinePath:
       "M0,180 C80,150 165,190 260,130 C345,75 430,165 520,110 C580,75 620,130 653,85",
     defaultAreaPath:
       "M0,180 C80,150 165,190 260,130 C345,75 430,165 520,110 C580,75 620,130 653,85 L653,240 L0,240 Z",
   },
-  /* Live — market/forecast signal (BDI, forward curve).
-     Fathom, not Deep: Deep is 2.74:1 on Foam, below the 3:1 non-text bar. */
-  live: {
-    stroke: "#1e88e5", // Fathom
+  /* Forecast — optimistic series (BDI, forward curve).
+     Glass-400 is a graphic-only tone. */
+  forecast: {
+    stroke: "#63d1ab", // Glass-400
     strokeWidth: 2,
-    gradientColor: "#64b5f6", // Channel wash
+    gradientColor: "#dcf3ea", // Glass-100 wash
     gradientOpacity: 0.26,
     defaultLinePath:
       "M0,140 C95,110 180,185 270,160 C360,135 445,190 535,120 C585,80 625,95 653,65",
     defaultAreaPath:
       "M0,140 C95,110 180,185 270,160 C360,135 445,190 535,120 C585,80 625,95 653,65 L653,240 L0,240 Z",
   },
-  /* Negative — drawdown sounding, heaviest ink */
+  /* Negative — drawdown, Coral-500 graphics tone */
   negative: {
-    stroke: "#0d47a1", // Abyss
+    stroke: "#e85c3a", // Coral-500 — graphics only
     strokeWidth: 2,
-    gradientColor: "#0d47a1", // Abyss wash
-    gradientOpacity: 0.2,
+    gradientColor: "#fdeae4", // Coral-100 wash
+    gradientOpacity: 0.3,
     defaultLinePath:
       "M0,110 C90,140 170,85 250,100 C330,115 415,185 500,170 C570,160 615,205 653,200",
     defaultAreaPath:
@@ -67,7 +65,7 @@ const VARIANT_CONFIGS: Record<ChartVariant, VariantConfig> = {
 };
 
 export const AnimatedSvgChart: React.FC<AnimatedSvgChartProps> = ({
-  variant = "neutral",
+  variant = "actual",
   height = 80,
   className = "",
   linePath,
@@ -78,7 +76,7 @@ export const AnimatedSvgChart: React.FC<AnimatedSvgChartProps> = ({
   const gradientId = `chart-gradient-${variant}-${cleanId}`;
   const shouldReduceMotion = useReducedMotion();
 
-  const config = VARIANT_CONFIGS[variant] || VARIANT_CONFIGS.neutral;
+  const config = VARIANT_CONFIGS[variant] || VARIANT_CONFIGS.actual;
   const finalLinePath = linePath || config.defaultLinePath;
   const finalAreaPath = areaPath || config.defaultAreaPath;
 
@@ -107,7 +105,7 @@ export const AnimatedSvgChart: React.FC<AnimatedSvgChartProps> = ({
       </defs>
 
       {/* Depth-sounding grid — dotted Shoal hairlines */}
-      <g stroke="#90caf9" strokeWidth="1" strokeDasharray="2 6" opacity="0.8">
+      <g stroke="#d8e2dc" strokeWidth="1" strokeDasharray="2 6" opacity="0.9">
         <line x1="0" y1="200" x2="653" y2="200" />
         <line x1="0" y1="120" x2="653" y2="120" />
         <line x1="0" y1="40" x2="653" y2="40" />
