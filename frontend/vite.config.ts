@@ -14,4 +14,14 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    // Same proxy for `vite preview` so the production bundle is testable
+    // locally without setting VITE_API_BASE.
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+    },
+  },
 })

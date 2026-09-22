@@ -131,7 +131,7 @@ function RailRow({ row }: { row: Row }) {
           <div
             className={cx(
               "flex items-center justify-end gap-0.5 font-mono text-[10px] tabular-nums",
-              row.deltaTone === "up" ? "font-medium text-deep" : "font-semibold text-abyss",
+              row.deltaTone === "up" ? "font-medium text-slate-ink" : "font-semibold text-abyss",
             )}
           >
             <span aria-hidden="true" className="text-[8px] leading-none">
