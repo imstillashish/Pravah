@@ -156,8 +156,8 @@ export const RightRail: React.FC<{ desk: "planner" | "operator" }> = ({ desk }) 
       <div className="mb-2 flex items-center justify-between px-2">
         <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
           {desk === "planner" ? "Market Feed" : "Port Feed"}
+          {/* Static live marker — no ping/pulse animation (workspace rule: anti-slop). */}
           <span className="relative flex size-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sea-600 opacity-60" />
             <span className="relative inline-flex size-1.5 rounded-full bg-sea-600" />
           </span>
         </span>

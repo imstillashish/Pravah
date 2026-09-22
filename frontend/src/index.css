@@ -92,4 +92,15 @@
   .shadow-sheet {
     box-shadow: 0 8px 24px rgba(8, 54, 44, 0.1);
   }
+
+  /* Skeleton sweep — an authored light band gliding across, NOT a
+     ping/pulse (banned as AI-slop; see .geminirules and DESIGN.md §7). */
+  @keyframes skeleton-sweep {
+    0% {
+      transform: translateX(-120%);
+    }
+    100% {
+      transform: translateX(420%);
+    }
+  }
 }
