@@ -90,6 +90,10 @@ ease-out, 4px-rise entrances, chart draw-ins, full reduced-motion collapse.
 - No second shadow beyond the sheet shadow. No gradients on surfaces.
 - No hue-only meaning encoding; every semantic carries a glyph.
 - No radius above 12px except full-round pills.
+- **No ping/pulse dots** (`animate-ping`/`animate-pulse`): live markers are
+  static Sea-600 dots + mono `LIVE` label; loading uses the `skeleton-sweep`
+  band in `ui.tsx` — never an opacity pulse. These read as AI slop and are
+  hard-banned in workspace rules (`.geminirules`).
 
 ## 8. Page Roles (all 16 Features.md pages)
 

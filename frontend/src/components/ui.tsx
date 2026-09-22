@@ -143,7 +143,15 @@ export function Eyebrow({ className, children, ...props }: HTMLAttributes<HTMLSp
   );
 }
 
-/** Loading skeleton: Glass-100 block with a soft pulse (reduced-motion safe). */
+/**
+ * Loading skeleton: Glass-100 block with an authored sweep — a light
+ * band glides across (chart "drawing in"), never a lazy opacity pulse
+ * (workspace rule: anti-slop). Global reduced-motion query stops it.
+ */
 export function Skeleton({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div aria-hidden className={cx("animate-pulse rounded-sm bg-glass-100", className)} {...props} />;
+  return (
+    <div aria-hidden className={cx("relative overflow-hidden rounded-sm bg-glass-100", className)} {...props}>
+      <span className="absolute inset-y-0 w-1/3 bg-card/70 [animation:skeleton-sweep_1.8s_ease-in-out_infinite]" />
+    </div>
+  );
 }
