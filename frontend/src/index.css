@@ -1,64 +1,81 @@
 @import "tailwindcss";
 
 /*
- * Admiralty Chart design world — single source of truth: DESIGN.md (v3).
- * Exactly ten blues, nothing else. Ruled hairlines instead of shadows,
- * mono tabular numerals for data, filled Abyss CTA. No other hue, no
- * box-shadow, no gradient may ship anywhere in the app.
+ * Sea-Glass design world — single source of truth: DESIGN.md (v4).
+ * Mint-teal accent ramp over sea-glass tinted neutrals. Three semantic
+ * hues with strict monopolies (amber=pending, coral=danger). Measured
+ * AA contrast; the ONLY allowed box-shadow is .shadow-sheet (overlays).
  */
 @theme {
-  /* The palette — the only colors in the system */
-  --color-foam: #e3f2fd;
-  --color-shoal: #bbdefb;
-  --color-shallow: #90caf9;
-  --color-channel: #64b5f6;
-  --color-reef: #42a5f5;
-  --color-deep: #2196f3;
-  --color-fathom: #1e88e5;
-  --color-slate-ink: #1565c0;
-  --color-deepsea: #1e3a8a;
-  --color-abyss: #0d47a1;
+  /* Mint ramp (accent) */
+  --color-glass-50: #effaf5;
+  --color-glass-100: #dcf3ea;
+  --color-glass-200: #bfe9db;
+  --color-glass-300: #97ddc6;
+  --color-glass-400: #63d1ab;
+  --color-mint-500: #2fbf94;
+  --color-mint-hover: #2ab08b;
+  --color-sea-600: #0d7a61;
+  --color-sea-700: #0a5c49;
+  --color-sea-800: #07453a;
+  --color-sea-900: #08362c;
 
-  /* Typography — Inter for prose, IBM Plex Mono for every numeral */
+  /* Sea-glass neutrals */
+  --color-canvas: #ecf1ee;
+  --color-card: #ffffff;
+  --color-well: #f7faf8;
+  --color-line: #d8e2dc;
+  --color-line-strong: #c2d2c9;
+  --color-wash: #e2ebe6;
+  --color-ink: #0d1f1c;
+  --color-body: #243935;
+  --color-muted: #56706a;
+  --color-faint: #748c85;
+
+  /* Semantic ramps (text-legal 700s + graphics 500s + tints) */
+  --color-amber-100: #fdf2d7;
+  --color-amber-300: #ecd9a4;
+  --color-amber-500: #d99a26;
+  --color-amber-700: #7a4f01;
+  --color-coral-100: #fdeae4;
+  --color-coral-500: #e85c3a;
+  --color-coral-700: #b03616;
+
+  /* Typography — unchanged faces */
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Terminal radius scale — 3px controls, 6px cards. Never larger. */
+  /* Radius scale — 4px chips / 8px cards / 12px inputs / full pills */
   --radius-*: initial;
-  --radius-sm: 3px;
-  --radius-md: 6px;
-  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
 }
 
 @layer base {
   ::selection {
-    background-color: #0d47a1;
-    color: #e3f2fd;
+    background-color: #dcf3ea;
+    color: #08362c;
   }
 
-  /* Abyss focus ring */
   *:focus-visible {
-    outline: 2px solid #0d47a1;
+    outline: 2px solid #0d7a61;
     outline-offset: 2px;
   }
 
-  /* Tabular figures for prices, rates, tonnage, timestamps */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
 
   body {
     margin: 0;
-    background-color: var(--color-foam);
-    color: var(--color-deepsea);
+    background-color: var(--color-canvas);
+    color: var(--color-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* One motion policy: collapse all CSS transitions/animations when the
-     user prefers reduced motion. Framer-motion paths opt out separately
-     via useReducedMotion in AnimatedSvgChart, the drawer, and
-     lib/motion.ts consumers. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -67,5 +84,12 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+  }
+}
+
+@layer utilities {
+  /* The ONLY shadow in the system — overlays/drawer sheets (DESIGN.md §6). */
+  .shadow-sheet {
+    box-shadow: 0 8px 24px rgba(8, 54, 44, 0.1);
   }
 }
