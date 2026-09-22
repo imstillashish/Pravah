@@ -1,5 +1,5 @@
 # MICROSCOPIC_TASK_BREAKDOWN.md
-# CharterSense — SIH26006
+# Astitva — SIH26006
 # Intelligent Freight Forecasting & Vessel Chartering Decision Platform for SAIL
 # Team: 6 Members | Duration: 48 Hours
 
@@ -9,7 +9,7 @@
 
 | Field | Value |
 |---|---|
-| Project Name | CharterSense |
+| Project Name | Astitva |
 | PS ID | SIH26006 |
 | One-Line Description | Intelligent freight forecasting and vessel chartering decision-support platform for SAIL's bulk coal procurement from overseas to East Coast of India |
 | Team Size | 6 members |
@@ -97,7 +97,7 @@ git rebase origin/main
 git push origin feat/backend-core --force-with-lease
 
 # --- OPEN PR on GitHub ---
-# Go to: https://github.com/<org>/chartersense/compare/feat/backend-core
+# Go to: https://github.com/imstillashish/Astitva/compare/feat/backend-core
 # Fill in the PR template (auto-populated from .github/PULL_REQUEST_TEMPLATE.md)
 
 # --- AFTER PR IS MERGED: delete local + remote branch ---
@@ -242,7 +242,7 @@ git reset --hard origin/main
 
 **G1:** Open https://github.com/new in a browser → **(Ashish — PM)**
 
-**G2:** Set Repository name field to `chartersense` → **(Ashish — PM)**
+**G2:** Set Repository name field to `Astitva` → **(Ashish — PM)**
 
 **G3:** Set Description field to `Intelligent freight forecasting and vessel chartering decision platform for SAIL — SIH26006` → **(Ashish — PM)**
 
@@ -257,7 +257,7 @@ git reset --hard origin/main
 **G8:** Click "Create repository" green button → **(Ashish — PM)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Repository URL is `https://github.com/<your-org>/chartersense`
+> - [ ] Repository URL is `https://github.com/imstillashish/Astitva`
 > - [ ] Repository is empty (no files, no commits)
 > - [ ] Visibility shows "Public"
 
@@ -267,12 +267,12 @@ git reset --hard origin/main
 
 **G9:** Navigate to `Settings → Collaborators and teams` on the repository → **(Ashish — PM)**
 
-**G10:** Click "Add people" → search for Palak's GitHub username → set role to **Write** → click "Add" → **(Ashish — PM)**
+**G10:** Click "Add people" → search and invite Palak, Om, Prachi, Param, Mahima with role **Write** → click "Add" → **(Ashish — PM)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Palak has received a GitHub email invite
-> - [ ] Palak accepts the invite from their email or from https://github.com/notifications
-> - [ ] Palak can see the repo at https://github.com/<org>/chartersense
+> - [ ] All teammates have received GitHub email invites
+> - [ ] Teammates accept invitations from their email or notifications
+> - [ ] Teammates can view and push to https://github.com/imstillashish/Astitva
 
 ---
 
@@ -355,46 +355,18 @@ git reset --hard origin/main
 
 ### Initial Repository Push (PM only)
 
-**G27:** On Ashish's local machine, navigate to the project folder (create it if needed): `mkdir chartersense && cd chartersense` → **(Ashish — PM)**
+**G27:** On Ashish's local machine, navigate to the project directory: `cd SIH26006` (or `mkdir Astitva && cd Astitva`) → **(Ashish — PM)**
 
-**G28:** Run `git init` in the chartersense folder → **(Ashish — PM)**
+**G28:** Run `git init` in the project root → **(Ashish — PM)**
 
-**G29:** Create file `README.md` with content: `# CharterSense — SIH26006\nIntelligent Freight Forecasting & Vessel Chartering Decision Platform for SAIL` → **(Ashish — PM)**
+**G29:** Create root `README.md` with project introduction, architecture stack breakdown, and quickstart commands for **Astitva** — SIH26006 → **(Ashish — PM)**
 
-**G30:** Create file `.gitignore` with the following exact lines:
-
-```
-# Python
-__pycache__/
-*.py[cod]
-*.env
-venv/
-.venv/
-*.egg-info/
-dist/
-build/
-.pytest_cache/
-
-# Node
-node_modules/
-dist/
-.vite/
-*.local
-
-# Environment files
-.env
-.env.local
-.env.production
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.idea/
-.vscode/
-*.swp
-```
+**G30:** Configure `.gitignore` with standard rules, explicitly excluding:
+  - Python virtual environments and caches: `venv/`, `.venv/`, `__pycache__/`, `*.py[cod]`
+  - Frontend dependencies and builds: `node_modules/`, `dist/`, `.vite/`
+  - Local database files: `*.db`, `logistics.db`, `backend/logistics.db`
+  - Internal LLM/planning and scratch files: `.planning/`, `.geminirules`, `MICROSCOPIC_TASK_BREAKDOWN_PROMPT.md`
+  - Environment variable files: `.env`, `.env.local`, `.env.production`
 
 → **(Ashish — PM)**
 
@@ -402,9 +374,9 @@ Thumbs.db
 
 **G32:** Run `git commit -m "chore(init): initial repository setup with README, gitignore, PR template"` → **(Ashish — PM)**
 
-**G33:** Run `git branch -M main` to rename default branch to main → **(Ashish — PM)**
+**G33:** Run `git branch -M main` to set default branch to main → **(Ashish — PM)**
 
-**G34:** Run `git remote add origin https://github.com/<your-org>/chartersense.git` (replace <your-org> with actual GitHub org/username) → **(Ashish — PM)**
+**G34:** Run `git remote add origin https://github.com/imstillashish/Astitva.git` → **(Ashish — PM)**
 
 **G35:** Run `git push -u origin main` → **(Ashish — PM)**
 
@@ -412,7 +384,7 @@ Thumbs.db
 
 ### All Members: Clone and Configure Identity
 
-**G36:** All 6 members each run on their own machine: `git clone https://github.com/<your-org>/chartersense.git && cd chartersense` → **(All Members)**
+**G36:** All 6 members each run on their own machine: `git clone https://github.com/imstillashish/Astitva.git && cd Astitva` → **(All Members)**
 
 **G37:** Each member runs: `git config user.name "<YourName>"` → **(All Members)**
 
@@ -423,14 +395,14 @@ Thumbs.db
 **G40:** Ashish runs: `git config user.email "ashish@<your-email>.com"` → **(Ashish — PM + Backend Lead)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Both members can run `git remote -v` and see the GitHub URL
-> - [ ] Both members can run `git log --oneline` and see 1 commit
-> - [ ] Both members have their git identity configured
+> - [ ] All members can run `git remote -v` and see the GitHub URL
+> - [ ] All members can run `git log --oneline` and see the initial commit
+> - [ ] All members have their git identity configured
 
 > **🔖 GIT CHECKPOINT — Remote is live**
 > ```bash
 > git log --oneline  # should show 1 commit: "chore(init): initial repository setup..."
-> git remote -v      # should show: origin https://github.com/<org>/chartersense.git
+> git remote -v      # should show: origin https://github.com/imstillashish/Astitva.git
 > ```
 > ✅ **All 6 team members are now connected to the same repo. Phase 0 can begin.**
 
@@ -545,7 +517,7 @@ python-dotenv==1.0.1
 
 > **Owner: Prachi — Frontend Developer**
 
-**Task 28:** Palak runs: `cd chartersense && npm create vite@latest frontend -- --template react-ts` → **(Prachi — Frontend Developer)**
+**Task 28:** Palak runs: `cd Astitva && npm create vite@latest frontend -- --template react-ts` → **(Prachi — Frontend Developer)**
 
 **Task 29:** Run `cd frontend && npm install` → **(Prachi — Frontend Developer)**
 
@@ -598,9 +570,9 @@ python-dotenv==1.0.1
 
 > **Owner: Param — DevOps + Backend**
 
-**Task 46:** Create a local PostgreSQL database named `chartersense_dev` using: `createdb chartersense_dev` (or via pgAdmin/DBeaver) → **(Param — DevOps + Backend)**
+**Task 46:** Create a local PostgreSQL database named `astitva_dev` using: `createdb astitva_dev` (or via pgAdmin/DBeaver) → **(Param — DevOps + Backend)**
 
-**Task 47:** Set `DATABASE_URL` in `backend/.env` to `postgresql://postgres:<password>@localhost:5432/chartersense_dev` → **(Param — DevOps + Backend)**
+**Task 47:** Set `DATABASE_URL` in `backend/.env` to `postgresql://postgres:<password>@localhost:5432/astitva_dev` → **(Param — DevOps + Backend)**
 
 **Task 48:** Create file `backend/app/database.py` — define SQLAlchemy `engine` using `DATABASE_URL` from config, define `SessionLocal` sessionmaker, define `Base` declarative base, define `get_db` dependency function yielding a session → **(Param — DevOps + Backend)**
 
@@ -645,7 +617,7 @@ python-dotenv==1.0.1
 
 > **Owner: Param — DevOps + Backend**
 
-**Task 59:** Create file `docs/API_CONTRACT.md` with a title line `# CharterSense API Contract` and a placeholder table of contents listing 10 endpoints (to be filled later): `POST /auth/login`, `GET /analyses`, `POST /analyses`, `GET /analyses/{id}`, `GET /analyses/{id}/export`, `POST /analyses/{id}/decision`, `GET /admin/users`, `POST /admin/users`, `GET /admin/reference`, `GET /audit-logs` → **(Param — DevOps + Backend)**
+**Task 59:** Create file `docs/API_CONTRACT.md` with a title line `# Astitva API Contract` and a placeholder table of contents listing 10 endpoints (to be filled later): `POST /auth/login`, `GET /analyses`, `POST /analyses`, `GET /analyses/{id}`, `GET /analyses/{id}/export`, `POST /analyses/{id}/decision`, `GET /admin/users`, `POST /admin/users`, `GET /admin/reference`, `GET /audit-logs` → **(Param — DevOps + Backend)**
 
 **Task 60:** Create file `scripts/seed_reference_data.py` — empty file with a docstring: `"""Seeds reference data: 4 verified ports, 4 vessel classes, cargo types."""` → **(Param — DevOps + Backend)**
 
@@ -744,11 +716,11 @@ python-dotenv==1.0.1
 
 **Task 84:** Open the generated migration file — verify it contains `CREATE TABLE` statements for all 17 tables — do NOT run yet until verified → **(Param — DevOps + Backend)**
 
-**Task 85:** Run `cd backend && alembic upgrade head` — applies migration to `chartersense_dev` database → **(Param — DevOps + Backend)**
+**Task 85:** Run `cd backend && alembic upgrade head` — applies migration to `astitva_dev` database → **(Param — DevOps + Backend)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Run `psql chartersense_dev -c "\dt"` — shows 17 tables
-> - [ ] Run `psql chartersense_dev -c "\d analyses"` — shows all columns for analyses table
+> - [ ] Run `psql astitva_dev -c "\dt"` — shows 17 tables
+> - [ ] Run `psql astitva_dev -c "\d analyses"` — shows all columns for analyses table
 > - [ ] No alembic errors
 
 ---
@@ -778,8 +750,8 @@ python-dotenv==1.0.1
 **Task 91:** Run `cd backend && python ../scripts/seed_reference_data.py` → **(Om — Backend Developer)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Run `psql chartersense_dev -c "SELECT port_name, max_draft_m FROM reference_ports;"` — shows 4 ports with correct draft values
-> - [ ] Run `psql chartersense_dev -c "SELECT class_name, dwt_min, dwt_max FROM reference_vessel_classes;"` — shows 4 vessel classes
+> - [ ] Run `psql astitva_dev -c "SELECT port_name, max_draft_m FROM reference_ports;"` — shows 4 ports with correct draft values
+> - [ ] Run `psql astitva_dev -c "SELECT class_name, dwt_min, dwt_max FROM reference_vessel_classes;"` — shows 4 vessel classes
 > - [ ] Haldia record shows `has_lightering = true`
 
 > **🔖 GIT CHECKPOINT — Commit & Push**
@@ -853,14 +825,14 @@ python-dotenv==1.0.1
 
 **Task 114:** Create file `backend/app/services/user_service.py` — define function `create_initial_admin(db, email, password)` that creates the first admin user with a hashed password — used only by a setup script, not exposed as an API endpoint → **(Ashish — PM + Backend Lead)**
 
-**Task 115:** Create file `scripts/create_admin.py` — a script that calls `create_initial_admin` with hardcoded demo credentials: `admin@chartersense.com` / `CharterDemo2026!` → **(Ashish — PM + Backend Lead)**
+**Task 115:** Create file `scripts/create_admin.py` — a script that calls `create_initial_admin` with hardcoded demo credentials: `admin@astitva.gov.in` / `AstitvaDemo2026!` → **(Ashish — PM + Backend Lead)**
 
 **Task 116:** Run `cd backend && python ../scripts/create_admin.py` → **(Ashish — PM + Backend Lead)**
 
 **Task 117:** Register the auth router in `backend/app/main.py`: add `app.include_router(auth_router, prefix="/auth", tags=["auth"])` → **(Ashish — PM + Backend Lead)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] POST to `http://localhost:8000/auth/login` with `{"email":"admin@chartersense.com","password":"CharterDemo2026!"}` returns a JWT token
+> - [ ] POST to `http://localhost:8000/auth/login` with `{"email":"admin@astitva.gov.in","password":"AstitvaDemo2026!"}` returns a JWT token
 > - [ ] POST with wrong password returns 401
 
 ---
@@ -1253,7 +1225,7 @@ python-dotenv==1.0.1
 
 ### Shared Layout Component
 
-**Task 218:** Create file `frontend/src/components/Layout.tsx` — a wrapper component with a top navigation bar containing: CharterSense logo text (left), nav links to Dashboard / New Analysis / Audit Log (center), user role display + Logout button (right) → **(Prachi — Frontend Developer)**
+**Task 218:** Create file `frontend/src/components/Layout.tsx` — a wrapper component with a top navigation bar containing: Astitva logo text (left), nav links to Dashboard / New Analysis / Audit Log (center), user role display + Logout button (right) → **(Prachi — Frontend Developer)**
 
 **Task 219:** Edit all non-login page files — wrap their return value with `<Layout>` → **(Prachi — Frontend Developer)**
 
@@ -1675,9 +1647,9 @@ python-dotenv==1.0.1
 > git push origin feat/deployment
 > git checkout main && git pull origin main
 > git merge --squash feat/deployment
-> git commit -m "feat(deployment): production deployment complete — CharterSense v1.0 demo-ready"
+> git commit -m "feat(deployment): production deployment complete — Astitva v1.0 demo-ready"
 > git push origin main
-> git tag -a v1.0-demo -m "SIH26006 CharterSense — Demo-ready build"
+> git tag -a v1.0-demo -m "SIH26006 Astitva — Demo-ready build"
 > git push origin v1.0-demo
 > ```
 
@@ -2069,7 +2041,7 @@ python-dotenv==1.0.1
 > ```bash
 > git checkout main && git pull origin main
 > git merge --squash feat/page-features-ui
-> git commit -m "feat(frontend): complete all 16 pages — CharterSense full page coverage"
+> git commit -m "feat(frontend): complete all 16 pages — Astitva full page coverage"
 > git push origin main
 > ```
 >

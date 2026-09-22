@@ -1,4 +1,4 @@
-# CharterSense — Page-by-Page Feature List (Simple Language)
+# Astitva — Page-by-Page Feature List (Simple Language)
 
 Here is every page in the app, and what each page actually does. No design details — just what exists and why.
 
