@@ -22,3 +22,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
 
 def decode_access_token(token: str) -> dict:
     return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+
+# Alias for standard convention
+get_password_hash = hash_password
