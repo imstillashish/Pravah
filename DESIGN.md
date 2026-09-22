@@ -1,168 +1,105 @@
-# Intelligent Freight Portal — Design World: "Admiralty Chart"
+# Intelligent Freight Portal — Design World: "Sea-Glass"
 
-> **v3 — Monochrome Blue.** This document is the single source of visual truth.
-> The previous worlds (Wise lime, OpenSea dark terminal) are **retired as
-> anti-references**: no green/lime/emerald anywhere, no black/charcoal surfaces
-> anywhere. The palette is exactly ten blues; nothing else may ship.
+> **v4 — Mint-Teal Light.** Single source of visual truth. The Admiralty
+> Chart mono-blue world is retired as an anti-reference: no all-blue
+> surfaces, no filled dark buttons. Light, sea-glass tinted, mint-accented.
+> Spec: docs/superpowers/specs/2026-09-22-sea-glass-light-palette-design.md
 
 ## 1. The Idea
 
-A **hydrographic chart** — the nautical chart a port office would actually
-have pinned to the wall. Paper is light, water is ink. The interface is drawn
-with **ruled hairlines and hatching**, like engraved chart linework: elevation
-comes from density of rule, never from shadows or color. Data is rendered the
-way a chart renders depth soundings — in a numerals-only face, weighted and
-italic for emphasis. One hue, ten steps, zero exceptions. The moment a second
-hue appears, the world collapses into a generic admin — the ban is the design.
+A harbor office at first light: sea-glass canvas, white cards, teal-black
+ink, and a mint ramp from pale glass to deep sea. Optimistic and
+growth-coded, but institutional — white cards do the work; mint only ever
+signals brand, positivity, or "live". One signature gesture: the full-round
+mint pill with deep-sea ink text.
 
-## 2. The Palette — Exactly Ten Blues
+## 2. The Mint Ramp (accent)
 
-| # | Hex | Chart Name | Role |
-|---|-----|-----------|------|
-| 1 | `#e3f2fd` | **Foam** | Page canvas, panel fill (light end) |
-| 2 | `#bbdefb` | **Shoal** | Elevated fill, pressed states, rule on Foam |
-| 3 | `#90caf9` | **Shallow** | Hairline rules, card edges, icon washes, quiet icons |
-| 4 | `#64b5f6` | **Channel** | Disabled ink, tertiary hover washes |
-| 5 | `#42a5f5` | **Reef** | Secondary emphasis, tertiary text on light |
-| 6 | `#2196f3` | **Deep** | Live-signal accent, informational accent, delta up-tint |
-| 7 | `#1e88e5` | **Fathom** | Interactive hover states, active icon |
-| 8 | `#1565c0` | **Slate (ink)** | Muted ink: metadata, placeholders, timestamps |
-| 9 | `#1e3a8a` | **Deep Sea** | Body copy, secondary headings, filled interactive controls |
-| 10 | `#0d47a1` | **Abyss** | Primary ink: headings, numerals, filled CTAs |
+| # | Hex | Name | Role |
+|---|-----|------|------|
+| 1 | `#effaf5` | Glass-50 | Faintest wash, row tints, recommendation ground |
+| 2 | `#dcf3ea` | Glass-100 | Washed fills, positive pill bg, active nav wash |
+| 3 | `#bfe9db` | Glass-200 | Brand chips, CTA-disabled fill |
+| 4 | `#97ddc6` | Glass-300 | Icon tint, decorative borders |
+| 5 | `#63d1ab` | Glass-400 | Chart forecast series, graphics — **never text** |
+| 6 | `#2fbf94` | Mint-500 | CTA fill (Sea-900 ink text). Hover `#2ab08b` |
+| 7 | `#0d7a61` | Sea-600 | Links, interactive text, focus ring, live dots |
+| 8 | `#0a5c49` | Sea-700 | Strong text, chart actual series |
+| 9 | `#07453a` | Sea-800 | Emphasis text, positive pill text |
+| 10 | `#08362c` | Sea-900 | Deep sea ink: headings, numerals, hero bands |
 
-> **Contrast is pre-solved.** Abyss-on-Foam 7.56:1, Deep-Sea-on-Foam 9.07:1,
-> Slate-on-Foam 5.03:1 — all AA body. Fathom-on-Foam 3.22:1 — large text and
-> non-text graphics only. **Deep-on-Foam is 2.74:1 — never for text and never
-> for a graphic that is the sole carrier of meaning** (pair Deep dots with a
-> text label; chart strokes use Fathom/Slate/Abyss instead). Never set body
-> copy in Reef or lighter.
+Measured contrast: Sea-600 5.28:1 card / 4.63:1 canvas · Sea-700 7.95:1 ·
+Sea-800 10.93:1 · Ink 17.07:1 card / 14.95:1 canvas · Mint-500 carries
+5.72:1 with Sea-900 ink. Glass-100–400 and Mint-500 are fills/graphics —
+never text.
 
-## 3. Type — Numerals, Not Prose
+## 3. Sea-Glass Neutrals
 
-| Role | Face | Weight | Size | Notes |
-|------|------|--------|------|-------|
-| Numerals & code | **IBM Plex Mono** | 400 / 500 / **600** | 12–30px | ALL tabular; 600 = data emphasis |
-| Headings / hero | Inter | 400 | 20–32px | Chart caption voice — weight 400 max |
-| Body | Inter | 400 | 14px | weight 400 |
-| Eyebrows | IBM Plex Mono | 400 | 10px | uppercase, letter-spaced, Slate ink |
-| **Banned** | bold/heavy display | 600+ sans | — | Charts don't shout; data does |
+| Token | Hex | Use |
+|---|-----|-----|
+| canvas `#ecf1ee` | page background |
+| card `#ffffff` | cards, sheets, rails |
+| well `#f7faf8` | inputs, recessed wells |
+| line `#d8e2dc` | hairline borders, chart grid |
+| line-strong `#c2d2c9` | table headers, strong dividers |
+| wash `#e2ebe6` | hover wash |
+| ink `#0d1f1c` | headings, numerals, body-strong |
+| body `#243935` | body copy (12.27:1 card) |
+| muted `#56706a` | metadata, eyebrows (5.36:1 card / 5.10:1 well) |
+| faint `#748c85` | placeholders, disabled only (3.60:1 — large/UI) |
 
-> **On washed bands** (Shoal fill / 60% washes), eyebrow ink steps up from
-> Slate to **Deep Sea** — Slate-on-Shoal/60 measures 4.45:1 and fails AA.
+## 4. Semantics — Three Hues, Strict Monopolies
 
-The **lightest-weight numeral is the quietest element on screen; the 600
-numeral is the loudest** — that is the whole hierarchy engine. No heading may
-exceed 32px. Section titles live at 20px.
+| Meaning | Recipe | Contrast |
+|---|---|---|
+| Approved / positive / live | Glass-100 bg · Sea-800 text · ▲ glyph | 9.40:1 |
+| Pending / caution | Amber-100 `#fdf2d7` · Amber-700 `#7a4f01` · ⏳ glyph | 6.40:1 |
+| Rejected / danger / hazard | Coral-100 `#fdeae4` · Coral-700 `#b03616` · ! glyph | 5.34:1 |
+| Neutral / draft | Well bg · Muted text | 5.10:1 |
 
-## 4. Rules and Lines (Elevation)
+Graphics-only: Amber-500 `#d99a26`, Coral-500 `#e85c3a`, Glass-400 — chart
+strokes, icon washes, borders; never text. All sample-data tags use the
+amber caution recipe with a dashed Amber-300 `#ecd9a4` border. Destructive
+actions (Reject, Disable user) use the coral recipe — never the mint pill.
 
-There are **no shadows. Ever.** No glow. No gradients on surfaces. Elevation
-is expressed only through rule density:
+## 5. Charts
 
-| Token | Value | Use |
-|-------|-------|-----|
-| `--rule-hairline` | `1px #90caf9` | card edges, dividers (15% alpha on Foam canvas) |
-| `--rule-medium` | `1px #90caf9` (45%) | table header underline, footer rule |
-| `--rule-hard` | `2px #0d47a1` | current section indicator, active nav |
-| `--rule-dotted` | `1px dotted #1565c0` | advisory callout borders |
-| `--wash-recessed` | `#e3f2fd` fill | inside-card wells, input wells |
-| `--wash-elevated` | `#bbdefb` fill | toolbar band, pressed rows |
+Forecast series Glass-400 `#63d1ab` 2px · actual/benchmark Sea-700 2px ·
+negative/drawdown Coral-500 2px. Grid: dotted `#d8e2dc`. Area wash
+Glass-100 @ 30%. Square plotter-nib terminal marker. Series differentiate
+by lightness + weight, never hue alone.
 
-Cards: **Foam panel + 1px hairline ring**. Hover = ring deepens to 45% rule;
-never a shadow. Highest elevation = a **double rule** (hairline + medium rule
-2px below) — use for the active nav item and the primary data card only.
+## 6. Type & Shell
 
-## 5. Geometry
+Fonts unchanged: Inter (UI) + IBM Plex Mono tabular (all numerals, prices,
+timestamps, desk codes). Page title Inter 600 28–32px Sea-900; section
+titles 20px; eyebrows mono 10px uppercase Muted.
 
-- **Radius scale:** 3px (controls, chips) / **6px (cards, inputs)** — nothing larger. Zero radius is allowed for table shells and rules.
-- **Base unit:** 4px. Gutters 12px inside cards; 48px between sections.
-- **Page max-width:** 1200px center column (content), full-bleed rails.
+Shell: icon rail white + line border, active = Glass-100 wash + 2px Sea-600
+bar · top bar white hairline band, Well search, Glass-100 desk pill with
+Sea-800 mono code · canvas `#ecf1ee` · white cards 8px radius.
+Radius: 8px cards / 12px inputs / full-round CTA pills / 4px chips.
+Overlays: one soft sheet shadow `0 8px 24px rgba(8,54,44,0.10)` — the only
+shadow in the system. Focus ring 2px Sea-600 offset 2. Motion 150–250ms
+ease-out, 4px-rise entrances, chart draw-ins, full reduced-motion collapse.
 
-## 6. Layout — The Three-Pane Chart Sheet
+## 7. Don't
 
-- **Left rail (56px):** Foam panel, hairline right edge. 24px icons in Slate;
-  active item = 2px Abyss left bar + Shoal wash. Bottom: settings, sign-out.
-- **Top bar (48px):** Foam band, medium rule below. Brand 14px/500 Abyss.
-  Search well (recessed Foam on Shoal wash) with `/` kbd. Desk pill on the
-  right (mono desk code, hairline border).
-- **Center column (max 1200px):** Foam canvas. 32px weight-400 Abyss desk
-  title with mono desk-code eyebrow. Metric cards in a dense 3-up row
-  (12px gaps). Data table with mono numerals, 1px rules between rows.
-- **Right rail (320px):** Foam panel with hairline left edge; "chart feed"
-  rows with mono values; dot rules; 45% section dividers.
+- No text in Glass-100–400, Mint-500, Amber-500, Coral-500 (graphics only).
+- No hover fill `#26a884` (4.46:1 — the rejected candidate).
+- No second shadow beyond the sheet shadow. No gradients on surfaces.
+- No hue-only meaning encoding; every semantic carries a glyph.
+- No radius above 12px except full-round pills.
 
-## 7. Semantics Without a Second Hue
+## 8. Page Roles (all 16 Features.md pages)
 
-| Meaning | Expression | Never |
-|---------|-----------|-------|
-| Primary action | **Filled Abyss** button, Foam text | filled Deep |
-| Secondary action | Hairline outline, Abyss text; hover washes Shoal | filled anything |
-| Live/verified/info | **Deep** dot or Deep text only | filled area |
-| Negative delta | **Abyss 600 + down-triangle glyph** | red, vermilion, any hue |
-| Positive delta | **Deep 500 + up-triangle glyph** | green, emerald, lime |
-| Neutral delta | Slate 400 mono | — |
-| Advisory/hazard | **Dotted Slate rule box + "!" glyph + 600 weight** | amber, red, orange |
-| Disabled | Channel ink on Shoal wash | opacity tricks on colored elements |
-
-Danger and status are communicated by **glyph + weight + rule**, the way
-charts mark hazards with hatching. Never by adding a hue.
-
-## 7a. Empty & Loading States
-
-- **Loading:** skeleton = Shoal block with **animated dotted Slate rule**
-  sweeping across (chart "drawing in" metaphor), 1.6s ease-in-out loop.
-- **Empty:** dashed Slate hairline box, centered 400 mono note.
-- **Error:** dotted-rule alert box, 600 Abyss glyph + message, medium rule
-  under header. Alert uses the same box as advisory — errors are hazards.
-
-## 8. Motion — The Pen Plotter
-
-All motion reads as a **pen plotter drawing a chart**: directional, precise,
-never bouncy. One curve: `cubic-bezier(0.4, 0, 0.2, 1)`, 200ms standard,
-400ms entrances.
-
-- Draw-in: rules and card edges **draw from left** (`scaleX 0→1`,
-  transform-origin left).
-- Series draw left-to-right (existing chart `pathLength` behavior).
-- Numerals settle with a 4px rise + fade, 200ms.
-- Hover: rule deepens (hairline → medium) over 150ms; wash transitions 150ms.
-- Deltas: up-triangle ▲ / down-triangle ▼ as glyphs — **no bounce, no pulse**.
-- **Reduced motion:** all transitions ≤1ms; draw-ins appear complete.
-
-## 9. Do
-
-- Keep the entire UI in the ten blues; check every new element against §2.
-- Render **every number, code, timestamp, and unit in mono, tabular**.
-- Express hierarchy through **weight (400/500/600 mono) and rule density**.
-- Mark hazards with dotted rules + glyph, never with color.
-- Use ▲/▼ glyphs for deltas with 500/600 mono weight.
-
-## 10. Don't
-
-- **No second hue.** No green/emerald/lime, no red/vermilion, no amber — the
-  semantic §7 mapping is mandatory.
-- **No shadows** (`box-shadow` banned on all elements). No glow. No gradients.
-- No bold sans (600+) for headings; only mono 600 for data emphasis.
-- No radius above 6px. No filled Deep buttons (only Abyss fills).
-- No body text in Reef or lighter (contrast < 4.5:1).
-
-## 11. Agent Quick Reference
-
-```css
-/* text: #0d47a1 · body: #1e3a8a · muted: #1565c0
-   canvas: #e3f2fd · elevated: #bbdefb
-   rules: #90caf9 (hairline) / #90caf9 45% (medium) / #0d47a1 2px (hard)
-   accent: #2196f3 · hover: #1e88e5 · CTA fill: #0d47a1 with #e3f2fd text */
-```
-
-**Example prompts:**
-1. Metric card: Foam fill, 1px hairline ring, 6px radius, 12px padding. Mono
-   10px uppercase Slate eyebrow; value in mono 24px 600 Abyss; body note in
-   12px Deep Sea.
-2. Table: zero radius shell, header row Shoal fill with mono 10px Slate
-   labels, 1px hairline row rules, hover row = Shoal wash, values mono
-   tabular.
-3. Primary button: filled `#0d47a1`, `#e3f2fd` 14px/500 text, 3px radius,
-   hover `#1e3a8a`, no shadow.
-4. Advisory: 1px dotted `#1565c0` rule box on Foam, "!" glyph in 600 Abyss,
-   message 12px Deep Sea.
+1 Landing: Sea-900 hero band (Glass-50 text = 12.5:1), mint pill CTAs,
+  white proof cards, amber sample-data tags · 2–3 Sign up/Login: white card,
+  Well inputs, mint pill · 4 Dashboard ✅ · 5 New Analysis ✅ · 6 Results:
+  recommendation on Glass-50 + mint chip, Glass-400/Sea-700 bars, amber/coral
+  risk pills · 7 Compare: selected = Sea-600 border + Glass-50 · 8 Decision
+  record: status pills · 9 History ✅ · 10 Booking: Waiting amber · Sent
+  muted · Confirmed positive · Cancelled coral · 11 Demand board: Glass-100
+  plant chips · 12 Vendor quotes: amber sample banner · 13 Map: Glass-400
+  route, Sea-700 ship, amber tag · 14–15 Admin: tables, coral destructive ·
+  16 Audit log: pure mono table.
