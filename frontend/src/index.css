@@ -13,7 +13,7 @@
   --color-spruce: #0c4a6e;            /* Deep Marine Ocean (Secondary dark surface) */
   --color-linen-mist: #e0f2fe;        /* Ice Mist (Soft cyan-tinted wash for active pills) */
   --color-signal-blue: #0284c7;       /* Maritime Blue Accent */
-  --color-alarm-red: #e11d48;         /* Rose / Hazard Alert Red */
+  --color-alarm-red: #be123c;         /* Rose 700 / Hazard Alert Red (AA: 5.74:1 on fog, 6.29:1 on paper as text; rose-600 #e11d48 failed 4.28) */
   --color-charcoal: #334155;          /* Slate 700 body copy text */
   --color-obsidian: #030712;          /* Ultra dark headings */
   --color-pebble: #cbd5e1;            /* Slate 300 subtle border / divider hairline */

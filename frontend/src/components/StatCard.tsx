@@ -179,14 +179,13 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <Card
       tone="fog"
-      role="img"
+      role="group"
       aria-label={ariaSummary}
       className="flex items-stretch justify-between gap-5 p-4"
     >
       <div className="flex min-w-0 flex-col justify-between">
         <p className="truncate text-[13px] text-charcoal">{label}</p>
         <motion.span
-          aria-hidden="true"
           className="mt-1.5 block font-mono text-[26px] font-semibold leading-none tracking-tight text-forest-ink tabular-nums"
         >
           {displayValue}
@@ -204,8 +203,6 @@ export const StatCard: React.FC<StatCardProps> = ({
             <span className="text-charcoal">{caption ?? ""}</span>
           )}
         </p>
-        {/* Real headline for AT: motion text nodes are not always exposed. */}
-        <span className="sr-only">{format(headline)}</span>
       </div>
 
       {n >= 2 && (
