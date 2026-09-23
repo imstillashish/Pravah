@@ -9,8 +9,8 @@ interface AstitvaLogoProps {
 
 /**
  * Astitva Brand Logo:
- * - Option 1: Maritime Horizon & Predictive Delta (Forward prow cutting water + Letter 'A' chevron)
- * - Forest Ink (#163300) authority + Lime Voltage (#9fe870) forward velocity
+ * - Option 1: Maritime Horizon & Predictive Delta
+ * - Deep Oceanic Navy (#07192f) authority + Electric Cyan (#38bdf8) forward vector
  */
 export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
   className = "",
@@ -34,17 +34,17 @@ export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
         width="64"
         height="64"
         rx="16"
-        fill={isInverse ? "#9fe870" : "#163300"}
+        fill={isInverse ? "#38bdf8" : "#07192f"}
       />
       {/* Outer Vessel Bow Chevron 'A' */}
       <path
         d="M32 9L51.5 48H41.5L32 29L22.5 48H12.5L32 9Z"
-        fill={isInverse ? "#163300" : "#ffffff"}
+        fill={isInverse ? "#07192f" : "#ffffff"}
       />
       {/* Inner Predictive Delta Arrow */}
       <path
         d="M32 20L43 44H36.2L32 35L27.8 44H21L32 20Z"
-        fill={isInverse ? "#054d28" : "#9fe870"}
+        fill={isInverse ? "#0369a1" : "#38bdf8"}
       />
       {/* Dynamic Waterline & Draft Indicator */}
       <rect
@@ -53,7 +53,7 @@ export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
         width="18"
         height="3.5"
         rx="1.75"
-        fill={isInverse ? "#163300" : "#9fe870"}
+        fill={isInverse ? "#07192f" : "#38bdf8"}
       />
     </svg>
   );
@@ -74,7 +74,7 @@ export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
           >
             Astitva
           </span>
-          <span className="font-mono text-[9px] uppercase tracking-[0.1em] px-1.5 py-0.5 rounded bg-lime-voltage/20 text-forest-ink font-medium">
+          <span className="font-mono text-[9px] uppercase tracking-[0.1em] px-1.5 py-0.5 rounded bg-lime-voltage/20 text-forest-ink font-semibold">
             SAIL
           </span>
         </div>
