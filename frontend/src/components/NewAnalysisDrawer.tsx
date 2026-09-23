@@ -4,7 +4,7 @@ import { X, Ship, CheckCircle, Loader2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
 import { AnimatedSvgChart } from "./AnimatedSvgChart";
-import { PrimaryButton, SecondaryButton, VerifiedDot } from "./ui";
+import { PrimaryButton, SecondaryButton } from "./ui";
 import { EASE_OUT, EASE_DRAWER } from "../lib/motion";
 import { cx } from "../lib/cn";
 
@@ -266,8 +266,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
               {/* Header */}
               <div className="flex items-center justify-between border-b border-pebble px-6 py-4">
                 <div>
-                  <div className="mb-0.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-                    <VerifiedDot />
+                  <div className="mb-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
                     SIMULATION CONSOLE
                   </div>
                   <h2 id={titleId} className="text-xl font-semibold leading-tight text-forest-ink">
