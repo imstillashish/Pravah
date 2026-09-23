@@ -14,7 +14,7 @@ import { GlobalMetricsStrip } from "../components/GlobalMetricsStrip";
 import { RecentAnalysesTable } from "../components/RecentAnalysesTable";
 import { NewAnalysisDrawer } from "../components/NewAnalysisDrawer";
 import { API_BASE } from "../api";
-import { PrimaryButton, Card, VerifiedDot } from "../components/ui";
+import { PrimaryButton, Card } from "../components/ui";
 import type { AnalysisObject } from "../types/analysis";
 
 /* Shared indicator tile padding. */
@@ -77,8 +77,7 @@ export const Dashboard: React.FC = () => {
       <section aria-labelledby="page-title" className="pb-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-              <VerifiedDot />
+            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
               {deskCode} · {dateLabel}
             </div>
             <h1 id="page-title" className="text-4xl font-bold tracking-tight text-obsidian">
