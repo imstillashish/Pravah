@@ -5,7 +5,7 @@ import jwt
 from app.database import get_db
 from app.models import User
 from app.security import hash_password, verify_password, create_access_token, decode_access_token
-from app.schemas import UserSignup, UserLogin, RoleSwitchRequest, UserResponse, TokenResponse
+from app.schemas import UserSignup, UserRegister, UserLogin, RoleSwitchRequest, UserResponse, TokenResponse
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -22,6 +22,28 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Account not found. Please sign in again.")
     return user
+
+@router.post("/register", status_code=status.HTTP_201_CREATED)
+def register(payload: UserRegister, db: Session = Depends(get_db)):
+    if payload.confirm_password and payload.password != payload.confirm_password:
+        raise HTTPException(status_code=400, detail="Passwords do not match.")
+    if len(payload.password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters long.")
+    if db.query(User).filter(User.email == payload.email).first():
+        raise HTTPException(status_code=400, detail="An account with this email or employee ID already exists.")
+
+    role_val = payload.role if payload.role in ["logistics_planner", "plant_manager", "admin", "port_operator"] else "logistics_planner"
+    user = User(
+        email=payload.email,
+        full_name=payload.full_name,
+        hashed_password=hash_password(payload.password),
+        role=role_val,
+        is_active=False # Pending admin approval per Task 317
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return {"message": "Account created. Await admin approval.", "user_id": user.id}
 
 @router.post("/signup", response_model=TokenResponse)
 def signup(payload: UserSignup, db: Session = Depends(get_db)):

@@ -19,7 +19,11 @@ const INPUT_CLASS =
 
 const LABEL_CLASS = "mb-1.5 block text-sm font-normal text-charcoal";
 
-export const AuthPage: React.FC = () => {
+export interface AuthPageProps {
+  onNavigateToSignUp?: () => void;
+}
+
+export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
   const { login } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
   const [fullName, setFullName] = useState("");
@@ -267,8 +271,12 @@ export const AuthPage: React.FC = () => {
           <div className="mt-6 border-t border-pebble pt-5 text-center">
             <TextButton
               onClick={() => {
-                setIsRegister(!isRegister);
-                setErrorMsg(null);
+                if (onNavigateToSignUp) {
+                  onNavigateToSignUp();
+                } else {
+                  setIsRegister(!isRegister);
+                  setErrorMsg(null);
+                }
               }}
             >
               {isRegister
