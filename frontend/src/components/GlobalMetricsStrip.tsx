@@ -6,10 +6,10 @@ import { AnimatedSvgChart } from "./AnimatedSvgChart";
 import { Card, Pill, Skeleton } from "./ui";
 
 /**
- * Global metrics — dense chart-sounding cards. Values in mono 600.
- * Deltas: ▲ positive (Glass-100/Sea-800), ⏳ falling-rate caution
- * (Amber) — a lower freight rate is a closing-window signal, not a
- * rejection (DESIGN.md §4 monopolies).
+ * Global metrics — Wise fog tiles. Values in mono 600 Forest Ink.
+ * Deltas: ▲ positive (Linen Mist/Forest Ink), ⏳ falling-rate info
+ * (Signal Blue) — a lower freight rate is a closing-window signal,
+ * not a rejection (spec §3).
  */
 const FALLBACK_METRICS: GlobalMetrics = {
   bdi_index: 1842,
@@ -71,7 +71,7 @@ export const GlobalMetricsStrip: React.FC = () => {
         className="grid grid-cols-1 gap-3 md:grid-cols-3"
       >
         {[1, 2, 3].map((i) => (
-          <Card key={i} className="flex flex-col gap-3 p-4">
+          <Card key={i} tone="fog" className="flex flex-col gap-3 p-4">
             <Skeleton className="h-3 w-28" />
             <Skeleton className="h-7 w-36" />
             <Skeleton className="h-12 w-full" />
@@ -86,18 +86,18 @@ export const GlobalMetricsStrip: React.FC = () => {
   return (
     <section aria-label="Global freight metrics" className="grid grid-cols-1 gap-3 md:grid-cols-3">
       {/* 1. Baltic Dry Index — live market signal */}
-      <Card className="flex flex-col justify-between p-4">
+      <Card tone="fog" className="flex flex-col justify-between p-4">
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
               BALTIC DRY INDEX
             </span>
             <DeltaChip pct={metrics.bdi_change_pct} />
           </div>
-          <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
+          <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
             {metrics.bdi_index.toLocaleString()}
           </div>
-          <p className="mt-1 text-xs leading-relaxed text-body">
+          <p className="mt-1 text-xs leading-relaxed text-charcoal">
             Global dry bulk freight barometer tracking Capesize &amp; Panamax fixtures.
           </p>
         </div>
@@ -105,19 +105,19 @@ export const GlobalMetricsStrip: React.FC = () => {
       </Card>
 
       {/* 2. Average freight rate */}
-      <Card className="flex flex-col justify-between p-4">
+      <Card tone="fog" className="flex flex-col justify-between p-4">
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
               AVG FREIGHT RATE
             </span>
             <DeltaChip pct={metrics.freight_change_pct} />
           </div>
-          <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
+          <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
             ${metrics.current_avg_freight_pmt.toFixed(2)}
-            <span className="text-xs font-normal text-muted"> / MT</span>
+            <span className="text-xs font-normal text-charcoal"> / MT</span>
           </div>
-          <p className="mt-1 text-xs leading-relaxed text-body">
+          <p className="mt-1 text-xs leading-relaxed text-charcoal">
             Benchmark voyage rate from Australia (Hay Point / Gladstone) to Paradip.
           </p>
         </div>
@@ -129,10 +129,10 @@ export const GlobalMetricsStrip: React.FC = () => {
       </Card>
 
       {/* 3. Bunker fuel — neutral sounding */}
-      <Card className="flex flex-col justify-between p-4">
+      <Card tone="fog" className="flex flex-col justify-between p-4">
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
               BUNKER FUEL · VLSFO
             </span>
             <Pill tone="muted">
@@ -140,19 +140,19 @@ export const GlobalMetricsStrip: React.FC = () => {
               SIN
             </Pill>
           </div>
-          <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
+          <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
             ${metrics.bunker_vlsfo_pmt.toFixed(2)}
-            <span className="text-xs font-normal text-muted"> / MT</span>
+            <span className="text-xs font-normal text-charcoal"> / MT</span>
           </div>
-          <p className="mt-1 text-xs leading-relaxed text-body">
+          <p className="mt-1 text-xs leading-relaxed text-charcoal">
             Fuel cost factor calculated in vessel voyage charter operating margins.
           </p>
         </div>
         <div className="mt-2 flex items-center gap-2">
-          <span aria-hidden="true" className="font-mono text-[10px] text-muted">
+          <span aria-hidden="true" className="font-mono text-[10px] text-charcoal">
             ▼
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
             SINGAPORE HUB · STEADY
           </span>
         </div>

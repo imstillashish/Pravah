@@ -70,14 +70,19 @@ export function TextButton({ className, children, ...props }: ButtonBaseProps) {
   );
 }
 
-type CardProps = HTMLAttributes<HTMLDivElement> & { children?: ReactNode };
+type CardProps = HTMLAttributes<HTMLDivElement> & {
+  children?: ReactNode;
+  /** paper = white card; fog = tinted tile (labels on fog must be Charcoal — Slate fails on Fog). */
+  tone?: "paper" | "fog";
+};
 
-/** Base surface: white card, 10px radius, Pebble hairline. No shadow. */
-export function Card({ className, children, ...props }: CardProps) {
+/** Base surface: 10px radius, Pebble hairline. No shadow. */
+export function Card({ tone = "paper", className, children, ...props }: CardProps) {
   return (
     <div
       className={cx(
-        "rounded-card border border-pebble bg-paper transition-colors duration-150",
+        "rounded-card border border-pebble transition-colors duration-150",
+        tone === "fog" ? "bg-fog" : "bg-paper",
         "hover:border-charcoal",
         className,
       )}
