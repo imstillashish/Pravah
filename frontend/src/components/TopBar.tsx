@@ -38,7 +38,7 @@ export const TopBar: React.FC = () => {
         <AstitvaLogo size={26} variant="full" className="mr-1" />
 
         {/* Search — Wise pill search on Fog fill */}
-        <div className="ml-2 flex h-8 max-w-md flex-1 items-center gap-2 rounded-full border border-transparent bg-fog px-3.5 transition-colors duration-150 focus-within:border-forest-ink focus-within:bg-paper">
+        <div className="ml-2 flex h-8 max-w-xs flex-1 items-center gap-2 rounded-full border border-transparent bg-fog px-3.5 transition-colors duration-150 focus-within:border-forest-ink focus-within:bg-paper">
           <Search className="size-4 text-slate" aria-hidden="true" />
           <input
             type="search"
@@ -50,6 +50,45 @@ export const TopBar: React.FC = () => {
             /
           </kbd>
         </div>
+
+        {/* Primary View Navigation Pills */}
+        <nav aria-label="Main Views" className="hidden lg:flex items-center gap-1 ml-2">
+          <button
+            type="button"
+            onClick={() => { window.location.hash = "#dashboard"; }}
+            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+          >
+            Dashboard
+          </button>
+          <button
+            type="button"
+            onClick={() => { window.location.hash = "#results"; }}
+            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+          >
+            Analysis Results
+          </button>
+          <button
+            type="button"
+            onClick={() => { window.location.hash = "#scenario"; }}
+            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+          >
+            Scenario Studio
+          </button>
+          <button
+            type="button"
+            onClick={() => { window.location.hash = "#admin-reference"; }}
+            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+          >
+            Admin Reference
+          </button>
+          <button
+            type="button"
+            onClick={() => { window.location.hash = "#audit-logs"; }}
+            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+          >
+            Audit Logs
+          </button>
+        </nav>
 
         <div className="ml-auto flex items-center gap-2">
           {/* Desk pill — Wise segmented style, mono desk code */}

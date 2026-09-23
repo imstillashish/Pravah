@@ -6,21 +6,23 @@ import { RightRail } from "./components/RightRail";
 import { AuthPage } from "./pages/AuthPage";
 import { SignUpPage } from "./pages/SignUpPage";
 import { Dashboard } from "./pages/Dashboard";
+import { AnalysisResultsPage } from "./pages/AnalysisResultsPage";
+import { ScenarioViewPage } from "./pages/ScenarioViewPage";
+import { AdminReferencePage } from "./pages/AdminReferencePage";
+import { AdminUsersPage } from "./pages/AdminUsersPage";
+import { AuditLogPage } from "./pages/AuditLogPage";
 import { Agentation } from "agentation";
 
 function MainApp() {
   const { user, isLoading } = useAuth();
-  const [authView, setAuthView] = useState<"login" | "signup">(
-    window.location.hash === "#signup" ? "signup" : "login"
+  const [currentView, setCurrentView] = useState<string>(
+    window.location.hash.replace("#", "") || "dashboard"
   );
 
   useEffect(() => {
     const handleHash = () => {
-      if (window.location.hash === "#signup") {
-        setAuthView("signup");
-      } else if (window.location.hash === "#login" || window.location.hash === "") {
-        setAuthView("login");
-      }
+      const hash = window.location.hash.replace("#", "");
+      setCurrentView(hash || "dashboard");
     };
     window.addEventListener("hashchange", handleHash);
     return () => window.removeEventListener("hashchange", handleHash);
@@ -40,16 +42,20 @@ function MainApp() {
   if (!user) {
     return (
       <div className="min-h-screen bg-paper">
-        {authView === "signup" ? (
-          <SignUpPage onSwitchToLogin={() => {
-            window.location.hash = "#login";
-            setAuthView("login");
-          }} />
+        {currentView === "signup" ? (
+          <SignUpPage
+            onSwitchToLogin={() => {
+              window.location.hash = "#login";
+              setCurrentView("login");
+            }}
+          />
         ) : (
-          <AuthPage onNavigateToSignUp={() => {
-            window.location.hash = "#signup";
-            setAuthView("signup");
-          }} />
+          <AuthPage
+            onNavigateToSignUp={() => {
+              window.location.hash = "#signup";
+              setCurrentView("signup");
+            }}
+          />
         )}
         {import.meta.env.DEV && <Agentation />}
       </div>
@@ -58,15 +64,43 @@ function MainApp() {
 
   const isPlanner = user.role === "logistics_planner";
 
+  // Parse analysis id if URL hash is e.g. #analysis-1 or #results-1
+  let activeAnalysisId: number | string = 1;
+  if (currentView.startsWith("analysis-")) {
+    const parsed = parseInt(currentView.replace("analysis-", ""), 10);
+    if (!isNaN(parsed)) activeAnalysisId = parsed;
+  }
+
+  const renderContent = () => {
+    if (currentView === "results" || currentView.startsWith("analysis")) {
+      return <AnalysisResultsPage analysisId={activeAnalysisId} />;
+    }
+    if (currentView === "scenario") {
+      return <ScenarioViewPage />;
+    }
+    if (currentView === "admin-reference") {
+      return <AdminReferencePage />;
+    }
+    if (currentView === "admin-users") {
+      return <AdminUsersPage />;
+    }
+    if (currentView === "audit-logs") {
+      return <AuditLogPage />;
+    }
+    return <Dashboard />;
+  };
+
   return (
     <div className="min-h-screen bg-paper">
       <IconRail />
       <TopBar />
       <div className="flex">
         <div className="min-w-0 flex-1 md:pl-14">
-          <Dashboard />
+          {renderContent()}
         </div>
-        <RightRail desk={isPlanner ? "planner" : "operator"} />
+        {currentView === "dashboard" && (
+          <RightRail desk={isPlanner ? "planner" : "operator"} />
+        )}
       </div>
       {import.meta.env.DEV && <Agentation />}
     </div>
