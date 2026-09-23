@@ -15,6 +15,12 @@ export interface AnalysisObject {
   created_at: string;
 }
 
+export interface MetricsSeries {
+  bdi: number[];
+  freight: number[];
+  bunker: number[];
+}
+
 export interface GlobalMetrics {
   bdi_index: number;
   bdi_change_pct: number;
@@ -23,4 +29,5 @@ export interface GlobalMetrics {
   bunker_vlsfo_pmt: number;
   capesize_daily_usd: number;
   panamax_daily_usd: number;
+  series?: MetricsSeries; // optional: fallback path (spec §6) may omit it
 }
