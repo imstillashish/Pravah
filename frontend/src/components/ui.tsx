@@ -107,9 +107,9 @@ type PillProps = HTMLAttributes<HTMLSpanElement> & {
 
 const PILL_TONES = {
   default: "border border-pebble bg-fog font-medium text-charcoal",
-  positive: "bg-linen-mist font-medium text-forest-ink",
-  pending: "bg-linen-mist font-medium text-signal-blue",
-  negative: "bg-fog font-semibold text-alarm-red",
+  positive: "border border-emerald-profit/20 bg-emerald-wash font-medium text-emerald-profit",
+  pending: "border border-amber-warning/20 bg-amber-wash font-medium text-amber-warning",
+  negative: "border border-alarm-red/20 bg-alarm-wash font-semibold text-alarm-red",
   muted: "border border-pebble bg-paper font-medium text-slate",
 } as const;
 

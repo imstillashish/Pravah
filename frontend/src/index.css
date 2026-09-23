@@ -13,7 +13,12 @@
   --color-spruce: #0c4a6e;            /* Deep Marine Ocean (Secondary dark surface) */
   --color-linen-mist: #e0f2fe;        /* Ice Mist (Soft cyan-tinted wash for active pills) */
   --color-signal-blue: #0284c7;       /* Maritime Blue Accent */
-  --color-alarm-red: #be123c;         /* Rose 700 / Hazard Alert Red (AA: 5.74:1 on fog, 6.29:1 on paper as text; rose-600 #e11d48 failed 4.28) */
+  --color-emerald-profit: #047857;    /* Emerald 700 — High-contrast profit & cost savings green (AA: 5.2:1) */
+  --color-emerald-wash: #ecfdf5;      /* Emerald 50 — Soft green highlight tint */
+  --color-alarm-red: #be123c;         /* Rose 700 / Hazard Alert Red (AA: 5.74:1 on fog, 6.29:1 on paper) */
+  --color-alarm-wash: #fff1f2;        /* Rose 50 — Soft red highlight tint */
+  --color-amber-warning: #b45309;     /* Amber 700 — High-contrast alert & caution gold (AA: 4.8:1) */
+  --color-amber-wash: #fffbeb;        /* Amber 50 — Soft amber tint */
   --color-charcoal: #334155;          /* Slate 700 body copy text */
   --color-obsidian: #030712;          /* Ultra dark headings */
   --color-pebble: #cbd5e1;            /* Slate 300 subtle border / divider hairline */

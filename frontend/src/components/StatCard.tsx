@@ -19,8 +19,8 @@ import { cx } from "../lib/cn";
  * stroke remains legal at ≥3:1 regardless.
  */
 
-const UP = "var(--color-spruce, #054d28)";   // good-direction stroke/text
-const DOWN = "var(--color-alarm-red, #cb272f)"; // bad-direction stroke/text
+const UP = "var(--color-emerald-profit, #047857)";   // good-direction stroke/text (psychological reward green)
+const DOWN = "var(--color-alarm-red, #be123c)"; // bad-direction stroke/text (caution alert red)
 
 /** Smooth monotone cubic path (no overshoot on the drawn line). */
 function monotonePath(points: { x: number; y: number }[]): string {
