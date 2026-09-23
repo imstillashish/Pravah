@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from app.schemas import GlobalMetricsResponse
+from app.schemas import GlobalMetricsResponse, MetricsSeries
+from app.metrics_service import generate_series
 
 router = APIRouter(prefix="/api/metrics", tags=["metrics"])
 
@@ -13,4 +14,9 @@ def get_global_metrics():
         bunker_vlsfo_pmt=612.50,
         capesize_daily_usd=22450,
         panamax_daily_usd=14120,
+        series=MetricsSeries(
+            bdi=generate_series("bdi", 1842, vol=0.025),
+            freight=generate_series("freight", 14.85, vol=0.018),
+            bunker=generate_series("bunker", 612.50, vol=0.012),
+        ),
     )

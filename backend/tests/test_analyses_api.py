@@ -22,6 +22,25 @@ def test_global_metrics_endpoint():
     assert data["bunker_vlsfo_pmt"] == 612.50
     assert data["capesize_daily_usd"] == 22450
     assert data["panamax_daily_usd"] == 14120
+    series = data["series"]
+    assert len(series["bdi"]) == 30
+    assert len(series["freight"]) == 30
+    assert len(series["bunker"]) == 30
+    assert series["bdi"][-1] == 1842
+    assert series["freight"][-1] == 14.85
+    assert series["bunker"][-1] == 612.50
+
+def test_metrics_series_deterministic():
+    a = client.get("/api/metrics/global").json()["series"]
+    b = client.get("/api/metrics/global").json()["series"]
+    assert a == b
+
+def test_metrics_series_shape():
+    data = client.get("/api/metrics/global").json()["series"]
+    for key in ("bdi", "freight", "bunker"):
+        vals = data[key]
+        assert all(v > 0 for v in vals)
+        assert any(v != vals[-1] for v in vals[:-1])
 
 def test_analyses_requires_auth():
     recent_res = client.get("/api/analyses/recent")

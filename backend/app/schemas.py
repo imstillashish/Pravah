@@ -29,6 +29,11 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     user: UserResponse
 
+class MetricsSeries(BaseModel):
+    bdi: list[float]
+    freight: list[float]
+    bunker: list[float]
+
 class GlobalMetricsResponse(BaseModel):
     bdi_index: int
     bdi_change_pct: float
@@ -37,6 +42,7 @@ class GlobalMetricsResponse(BaseModel):
     bunker_vlsfo_pmt: float
     capesize_daily_usd: int
     panamax_daily_usd: int
+    series: MetricsSeries
 
 class AnalysisCreate(BaseModel):
     title: Optional[str] = None
