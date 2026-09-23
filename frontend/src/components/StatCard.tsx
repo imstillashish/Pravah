@@ -203,7 +203,7 @@ export const StatCard: React.FC<StatCardProps> = ({
         <span className="sr-only">{format(headline)}</span>
       </div>
 
-      {spark && (
+      {n >= 2 && (
         <div
           ref={sparkRef}
           aria-hidden="true"
@@ -219,6 +219,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           onPointerDown={(e) => onMove(e.clientX)}
           onPointerLeave={() => setHover(null)}
         >
+          {spark && (
           <svg
             width={box.w}
             height={box.h}
@@ -271,6 +272,7 @@ export const StatCard: React.FC<StatCardProps> = ({
               />
             )}
           </svg>
+          )}
         </div>
       )}
     </Card>
