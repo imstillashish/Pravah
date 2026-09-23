@@ -479,11 +479,19 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
               </span>
             </div>
 
-            {/* Total Reconciled Score */}
-            <div className="flex items-center justify-between rounded-lg bg-linen-mist/50 p-2.5 font-mono text-xs">
-              <span className="font-bold text-charcoal">
-                Deterministic Composite Score:
-              </span>
+            {/* Total Reconciled Score (Task 285) */}
+            <div
+              title="(0.5 × cost_score) + (0.3 × confidence_score) + (0.2 × coverage_fit_score) = 1.0 Total Weight"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-linen-mist/50 p-2.5 font-mono text-xs"
+            >
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold text-charcoal">
+                  Deterministic Composite Score:
+                </span>
+                <span className="rounded bg-forest-ink/10 px-1.5 py-0.5 text-[10px] text-forest-ink font-semibold">
+                  Weights Sum: 0.50 + 0.30 + 0.20 = 1.00
+                </span>
+              </div>
               <span className="font-extrabold text-forest-ink">
                 (0.390 + 0.180 + 0.184) = 0.756
               </span>
@@ -518,33 +526,49 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
           <div className="rounded-xl border border-pebble bg-paper p-4 text-center">
             <span className="text-xs font-medium text-slate uppercase">P10 (Best Case)</span>
             <p className="mt-1 font-mono text-2xl font-bold text-emerald-600">
-              ${data.forecast.p10_usd_per_mt.toFixed(2)}
+              {data.forecast?.p10_usd_per_mt != null ? `$${data.forecast.p10_usd_per_mt.toFixed(2)}` : "unavailable"}
             </p>
-            <span className="text-[10px] text-slate">USD per Metric Ton</span>
+            <div className="mt-1">
+              <span className="rounded bg-sky-100 px-1.5 py-0.5 text-[9px] font-semibold text-sky-800 font-sans">
+                MODEL OUTPUT
+              </span>
+            </div>
           </div>
 
           <div className="rounded-xl border-2 border-forest-ink bg-linen-mist/30 p-4 text-center">
             <span className="text-xs font-bold text-forest-ink uppercase">P50 (Most Likely)</span>
             <p className="mt-1 font-mono text-3xl font-extrabold text-forest-ink">
-              ${data.forecast.p50_usd_per_mt.toFixed(2)}
+              {data.forecast?.p50_usd_per_mt != null ? `$${data.forecast.p50_usd_per_mt.toFixed(2)}` : "unavailable"}
             </p>
-            <span className="text-[10px] font-medium text-forest-ink">Primary Baseline Quote</span>
+            <div className="mt-1">
+              <span className="rounded bg-sky-100 px-1.5 py-0.5 text-[9px] font-semibold text-sky-800 font-sans">
+                MODEL OUTPUT
+              </span>
+            </div>
           </div>
 
           <div className="rounded-xl border border-pebble bg-paper p-4 text-center">
             <span className="text-xs font-medium text-slate uppercase">P90 (Worst Case)</span>
             <p className="mt-1 font-mono text-2xl font-bold text-amber-600">
-              ${data.forecast.p90_usd_per_mt.toFixed(2)}
+              {data.forecast?.p90_usd_per_mt != null ? `$${data.forecast.p90_usd_per_mt.toFixed(2)}` : "unavailable"}
             </p>
-            <span className="text-[10px] text-slate">USD per Metric Ton</span>
+            <div className="mt-1">
+              <span className="rounded bg-sky-100 px-1.5 py-0.5 text-[9px] font-semibold text-sky-800 font-sans">
+                MODEL OUTPUT
+              </span>
+            </div>
           </div>
 
           <div className="rounded-xl border border-pebble bg-fog/50 p-4 text-center">
             <span className="text-xs font-medium text-slate uppercase">ARIMA Baseline</span>
             <p className="mt-1 font-mono text-2xl font-bold text-charcoal">
-              ${data.forecast.arima_baseline_usd_per_mt?.toFixed(2) || "25.50"}
+              {data.forecast?.arima_baseline_usd_per_mt != null ? `$${data.forecast.arima_baseline_usd_per_mt.toFixed(2)}` : "$25.50"}
             </p>
-            <span className="text-[10px] text-slate">Statistical Reference</span>
+            <div className="mt-1">
+              <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-800 font-sans">
+                MODEL OUTPUT
+              </span>
+            </div>
           </div>
         </div>
       </section>
@@ -624,8 +648,8 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                   ₹{data.landed_cost.total_inr_per_mt.toFixed(2)} / MT
                 </td>
                 <td className="py-3 px-4 text-center">
-                  <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-800 font-sans">
-                    VERIFIED EXTERNAL
+                  <span className="rounded bg-purple-100 px-2 py-0.5 text-[10px] font-semibold text-purple-800 font-sans">
+                    DERIVED
                   </span>
                 </td>
               </tr>
@@ -636,8 +660,10 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                 <td className="py-3 px-4 text-right font-extrabold text-forest-ink text-base">
                   ₹{(data.landed_cost.total_inr / 10000000).toFixed(2)} Cr (₹{data.landed_cost.total_inr.toLocaleString()})
                 </td>
-                <td className="py-3 px-4 text-center font-sans text-[11px] text-slate font-medium">
-                  Full Cargo Lot
+                <td className="py-3 px-4 text-center">
+                  <span className="rounded bg-purple-100 px-2 py-0.5 text-[10px] font-semibold text-purple-800 font-sans">
+                    DERIVED
+                  </span>
                 </td>
               </tr>
             </tbody>
@@ -766,7 +792,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
               {data.risks.map((risk) => (
                 <tr key={risk.risk_category} className="hover:bg-fog/30">
                   <td className="py-3 px-4 font-medium text-charcoal capitalize">
-                    {risk.risk_category.replace(/_/g, " ")}
+                    {risk.risk_category ? risk.risk_category.replace(/_/g, " ") : "unavailable"}
                   </td>
                   <td className="py-3 px-3 text-center">
                     <span
@@ -780,14 +806,14 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                           : "bg-gray-100 text-gray-600"
                       }`}
                     >
-                      {risk.severity}
+                      {risk.severity || "unavailable"}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-slate">
-                    {risk.signal_description}
+                    {risk.signal_description || "unavailable"}
                   </td>
                   <td className="py-3 px-4 font-mono text-[11px] text-charcoal">
-                    {risk.data_source}
+                    {risk.data_source || "unavailable"}
                   </td>
                 </tr>
               ))}
