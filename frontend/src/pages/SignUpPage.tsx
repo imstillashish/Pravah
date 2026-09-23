@@ -1,13 +1,35 @@
 import React, { useState } from "react";
-import { User, Mail, Lock, ShieldCheck, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
+import { Compass, User, Mail, Lock, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { registerUser } from "../api/auth";
-import { PrimaryButton, Card } from "../components/ui";
+import { PrimaryButton, Card, TextButton } from "../components/ui";
 import { AstitvaLogo } from "../components/AstitvaLogo";
+import { cx } from "../lib/cn";
 import type { RegisterPayload } from "../types";
 
 export interface SignUpPageProps {
   onSwitchToLogin?: () => void;
 }
+
+const DESK_OPTIONS = [
+  {
+    value: "logistics_planner" as const,
+    code: "PLN-DESK",
+    title: "Logistics Planner",
+    sub: "Procurement & contracts",
+  },
+  {
+    value: "plant_manager" as const,
+    code: "PLT-MGR",
+    title: "Plant Manager",
+    sub: "Stock & clearance",
+  },
+  {
+    value: "admin" as const,
+    code: "SYS-ADM",
+    title: "Administrator",
+    sub: "User approvals",
+  },
+];
 
 export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
   const [fullName, setFullName] = useState("");
@@ -63,176 +85,230 @@ export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
     "text-charcoal placeholder:text-slate transition-colors duration-150 " +
     "hover:border-charcoal focus:border-forest-ink focus:outline-none";
 
-  const LABEL_CLASS = "mb-1.5 block text-sm font-medium text-forest-ink";
+  const LABEL_CLASS = "mb-1.5 block text-sm font-normal text-charcoal";
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-fog p-4 md:p-8">
-      <Card tone="paper" className="w-full max-w-lg border border-pebble p-6 md:p-8 shadow-xl">
-        <div className="mb-6 flex flex-col items-center text-center">
-          <AstitvaLogo size={42} variant="mark-only" className="mb-3" />
-          <h1 className="text-2xl font-bold tracking-tight text-forest-ink">Create SAIL Freight Account</h1>
-          <p className="mt-1 text-sm text-slate">
-            Register your credentials to access the intelligent chartering terminal
+    <div className="grid min-h-screen lg:grid-cols-[45fr_55fr]">
+      {/* Forest Ink hero panel — matched directly from AuthPage */}
+      <aside className="m-4 hidden flex-col justify-between rounded-xl bg-forest-ink p-12 lg:flex">
+        <AstitvaLogo size={32} variant="inverse" subtitle={true} />
+
+        <div>
+          <h1 className="text-5xl font-black leading-[0.9] tracking-[-0.03em] text-lime-voltage xl:text-[64px] 2xl:text-[89px]">
+            Intelligent freight chartering.
+          </h1>
+          <p className="mt-5 max-w-[46ch] text-base leading-relaxed text-paper/90">
+            Join SAIL&apos;s unified logistics desk to forecast voyage rates, monitor berthing
+            congestion, and coordinate raw material deliveries with AI clarity.
           </p>
+          <PrimaryButton
+            className="mt-8"
+            onClick={() => onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "#login")}
+          >
+            Sign in to existing account
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </PrimaryButton>
         </div>
 
-        {successMsg ? (
-          <div className="rounded-card border border-emerald-300 bg-emerald-50 p-5 text-center">
-            <CheckCircle2 className="mx-auto mb-2 size-8 text-emerald-600" />
-            <h2 className="text-base font-semibold text-emerald-950">Registration Submitted</h2>
-            <p className="mt-1 text-sm text-emerald-800 leading-relaxed">{successMsg}</p>
-            <div className="mt-6">
-              <button
-                type="button"
-                onClick={() => onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "")}
-                className="inline-flex items-center gap-2 rounded-full bg-forest-ink px-6 py-2.5 text-sm font-medium text-paper transition hover:bg-forest-ink/90 cursor-pointer"
-              >
-                Return to Login
-                <ArrowRight className="size-4" />
-              </button>
-            </div>
+        <div className="font-mono text-xs text-paper/60">Steel in motion, rates on time</div>
+      </aside>
+
+      {/* Form side — Paper canvas, card centered */}
+      <main className="flex flex-col justify-center px-4 py-10 sm:px-8">
+        {/* Mobile banner — condensed hero */}
+        <div className="mb-6 rounded-xl bg-forest-ink p-6 lg:hidden">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="flex size-6 items-center justify-center rounded-full bg-lime-voltage text-forest-ink">
+              <Compass className="size-4" aria-hidden="true" />
+            </span>
+            <span className="text-sm font-medium text-paper">Intelligent Freight Portal</span>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {errorMsg && (
-              <div
-                role="alert"
-                className="flex items-start gap-2.5 rounded-card border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-800"
-              >
-                <AlertCircle className="size-4 shrink-0 mt-0.5 text-rose-600" aria-hidden="true" />
-                <span>{errorMsg}</span>
-              </div>
-            )}
+          <h1 className="text-2xl font-black leading-tight tracking-[-0.02em] text-lime-voltage">
+            Intelligent freight chartering.
+          </h1>
+        </div>
 
-            {/* Full Name */}
-            <div>
-              <label htmlFor="signup-name" className={LABEL_CLASS}>
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
-                <input
-                  id="signup-name"
-                  type="text"
-                  required
-                  placeholder="e.g. Ramesh Kumar"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className={INPUT_CLASS}
-                />
-              </div>
+        <Card className="mx-auto w-full max-w-md p-6 sm:p-8">
+          <h2 className="text-xl font-semibold leading-tight text-forest-ink">
+            Create your operations account
+          </h2>
+          <p className="mt-1.5 text-sm leading-relaxed text-charcoal">
+            Register your credentials to access SAIL&apos;s freight forecasting desk and port operations.
+          </p>
+
+          {errorMsg && (
+            <div
+              role="alert"
+              className="mt-5 flex items-start gap-3 rounded-card border border-pebble bg-fog p-4"
+            >
+              <AlertCircle className="mt-0.5 size-5 shrink-0 text-alarm-red" aria-hidden="true" />
+              <div className="flex-1 text-sm font-semibold text-alarm-red">{errorMsg}</div>
             </div>
+          )}
 
-            {/* Email or Employee ID */}
-            <div>
-              <label htmlFor="signup-email" className={LABEL_CLASS}>
-                Employee ID or Work Email
-              </label>
-              <div className="relative">
-                <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
-                <input
-                  id="signup-email"
-                  type="text"
-                  required
-                  placeholder="name@sail.gov.in or EMP10492"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={INPUT_CLASS}
-                />
-              </div>
-            </div>
-
-            {/* Role Dropdown */}
-            <div>
-              <label htmlFor="signup-role" className={LABEL_CLASS}>
-                Assigned Operational Role
-              </label>
-              <div className="relative">
-                <ShieldCheck className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
-                <select
-                  id="signup-role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as "logistics_planner" | "plant_manager" | "admin")}
-                  className={`${INPUT_CLASS} cursor-pointer appearance-none bg-paper`}
+          {successMsg ? (
+            <div className="mt-6 rounded-card border border-emerald-300 bg-emerald-50 p-6 text-center">
+              <CheckCircle2 className="mx-auto mb-2.5 size-10 text-emerald-600" />
+              <h3 className="text-base font-semibold text-emerald-950">Registration Submitted</h3>
+              <p className="mt-1.5 text-sm text-emerald-800 leading-relaxed">{successMsg}</p>
+              <div className="mt-6">
+                <PrimaryButton
+                  type="button"
+                  onClick={() => onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "#login")}
+                  className="w-full justify-center"
                 >
-                  <option value="logistics_planner">Freight & Chartering Officer (Planner)</option>
-                  <option value="plant_manager">Plant Logistics Manager (Approver)</option>
-                  <option value="admin">System Administrator (Govt Oversight)</option>
-                </select>
+                  Return to Sign In
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </PrimaryButton>
               </div>
             </div>
-
-            {/* Password */}
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="signup-password" className={LABEL_CLASS}>
-                  Password
+          ) : (
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+              {/* Full Name */}
+              <div>
+                <label htmlFor="signup-name" className={LABEL_CLASS}>
+                  Full Name
                 </label>
-                <span className="text-[11px] font-mono text-slate">Min. 8 characters</span>
+                <div className="relative">
+                  <User className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
+                  <input
+                    id="signup-name"
+                    type="text"
+                    required
+                    placeholder="e.g. Ramesh Kumar"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className={INPUT_CLASS}
+                  />
+                </div>
               </div>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
-                <input
-                  id="signup-password"
-                  type="password"
-                  required
-                  minLength={8}
-                  placeholder="At least 8 characters"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={INPUT_CLASS}
-                />
-              </div>
-            </div>
 
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="signup-confirm-password" className={LABEL_CLASS}>
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
-                <input
-                  id="signup-confirm-password"
-                  type="password"
-                  required
-                  placeholder="Re-enter your password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={INPUT_CLASS}
-                />
+              {/* Work Email / Employee ID */}
+              <div>
+                <label htmlFor="signup-email" className={LABEL_CLASS}>
+                  Work Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
+                  <input
+                    id="signup-email"
+                    type="text"
+                    required
+                    placeholder="name@sail.gov.in"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={INPUT_CLASS}
+                  />
+                </div>
               </div>
-              {confirmPassword.length > 0 && !passwordsMatch && (
-                <p className="mt-1 text-xs text-rose-600 font-medium">
-                  Passwords do not match.
-                </p>
-              )}
-            </div>
 
-            <div className="pt-2">
+              {/* Operational Desk Selection */}
+              <div>
+                <span className={LABEL_CLASS}>Assigned Operational Desk</span>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  {DESK_OPTIONS.map((desk) => {
+                    const selected = role === desk.value;
+                    return (
+                      <button
+                        key={desk.value}
+                        type="button"
+                        onClick={() => setRole(desk.value)}
+                        aria-pressed={selected}
+                        className={cx(
+                          "flex min-h-[70px] cursor-pointer flex-col justify-between rounded-card border p-2.5 text-left transition-colors duration-150",
+                          selected
+                            ? "border-forest-ink bg-linen-mist"
+                            : "border-pebble bg-paper hover:border-forest-ink"
+                        )}
+                      >
+                        <div className="flex w-full items-center justify-between">
+                          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
+                            {desk.code}
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            className={cx(
+                              "size-2.5 rounded-full transition-colors",
+                              selected ? "bg-forest-ink" : "border border-pebble"
+                            )}
+                          />
+                        </div>
+                        <div className="mt-1">
+                          <div className="text-xs font-medium text-forest-ink leading-tight">{desk.title}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Password */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="signup-password" className={LABEL_CLASS}>
+                    Password
+                  </label>
+                  <span className="text-[11px] font-mono text-slate">Min. 8 characters</span>
+                </div>
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
+                  <input
+                    id="signup-password"
+                    type="password"
+                    required
+                    minLength={8}
+                    placeholder="At least 8 characters"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={INPUT_CLASS}
+                  />
+                </div>
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label htmlFor="signup-confirm-password" className={LABEL_CLASS}>
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
+                  <input
+                    id="signup-confirm-password"
+                    type="password"
+                    required
+                    placeholder="Re-enter your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={INPUT_CLASS}
+                  />
+                </div>
+                {confirmPassword.length > 0 && !passwordsMatch && (
+                  <p className="mt-1 text-xs text-alarm-red font-medium">
+                    Passwords do not match.
+                  </p>
+                )}
+              </div>
+
               <PrimaryButton
                 type="submit"
                 disabled={!isFormValid || loading}
-                className="w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-5 w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Creating Account..." : "Create Account"}
+                <span>{loading ? "Creating Account…" : "Create Account"}</span>
                 <ArrowRight className="size-4" aria-hidden="true" />
               </PrimaryButton>
-            </div>
+            </form>
+          )}
 
-            <div className="pt-3 text-center text-sm text-slate">
-              Already have an account?{" "}
-              <button
-                type="button"
-                onClick={() => onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "")}
-                className="font-semibold text-forest-ink hover:underline cursor-pointer"
-              >
-                Login
-              </button>
-            </div>
-          </form>
-        )}
-      </Card>
+          <div className="mt-6 border-t border-pebble pt-5 text-center">
+            <TextButton
+              onClick={() => onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "#login")}
+            >
+              Already have an account? Sign in here
+            </TextButton>
+          </div>
+        </Card>
+      </main>
     </div>
   );
 };
