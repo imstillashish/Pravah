@@ -82,3 +82,67 @@ def test_disruption_alerts_endpoint():
     red_sea = [a for a in data if a.get("keyword_matched") == "Red Sea"]
     assert len(red_sea) >= 1
     assert red_sea[0]["is_active"] is True
+
+
+def test_golden_demo_quality_checks():
+    """Verify Tasks 308, 309, 313, 261, 265, 402: Quality checks on seeded database."""
+    from app.database import SessionLocal
+    from app.models.entities import (
+        FeasibilityResult,
+        Recommendation,
+        StockOutAlert,
+        LandedCost,
+        RegretScore,
+    )
+    from app.models.cargo_request import CargoRequest
+
+    db = SessionLocal()
+    try:
+        # Task 308: Capesize rejection shows exact draft failure reason
+        capesize = db.query(FeasibilityResult).filter(
+            FeasibilityResult.analysis_id == 1,
+            FeasibilityResult.vessel_class == "Capesize"
+        ).first()
+        assert capesize is not None
+        assert capesize.overall_feasible is False
+        assert "Draft 18.2m exceeds Paradip max draft 16.5m" in capesize.failure_reason
+
+        # Task 309: Recommendation score on golden demo is 0.756
+        rec = db.query(Recommendation).filter(
+            Recommendation.analysis_id == 1,
+            Recommendation.rank == 1
+        ).first()
+        assert rec is not None
+        assert rec.vessel_class == "Panamax"
+        assert abs(rec.total_score - 0.756) < 0.001
+
+        # Task 313: Stockout alert shows is_at_risk=True and alert text
+        stockout = db.query(StockOutAlert).filter(StockOutAlert.analysis_id == 1).first()
+        assert stockout is not None
+        assert stockout.is_at_risk is True
+        assert stockout.days_to_stockout == 15
+        assert stockout.days_to_best_window == 22
+        assert "Stock will last 15 days" in stockout.alert_message
+
+        # Task 261: Landed cost verification
+        cost = db.query(LandedCost).filter(LandedCost.analysis_id == 1).first()
+        assert cost is not None
+        assert cost.total_usd_per_mt == 23.50
+        assert cost.total_inr_per_mt == 1962.25
+        assert cost.total_inr == 147168750.0
+
+        # Task 265: Past regret scores (0.5%, 3.2%, 8.1%)
+        regrets = db.query(RegretScore).all()
+        assert len(regrets) >= 3
+        regret_values = [round(r.regret_pct, 1) for r in regrets]
+        assert 0.5 in regret_values
+        assert 3.2 in regret_values
+        assert 8.1 in regret_values
+
+        # Task 402: 2 open CargoRequests (Bhilai 40k + Rourkela 35k MT)
+        cargo_reqs = db.query(CargoRequest).filter(CargoRequest.status == "OPEN").all()
+        assert len(cargo_reqs) == 2
+        quantities = sorted([r.quantity_mt for r in cargo_reqs])
+        assert quantities == [35000.0, 40000.0]
+    finally:
+        db.close()
