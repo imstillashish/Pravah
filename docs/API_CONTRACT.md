@@ -12,12 +12,16 @@ The Astitva Core API delivers intelligence, predictive freight rate forecasting,
 1. [Authentication (`/auth`)](#1-authentication-auth)
    - `POST /auth/login`
    - `POST /auth/register`
+   - `POST /auth/forgot-password`
+   - `POST /auth/reset-password`
    - `POST /auth/switch-role`
 2. [Freight Analysis & Predictions (`/analyses`)](#2-freight-analysis--predictions-analyses)
    - `GET /analyses`
    - `POST /analyses`
    - `GET /analyses/{id}`
    - `POST /analyses/{id}/decision`
+   - `POST /analyses/{id}/decision/approve`
+   - `POST /analyses/{id}/decision/reject`
    - `GET /analyses/disruption-alerts`
    - `GET /disruption-alerts`
 3. [Global Market Metrics (`/metrics`)](#3-global-market-metrics-metrics)
@@ -27,15 +31,21 @@ The Astitva Core API delivers intelligence, predictive freight rate forecasting,
 5. [Maritime Routing & Navigation (`/map`)](#5-maritime-routing--navigation-map)
    - `GET /map/route`
    - `GET /map/ship-position`
-6. [Administration & Reference Data (`/admin`)](#6-administration--reference-data-admin)
+6. [Booking Management (`/bookings`)](#6-booking-management-bookings)
+   - `POST /bookings`
+   - `GET /bookings`
+7. [Demand Management & Cargo Pooling (`/demand`)](#7-demand-management--cargo-pooling-demand)
+   - `GET /demand`
+   - `POST /demand/merge`
+8. [Administration & Reference Data (`/admin`)](#8-administration--reference-data-admin)
    - `GET /admin/users`
    - `POST /admin/users`
    - `PATCH /admin/users/{id}/deactivate`
    - `GET /admin/reference`
    - `PUT /admin/reference/ports/{id}`
-7. [Audit Trails & Governance (`/audit-logs`)](#7-audit-trails--governance-audit-logs)
+9. [Audit Trails & Governance (`/audit-logs`)](#9-audit-trails--governance-audit-logs)
    - `GET /audit-logs`
-8. [System Health Check](#8-system-health-check)
+10. [System Health Check](#10-system-health-check)
    - `GET /health`
 
 ---
@@ -67,7 +77,7 @@ Authenticates a user and issues a signed JWT access token.
   ```
 
 ### `POST /auth/register`
-Registers a new user account.
+Registers a new user account (pending administrative approval).
 - **Request Body**:
   ```json
   {
@@ -77,7 +87,23 @@ Registers a new user account.
     "role": "logistics_planner"
   }
   ```
-- **Response `200 OK`**: User profile with created status.
+- **Response `200 OK`**: `{"message": "Account created. Await admin approval."}`
+
+### `POST /auth/forgot-password`
+Initiates a password reset flow by issuing a timed reset token.
+- **Request Body**: `{"email": "planner@sail.gov.in"}`
+- **Response `200 OK`**: `{"message": "If this email is registered, a password reset link has been dispatched."}`
+
+### `POST /auth/reset-password`
+Completes password reset using a cryptographic token.
+- **Request Body**:
+  ```json
+  {
+    "token": "reset_token_xyz...",
+    "new_password": "NewStrongPassword2026!"
+  }
+  ```
+- **Response `200 OK`**: `{"message": "Password updated successfully. You may now log in."}`
 
 ---
 
@@ -104,6 +130,29 @@ Runs end-to-end multi-agent pipeline: context resolution, ML forecasting (LightG
   }
   ```
 - **Response `200 OK`**: Created analysis with id, summary metrics, and generated artifacts.
+
+### `POST /analyses/{id}/decision`
+Records procurement officer chartering decision and captures override justification if recommendation was altered.
+- **Request Body**:
+  ```json
+  {
+    "chosen_vessel_class": "Panamax",
+    "chosen_port_id": 1,
+    "chosen_day_rate": 14200.0,
+    "was_override": false,
+    "override_reason": null
+  }
+  ```
+- **Response `200 OK`**: Updated decision record with timestamp and decision maker ID.
+
+### `POST /analyses/{id}/decision/approve`
+Approves recommendation or override decision, triggers audit event `DECISION_RECORDED`, and transitions analysis status to `finalized`.
+- **Response `200 OK`**: `{"status": "approved", "analysis_id": 1, "action_type": "DECISION_RECORDED"}`
+
+### `POST /analyses/{id}/decision/reject`
+Rejects recommendation with reason notes and marks analysis for re-computation.
+- **Request Body**: `{"rejection_reason": "Excessive demurrage exposure on target laycan"}`
+- **Response `200 OK`**: `{"status": "rejected", "analysis_id": 1}`
 
 ### `GET /analyses/disruption-alerts` / `GET /disruption-alerts`
 Returns real-time and simulated geopolitical disruption alerts (e.g., Red Sea rerouting advisories).
@@ -201,6 +250,55 @@ Linearly interpolates simulated vessel progress along a maritime corridor.
   ```
 
 ---
+
+## 6. Booking Management (`/bookings`)
+
+### `POST /bookings`
+Generates a charter booking fixture note and locks laycan window for finalized analyses.
+- **Request Body**:
+  ```json
+  {
+    "analysis_id": 1,
+    "broker_name": "Clarksons Platou",
+    "vessel_name": "MV Ocean Pride",
+    "vessel_class": "Panamax",
+    "agreed_rate_usd_per_mt": 21.80,
+    "laycan_start": "2026-10-10",
+    "laycan_end": "2026-10-18"
+  }
+  ```
+- **Response `201 Created`**: Booking record with confirmation fixture reference.
+
+### `GET /bookings`
+Lists historical and active charter fixtures.
+- **Response `200 OK`**: Array of booking fixture objects.
+
+---
+
+## 7. Demand Management & Cargo Pooling (`/demand`)
+
+### `GET /demand`
+Retrieves pending plant cargo requests across SAIL steel manufacturing plants (Bhilai, Rourkela, Bokaro, Durgapur).
+- **Response `200 OK`**: Array of open `CargoRequest` records.
+
+### `POST /demand/merge`
+Merges two or more sub-Capesize/Panamax plant cargo requests into a consolidated parcel (e.g., pooling 40,000 MT Bhilai + 35,000 MT Rourkela into a single 75,000 MT Panamax shipment to minimize freight rate PMT).
+- **Request Body**:
+  ```json
+  {
+    "cargo_request_ids": [1, 2],
+    "target_destination_port": "Paradip"
+  }
+  ```
+- **Response `200 OK`**:
+  ```json
+  {
+    "merged_analysis_id": 2,
+    "total_tonnage_mt": 75000.0,
+    "optimal_vessel_class": "Panamax",
+    "projected_savings_usd": 182400.0
+  }
+  ```
 
 ## 6. Administration & Reference Data (`/admin`)
 
