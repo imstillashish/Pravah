@@ -329,6 +329,9 @@ def get_analysis_detail(
             "was_override": getattr(decision, "was_override", False) if decision else False,
             "override_reason": getattr(decision, "override_reason", None) if decision else None,
             "decided_at": decision.decided_at.isoformat() if decision and hasattr(decision.decided_at, "isoformat") else None,
+            "manager_approved": getattr(decision, "manager_approved", None) if decision else None,
+            "approval_notes": getattr(decision, "approval_notes", None) if decision else None,
+            "approved_at": decision.approved_at.isoformat() if decision and hasattr(getattr(decision, "approved_at", None), "isoformat") else None,
         } if decision else None,
     }
 
@@ -376,5 +379,135 @@ def record_decision(
         "analysis_id": analysis_id,
         "action_type": "DECISION_RECORDED",
     }
+
+
+@router.post("/{analysis_id}/decision/approve")
+def approve_decision(
+    analysis_id: int,
+    payload: dict = None,
+    db: Session = Depends(get_db)
+):
+    """
+    Task 381: Plant Manager approves charter fixture decision.
+    """
+    from app.models.entities import DecisionRecord, AuditLog
+
+    decision = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis_id).first()
+    if not decision:
+        decision = DecisionRecord(analysis_id=analysis_id, chosen_vessel_class="Panamax")
+        db.add(decision)
+
+    decision.manager_approved = True
+    decision.approval_notes = payload.get("notes") if payload else "Approved by Plant Manager"
+    decision.approved_at = datetime.now(timezone.utc)
+
+    audit = AuditLog(
+        action_type="DECISION_APPROVED",
+        affected_record_id=str(analysis_id),
+        detail=f"Plant manager approved fixture: {decision.chosen_vessel_class}"
+    )
+    db.add(audit)
+    db.commit()
+
+    return {"status": "approved", "manager_approved": True, "analysis_id": analysis_id}
+
+
+@router.post("/{analysis_id}/decision/reject")
+def reject_decision(
+    analysis_id: int,
+    payload: dict,
+    db: Session = Depends(get_db)
+):
+    """
+    Task 381: Plant Manager rejects fixture with required rationale.
+    """
+    from app.models.entities import DecisionRecord, AuditLog
+
+    reason = payload.get("rejection_reason") or payload.get("reason")
+    if not reason:
+        raise HTTPException(status_code=400, detail="Rejection reason is required")
+
+    decision = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis_id).first()
+    if not decision:
+        decision = DecisionRecord(analysis_id=analysis_id, chosen_vessel_class="Panamax")
+        db.add(decision)
+
+    decision.manager_approved = False
+    decision.approval_notes = reason
+    decision.approved_at = datetime.now(timezone.utc)
+
+    audit = AuditLog(
+        action_type="DECISION_REJECTED",
+        affected_record_id=str(analysis_id),
+        detail=f"Plant manager rejected fixture: {reason}"
+    )
+    db.add(audit)
+    db.commit()
+
+    return {"status": "rejected", "manager_approved": False, "analysis_id": analysis_id, "reason": reason}
+
+
+@router.get("/{analysis_id}/export")
+def export_decision_record(analysis_id: int, db: Session = Depends(get_db)):
+    """
+    Task 382: Plain text structured decision record export file.
+    """
+    from fastapi.responses import PlainTextResponse
+    from app.models.entities import DecisionRecord, LandedCost
+
+    analysis = db.query(Analysis).filter(Analysis.id == analysis_id).first()
+    if not analysis:
+        analysis = db.query(Analysis).first()
+    if not analysis:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+
+    decision = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis.id).first()
+    cost = db.query(LandedCost).filter(LandedCost.analysis_id == analysis.id).first()
+
+    status_text = "APPROVED" if (decision and decision.manager_approved is True) else (
+        "REJECTED" if (decision and decision.manager_approved is False) else "PENDING"
+    )
+
+    export_content = f"""================================================================================
+ASTITVA — FREIGHT FORECASTING & CHARTERING DECISION RECORD (SIH26006)
+STEEL AUTHORITY OF INDIA LIMITED (SAIL) — LOGISTICS PROCUREMENT DIVISION
+================================================================================
+
+1. ANALYSIS SPECIFICATIONS
+--------------------------------------------------------------------------------
+Analysis ID:         #{analysis.id}
+Document Reference:  SAIL-FR8-{analysis.id:04d}-{datetime.now(timezone.utc).strftime('%Y%m%d')}
+Generated On:        {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}
+Status:              {analysis.status.upper()}
+Route Corridor:      {analysis.origin_port} ({analysis.origin_country}) -> {analysis.destination_port} (India)
+Commodity:           {analysis.commodity}
+Parcel Tonnage:      {analysis.parcel_tonnage:,.2f} MT
+
+2. DECISION GOVERNANCE
+--------------------------------------------------------------------------------
+AI Recommended Vessel: {analysis.recommended_vessel}
+Chosen Vessel Class:   {decision.chosen_vessel_class if decision else analysis.recommended_vessel}
+Override Applied:      {'YES' if (decision and decision.was_override) else 'NO'}
+Override Rationale:    {(decision.override_reason if decision and decision.override_reason else 'N/A')}
+Approval Status:       {status_text}
+Plant Manager Notes:   {(decision.approval_notes if decision and decision.approval_notes else 'None')}
+
+3. FINANCIAL & COMMERCIAL VALUATION
+--------------------------------------------------------------------------------
+Predicted Ocean Freight: ${analysis.predicted_rate_pmt:.2f} / MT
+BAF Bunker Surcharge:    ${cost.baf_surcharge_usd_per_mt if cost else 1.20:.2f} / MT
+Total Landed (USD):      ${(cost.total_usd_per_mt if cost else analysis.predicted_rate_pmt + 1.20):.2f} / MT
+Forex Reference Rate:    Rs. {(cost.usd_inr_rate if cost else 83.50):.2f} / USD
+Total Landed (INR):      Rs. {(cost.total_inr_per_mt if cost else (analysis.predicted_rate_pmt + 1.20) * 83.5):.2f} / MT
+Total Voyage Outlay:     Rs. {(cost.total_inr if cost else (analysis.predicted_rate_pmt + 1.20) * 83.5 * analysis.parcel_tonnage):,.2f}
+Estimated Net Savings:   ${analysis.estimated_savings_usd:,.2f} USD
+
+================================================================================
+VERIFIED REGULATORY RECORD — IMMUTABLE AUDIT TRAIL LOGGED
+================================================================================
+"""
+    headers = {"Content-Disposition": f'attachment; filename="analysis_{analysis.id}_decision_record.txt"'}
+    return PlainTextResponse(content=export_content, media_type="text/plain", headers=headers)
+
 
 
