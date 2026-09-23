@@ -17,8 +17,8 @@ if str(_backend_dir) not in sys.path:
 from app.main import app as fastapi_app
 from app.database import Base, engine
 import app.models
-from seed_reference_data import seed_all_reference_data
-from seed_demo_scenarios import seed_all_demo_scenarios
+from scripts.seed_reference_data import seed_all_reference_data
+from scripts.seed_demo_scenarios import seed_all_demo_scenarios
 
 
 @pytest.fixture(autouse=True)
@@ -134,7 +134,7 @@ def test_golden_demo_quality_checks():
         # Task 265: Past regret scores (0.5%, 3.2%, 8.1%)
         regrets = db.query(RegretScore).all()
         assert len(regrets) >= 3
-        regret_values = [round(r.regret_pct, 1) for r in regrets]
+        regret_values = [round(float(r.regret_pct), 1) for r in regrets]
         assert 0.5 in regret_values
         assert 3.2 in regret_values
         assert 8.1 in regret_values
