@@ -225,10 +225,10 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                       </div>
                     </td>
 
-                    {/* Savings — Slate ink: Deep is 3.5:1, below AA at 14px */}
+                    {/* Savings — High psychological reward Emerald Green */}
                     <td className="px-3 py-3.5">
-                      <span className="font-mono font-medium tabular-nums text-spruce">
-                        <span aria-hidden="true" className="mr-0.5 text-[8px]">▲</span>
+                      <span className="font-mono font-semibold tabular-nums text-emerald-profit">
+                        <span aria-hidden="true" className="mr-0.5 text-[9px]">▲</span>
                         +${Math.round(item.estimated_savings_usd).toLocaleString()}
                       </span>
                     </td>

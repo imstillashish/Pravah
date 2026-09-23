@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import {
-  TrendingUp,
   Anchor,
-  Calendar,
-  Compass,
   ShieldAlert,
   Clock,
   Plus,
@@ -195,12 +192,14 @@ export const Dashboard: React.FC = () => {
           <>
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
                   SPOT VS PERIOD GAP
                 </span>
-                <TrendingUp className="size-4 text-forest-ink" aria-hidden="true" />
+                <span className="inline-flex items-center gap-1 rounded bg-emerald-wash px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-profit">
+                  SAVINGS OPPORTUNITY
+                </span>
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
+              <div className="font-mono text-2xl font-bold tabular-nums text-emerald-profit">
                 -14.2%
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
@@ -211,12 +210,14 @@ export const Dashboard: React.FC = () => {
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
                   FORECASTED WINDOW
                 </span>
-                <Calendar className="size-4 text-forest-ink" aria-hidden="true" />
+                <span className="inline-flex items-center gap-1 rounded bg-linen-mist px-2 py-0.5 font-mono text-[10px] font-semibold text-signal-blue">
+                  AI RECOMMENDATION
+                </span>
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
+              <div className="font-mono text-2xl font-bold tabular-nums text-forest-ink">
                 OCT 05–18
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
@@ -227,12 +228,14 @@ export const Dashboard: React.FC = () => {
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
                   VESSEL PARCEL PAIRING
                 </span>
-                <Compass className="size-4 text-forest-ink" aria-hidden="true" />
+                <span className="inline-flex items-center gap-1 rounded bg-amber-wash px-2 py-0.5 font-mono text-[10px] font-semibold text-amber-warning">
+                  BERTH OPTIMAL
+                </span>
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
+              <div className="font-mono text-2xl font-bold tabular-nums text-forest-ink">
                 PMX 75K
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
