@@ -1,13 +1,30 @@
+import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { IconRail } from "./components/IconRail";
 import { TopBar } from "./components/TopBar";
 import { RightRail } from "./components/RightRail";
 import { AuthPage } from "./pages/AuthPage";
+import { SignUpPage } from "./pages/SignUpPage";
 import { Dashboard } from "./pages/Dashboard";
 import { Agentation } from "agentation";
 
 function MainApp() {
   const { user, isLoading } = useAuth();
+  const [authView, setAuthView] = useState<"login" | "signup">(
+    window.location.hash === "#signup" ? "signup" : "login"
+  );
+
+  useEffect(() => {
+    const handleHash = () => {
+      if (window.location.hash === "#signup") {
+        setAuthView("signup");
+      } else if (window.location.hash === "#login" || window.location.hash === "") {
+        setAuthView("login");
+      }
+    };
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
+  }, []);
 
   if (isLoading) {
     return (
@@ -23,7 +40,17 @@ function MainApp() {
   if (!user) {
     return (
       <div className="min-h-screen bg-paper">
-        <AuthPage />
+        {authView === "signup" ? (
+          <SignUpPage onSwitchToLogin={() => {
+            window.location.hash = "#login";
+            setAuthView("login");
+          }} />
+        ) : (
+          <AuthPage onNavigateToSignUp={() => {
+            window.location.hash = "#signup";
+            setAuthView("signup");
+          }} />
+        )}
         {import.meta.env.DEV && <Agentation />}
       </div>
     );

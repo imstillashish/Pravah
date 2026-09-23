@@ -144,3 +144,11 @@ export interface DisruptionAlert {
   matched_at: string;
   is_active: boolean;
 }
+
+export interface RegisterPayload {
+  full_name: string;
+  email: string;
+  password: string;
+  confirm_password?: string;
+  role: "logistics_planner" | "plant_manager" | "admin" | "port_operator";
+}

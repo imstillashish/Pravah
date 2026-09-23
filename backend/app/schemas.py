@@ -72,3 +72,10 @@ class AnalysisResponse(BaseModel):
     estimated_savings_usd: float
     status: str
     created_at: datetime
+
+class UserRegister(BaseModel):
+    full_name: str
+    email: str # accepts email or employee id
+    password: str
+    confirm_password: Optional[str] = None
+    role: Optional[str] = "logistics_planner"
