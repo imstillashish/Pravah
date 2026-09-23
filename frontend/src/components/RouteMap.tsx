@@ -64,6 +64,8 @@ interface RouteMapProps {
   distanceNm?: number;
   className?: string;
   interactive?: boolean;
+  shipProgress?: number;
+  shipPositionText?: string;
 }
 
 export const RouteMap: React.FC<RouteMapProps> = ({
@@ -71,9 +73,15 @@ export const RouteMap: React.FC<RouteMapProps> = ({
   destinationName = "Paradip, IN (INPRT)",
   distanceNm = 5832,
   className = "",
+  shipProgress,
+  shipPositionText,
 }) => {
   const [selectedPort, setSelectedPort] = useState<PortInfo>(VERIFIED_PORTS[0]);
   const [zoomLevel, setZoomLevel] = useState<"corridor" | "bay">("corridor");
+
+  const t = typeof shipProgress === "number" ? Math.max(0, Math.min(1, shipProgress)) : 0.52;
+  const shipX = (1 - t) * (1 - t) * 720 + 2 * (1 - t) * t * 420 + t * t * 205;
+  const shipY = (1 - t) * (1 - t) * 230 + 2 * (1 - t) * t * 280 + t * t * 130;
 
   return (
     <div
@@ -172,7 +180,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
               />
 
               {/* Animated Cargo Vessel Icon */}
-              <g transform="translate(420, 245)">
+              <g transform={`translate(${shipX}, ${shipY})`}>
                 <circle r="14" fill="rgba(56, 189, 248, 0.25)" className="animate-ping" />
                 <circle r="7" fill="#38bdf8" />
                 <text
@@ -183,7 +191,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
                   fontFamily="monospace"
                   className="tracking-wider"
                 >
-                  MV OCEAN PRIDE (52% ETA)
+                  {shipPositionText || `MV OCEAN PRIDE (${Math.round(t * 100)}% ETA)`}
                 </text>
               </g>
 

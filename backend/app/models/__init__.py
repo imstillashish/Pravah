@@ -21,6 +21,7 @@ from app.models.entities import (
 )
 from app.models.vendor_quote import VendorQuote
 from app.models.cargo_request import CargoRequest
+from app.models.booking import Booking
 
 
 __all__ = [
@@ -44,6 +45,7 @@ __all__ = [
     "AuditLog",
     "VendorQuote",
     "CargoRequest",
+    "Booking",
 ]
 
 
