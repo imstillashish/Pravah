@@ -11,13 +11,16 @@ import { cx } from "../lib/cn";
  * keyboard scrub, spring rolling headline. The spark region is an
  * operable role="slider" scrubber (a11y: focusable + aria-hidden is a
  * violation; focusable + slider semantics is the correct pattern).
- * Semantic colors come from the theme tokens via spec §3 — the
- * ▲/▼ glyph is always paired with the delta color so hue is never
- * the sole signal.
+ * Semantic colors read the THEME tokens (good/bad direction) so the
+ * card follows whatever visual world is active — the ▲/▼ glyph is
+ * always paired with the delta color so hue is never the sole signal.
+ * NOTE: bad-direction TEXT on fog sits at the theme's alarm-red; if a
+ * theme's alarm fails 4.5:1 as text on its fog, darken the token — the
+ * stroke remains legal at ≥3:1 regardless.
  */
 
-const UP = "#054d28"; // good-direction stroke/text (Spruce in Wise world)
-const DOWN = "#cb272f"; // bad-direction stroke/text (Alarm Red in Wise world)
+const UP = "var(--color-spruce, #054d28)";   // good-direction stroke/text
+const DOWN = "var(--color-alarm-red, #cb272f)"; // bad-direction stroke/text
 
 /** Smooth monotone cubic path (no overshoot on the drawn line). */
 function monotonePath(points: { x: number; y: number }[]): string {
