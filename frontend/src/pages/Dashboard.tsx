@@ -119,7 +119,7 @@ export const Dashboard: React.FC = () => {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="z-10 max-w-lg">
                 <div className="flex items-center gap-2">
-                  <span className="flex size-2 rounded-full bg-lime-voltage animate-ping" />
+                  <span aria-hidden="true" className="flex size-2 rounded-full bg-lime-voltage" />
                   <span className="font-mono text-[11px] font-semibold tracking-wider text-lime-voltage uppercase">
                     Live Indian Ocean Vessel Radar
                   </span>
