@@ -6,12 +6,10 @@ import {
   Clock,
   Plus,
   RefreshCw,
-  Globe,
 } from "lucide-react";
 import { GlobalMetricsStrip } from "../components/GlobalMetricsStrip";
 import { RecentAnalysesTable } from "../components/RecentAnalysesTable";
 import { NewAnalysisDrawer } from "../components/NewAnalysisDrawer";
-import { MaritimeGlobe } from "../components/MaritimeGlobe";
 import { API_BASE } from "../api";
 import { PrimaryButton, Card } from "../components/ui";
 import type { AnalysisObject } from "../types/analysis";
@@ -25,7 +23,6 @@ export const Dashboard: React.FC = () => {
   const [isLoadingAnalyses, setIsLoadingAnalyses] = useState<boolean>(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const [showGlobe, setShowGlobe] = useState<boolean>(true);
 
   const isPlanner = user?.role === "logistics_planner";
 
@@ -90,16 +87,7 @@ export const Dashboard: React.FC = () => {
             </p>
           </div>
           {isPlanner && (
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setShowGlobe(!showGlobe)}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-pebble bg-paper px-3.5 py-2 text-xs font-semibold text-charcoal shadow-sm transition hover:border-forest-ink hover:text-forest-ink"
-                title="Toggle 3D Global Trade Lane Radar"
-              >
-                <Globe className="size-3.5 text-lime-voltage" />
-                <span>{showGlobe ? "Hide 3D Radar" : "Show 3D Radar"}</span>
-              </button>
+            <div className="shrink-0">
               <PrimaryButton onClick={() => setIsDrawerOpen(true)}>
                 <Plus className="size-4" aria-hidden="true" />
                 <span>Run New Analysis</span>
@@ -108,52 +96,6 @@ export const Dashboard: React.FC = () => {
           )}
         </div>
       </section>
-
-      {/* 3D Maritime Global Trade Radar Banner */}
-      {showGlobe && (
-        <section aria-label="3D Maritime Trade Route Radar" className="mb-8">
-          <div className="relative overflow-hidden rounded-2xl border border-pebble bg-forest-ink p-6 text-paper shadow-lg">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="z-10 max-w-lg">
-                <div className="flex items-center gap-2">
-                  <span className="flex size-2 rounded-full bg-lime-voltage animate-ping" />
-                  <span className="font-mono text-[11px] font-semibold tracking-wider text-lime-voltage uppercase">
-                    Live Indian Ocean Vessel Radar
-                  </span>
-                </div>
-                <h2 className="mt-2 text-2xl font-bold tracking-tight text-paper">
-                  Real-Time Trade Lanes & Corridors
-                </h2>
-                <p className="mt-1 text-sm text-paper/80 leading-relaxed">
-                  Interactive spatial telemetry tracking Capesize & Panamax bulk carrier transits across Australia (Gladstone/Hay Point), Indonesia (Taboneo), and South Africa (Richards Bay) to Indian East Coast terminals.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-mono">
-                  <span className="rounded bg-paper/10 px-2.5 py-1 text-lime-voltage">
-                    ● Paradip · 14.5m Draft
-                  </span>
-                  <span className="rounded bg-paper/10 px-2.5 py-1 text-lime-voltage">
-                    ● Vizag · 16.5m Draft
-                  </span>
-                  <span className="rounded bg-paper/10 px-2.5 py-1 text-lime-voltage">
-                    ● Haldia · 8.2m Draft
-                  </span>
-                  <span className="rounded bg-paper/10 px-2.5 py-1 text-amber-300">
-                    7 Active Corridors
-                  </span>
-                </div>
-                <div className="mt-3 text-[11px] text-paper/50">
-                  Tip: Click and drag the sphere to rotate viewing angle
-                </div>
-              </div>
-
-              {/* 3D Canvas */}
-              <div className="relative mx-auto lg:mx-0 h-[220px] w-[260px] sm:h-[240px] sm:w-[300px]">
-                <MaritimeGlobe className="h-full w-full" />
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Global freight metrics */}
       {isPlanner && (
