@@ -94,12 +94,12 @@ DEFAULT_VESSELS: List[Dict[str, Any]] = [
 
 
 try:
-    from app.models import FeasibilityResult
+    from app.models import FeasibilityResult, ReferencePort, ReferenceVesselClass
 except (ImportError, AttributeError):
-    try:
-        from models import FeasibilityResult
-    except (ImportError, AttributeError):
-        class FeasibilityResult:
+    ReferencePort = Any
+    ReferenceVesselClass = Any
+
+    class FeasibilityResult:
             """FeasibilityResult ORM/Model representation."""
 
             def __init__(
@@ -159,7 +159,6 @@ def _resolve_port_data(analysis: Any, db: Optional[Session]) -> Dict[str, Any]:
     # Try DB query if db session provided
     if db is not None:
         try:
-            from app.models import ReferencePort
             query = db.query(ReferencePort)
             if dest_id is not None:
                 port_obj = query.filter(ReferencePort.id == dest_id).first()
@@ -200,7 +199,6 @@ def _resolve_vessel_classes(db: Optional[Session]) -> List[Dict[str, Any]]:
     """Resolves the 4 vessel classes from DB or verified defaults."""
     if db is not None:
         try:
-            from app.models import ReferenceVesselClass
             vessels = db.query(ReferenceVesselClass).all()
             if vessels:
                 return [

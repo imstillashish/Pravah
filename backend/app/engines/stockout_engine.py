@@ -8,10 +8,7 @@ from typing import Any, Dict, Optional
 try:
     from app.models import StockOutAlert
 except (ImportError, AttributeError):
-    try:
-        from models import StockOutAlert
-    except (ImportError, AttributeError):
-        class StockOutAlert:
+    class StockOutAlert:
             """StockOutAlert ORM/Model representation."""
 
             def __init__(

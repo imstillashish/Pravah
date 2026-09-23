@@ -11,12 +11,11 @@ from sqlalchemy.orm import Session
 
 
 try:
-    from app.models import RegretScore
+    from app.models import RegretScore, DecisionRecord
 except (ImportError, AttributeError):
-    try:
-        from models import RegretScore
-    except (ImportError, AttributeError):
-        class RegretScore:
+    DecisionRecord = Any
+
+    class RegretScore:
             """RegretScore ORM/Model representation."""
 
             def __init__(
@@ -89,7 +88,6 @@ def compute_regret_score(
     record = decision_record
     if record is None and db is not None:
         try:
-            from app.models import DecisionRecord
             record = db.query(DecisionRecord).filter(DecisionRecord.id == decision_record_id).first()
         except Exception:
             pass

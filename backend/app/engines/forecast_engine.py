@@ -26,36 +26,33 @@ from ml.train_lgbm import FEATURE_COLS
 try:
     from app.models import Analysis, ForecastResult
 except (ImportError, AttributeError):
-    try:
-        from models import Analysis, ForecastResult
-    except (ImportError, AttributeError):
-        Analysis = Any
+    Analysis = Any
 
-        class ForecastResult:
-            """ForecastResult ORM/Model representation."""
+    class ForecastResult:
+        """ForecastResult ORM/Model representation."""
 
-            def __init__(
-                self,
-                analysis_id=None,
-                p10_usd_per_mt: Optional[float] = None,
-                p50_usd_per_mt: Optional[float] = None,
-                p90_usd_per_mt: Optional[float] = None,
-                arima_baseline_usd_per_mt: Optional[float] = None,
-                confidence_label: Optional[str] = None,
-                model_used: str = "LightGBM_quantile_ensemble",
-                forecast_generated_at: Optional[datetime] = None,
-                **kwargs,
-            ):
-                self.analysis_id = analysis_id
-                self.p10_usd_per_mt = p10_usd_per_mt
-                self.p50_usd_per_mt = p50_usd_per_mt
-                self.p90_usd_per_mt = p90_usd_per_mt
-                self.arima_baseline_usd_per_mt = arima_baseline_usd_per_mt
-                self.confidence_label = confidence_label
-                self.model_used = model_used
-                self.forecast_generated_at = forecast_generated_at or datetime.now(timezone.utc)
-                for k, v in kwargs.items():
-                    setattr(self, k, v)
+        def __init__(
+            self,
+            analysis_id=None,
+            p10_usd_per_mt: Optional[float] = None,
+            p50_usd_per_mt: Optional[float] = None,
+            p90_usd_per_mt: Optional[float] = None,
+            arima_baseline_usd_per_mt: Optional[float] = None,
+            confidence_label: Optional[str] = None,
+            model_used: Optional[str] = "LightGBM_quantile_ensemble",
+            forecast_generated_at: Optional[datetime] = None,
+            **kwargs,
+        ):
+            self.analysis_id = analysis_id
+            self.p10_usd_per_mt = p10_usd_per_mt
+            self.p50_usd_per_mt = p50_usd_per_mt
+            self.p90_usd_per_mt = p90_usd_per_mt
+            self.arima_baseline_usd_per_mt = arima_baseline_usd_per_mt
+            self.confidence_label = confidence_label
+            self.model_used = model_used
+            self.forecast_generated_at = forecast_generated_at or datetime.now(timezone.utc)
+            for k, v in kwargs.items():
+                setattr(self, k, v)
 
             @property
             def p10(self) -> Optional[float]:
