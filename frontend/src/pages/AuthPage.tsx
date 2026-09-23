@@ -4,6 +4,7 @@ import { API_BASE } from "../api";
 import { Compass, Lock, Mail, User, AlertCircle, ArrowRight } from "lucide-react";
 import { PrimaryButton, Card, TextButton } from "../components/ui";
 import { AstitvaLogo } from "../components/AstitvaLogo";
+import { MaritimeGlobe } from "../components/MaritimeGlobe";
 import { cx } from "../lib/cn";
 
 /**
@@ -80,10 +81,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
   return (
     <div className="grid min-h-screen lg:grid-cols-[45fr_55fr]">
       {/* Forest Ink hero panel — the brand's display voice (desktop only) */}
-      <aside className="m-4 hidden flex-col justify-between rounded-xl bg-forest-ink p-12 lg:flex">
-        <AstitvaLogo size={32} variant="inverse" subtitle={true} />
+      <aside className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-xl bg-forest-ink p-12 lg:flex">
+        <div className="relative z-10">
+          <AstitvaLogo size={32} variant="inverse" subtitle={true} />
+        </div>
 
-        <div>
+        {/* 3D Maritime Route Globe */}
+        <div className="absolute right-[-40px] top-[18%] z-0 h-[380px] w-[380px] opacity-75 xl:right-[10px] xl:h-[460px] xl:w-[460px]">
+          <MaritimeGlobe className="h-full w-full" />
+        </div>
+
+        <div className="relative z-10">
           <h1 className="text-5xl font-black leading-[0.9] tracking-[-0.03em] text-lime-voltage xl:text-[64px] 2xl:text-[89px]">
             Know your rate before you book.
           </h1>
@@ -97,7 +105,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
           </PrimaryButton>
         </div>
 
-        <div className="font-mono text-xs text-paper/60">Steel in motion, rates on time</div>
+        <div className="relative z-10 flex items-center justify-between font-mono text-xs text-paper/60">
+          <span>Steel in motion, rates on time</span>
+          <span className="flex items-center gap-1.5 text-lime-voltage">
+            <span className="size-1.5 animate-pulse rounded-full bg-lime-voltage" />
+            Live Global Route Radar
+          </span>
+        </div>
       </aside>
 
       {/* Auth side — Paper canvas, card centered */}
