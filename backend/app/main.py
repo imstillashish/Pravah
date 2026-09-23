@@ -9,6 +9,8 @@ from app.api.admin import router as admin_router
 from app.api.audit import router as audit_router
 from app.api.quotes import router as quotes_router
 from app.api.map import router as map_router
+from app.api.bookings import router as bookings_router
+from app.api.demand import router as demand_router
 import app.models  # ensure all models are registered in Base.metadata
 
 Base.metadata.create_all(bind=engine)
@@ -35,10 +37,17 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(metrics_router)
 app.include_router(analyses_router)
+app.include_router(analyses_router, prefix="/api")
 app.include_router(admin_router)
 app.include_router(audit_router)
 app.include_router(quotes_router)
+app.include_router(quotes_router, prefix="/api")
 app.include_router(map_router)
+app.include_router(map_router, prefix="/api")
+app.include_router(bookings_router)
+app.include_router(bookings_router, prefix="/api")
+app.include_router(demand_router)
+app.include_router(demand_router, prefix="/api")
 
 @app.get("/disruption-alerts")
 def get_root_disruption_alerts():

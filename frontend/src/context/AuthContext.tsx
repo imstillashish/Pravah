@@ -5,7 +5,7 @@ export interface User {
   id: number;
   email: string;
   full_name: string;
-  role: "logistics_planner" | "port_operator";
+  role: "logistics_planner" | "port_operator" | "ADMIN" | "PLANT_MANAGER" | "PROCUREMENT_OFFICER" | string;
   is_active: boolean;
 }
 

@@ -15,6 +15,7 @@ import {
   FileCheck,
   Sparkles,
   Info,
+  ArrowRight,
 } from "lucide-react";
 
 interface FeasibilityRow {
@@ -827,6 +828,19 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                     Reason: "{data.decision.override_reason}"
                   </p>
                 )}
+                {/* Task 383: Link to Decision Record Page */}
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.location.hash = "#decision";
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-forest-ink px-4 py-2 text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 transition-all active:scale-95"
+                  >
+                    <span>Approve / Send for Booking (Decision Record)</span>
+                    <ArrowRight className="size-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

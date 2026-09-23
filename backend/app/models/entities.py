@@ -222,6 +222,9 @@ class DecisionRecord(Base):
     override_reason = Column(Text, nullable=True)
     decided_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     decided_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    manager_approved = Column(Boolean, nullable=True, default=None)
+    approval_notes = Column(Text, nullable=True)
+    approved_at = Column(DateTime, nullable=True)
 
 
 class RegretScore(Base):
