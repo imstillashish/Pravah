@@ -44,16 +44,15 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
 
     # Determine Date column or index for month and quarter
     if "Date" in out_df.columns:
-        date_series = pd.to_datetime(out_df["Date"])
+        raw_dates = out_df["Date"]
     elif "date" in out_df.columns:
-        date_series = pd.to_datetime(out_df["date"])
-    elif isinstance(out_df.index, pd.DatetimeIndex):
-        date_series = pd.Series(out_df.index, index=out_df.index)
+        raw_dates = out_df["date"]
     else:
-        date_series = pd.to_datetime(out_df.index)
+        raw_dates = out_df.index
 
-    out_df["month"] = date_series.dt.month.astype(int)
-    out_df["quarter"] = date_series.dt.quarter.astype(int)
+    date_series = pd.Series(pd.to_datetime(raw_dates))
+    out_df["month"] = date_series.dt.month.astype(int).values
+    out_df["quarter"] = date_series.dt.quarter.astype(int).values
 
     return out_df
 
@@ -73,8 +72,8 @@ def apply_walk_forward_split(df: pd.DataFrame, test_size: int = 60) -> tuple:
     if len(df) <= test_size:
         raise ValueError(f"DataFrame length ({len(df)}) must be greater than test_size ({test_size}).")
 
-    train_df = df.iloc[:-test_size].copy()
-    test_df = df.iloc[-test_size:].copy()
+    train_df = pd.DataFrame(df.iloc[:-test_size]).copy()
+    test_df = pd.DataFrame(df.iloc[-test_size:]).copy()
 
     # Extract dates for chronological verification
     if "Date" in df.columns:
