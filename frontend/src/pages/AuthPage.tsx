@@ -282,7 +282,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             {isSignup && (
               <fieldset>
                 <legend className={LABEL_CLASS}>Choose your starting desk</legend>
-                <div className="grid grid-cols-1 gap-2 xl:grid-cols-2">
+                <div className="grid grid-cols-1 gap-2">
                   {DESK_OPTIONS.map((desk) => {
                     const selected = role === desk.value;
                     return (
@@ -313,7 +313,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                           </span>
                           <span className="block truncate text-xs text-charcoal">{desk.sub}</span>
                         </span>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
                           {desk.code}
                         </span>
                       </button>
