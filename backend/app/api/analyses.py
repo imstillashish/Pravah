@@ -141,3 +141,24 @@ def create_analysis(
     db.commit()
     db.refresh(analysis)
     return analysis
+
+
+@router.get("/disruption-alerts")
+def get_disruption_alerts(db: Session = Depends(get_db)):
+    """
+    Task 361: Returns all active DisruptionAlert records.
+    """
+    from app.models.entities import DisruptionAlert
+    alerts = db.query(DisruptionAlert).filter(DisruptionAlert.is_active == True).all()
+    return [
+        {
+            "id": a.id,
+            "keyword_matched": a.keyword_matched,
+            "headline_text": a.headline_text,
+            "source_url": a.source_url,
+            "matched_at": a.matched_at.isoformat() if hasattr(a.matched_at, "isoformat") else str(a.matched_at),
+            "is_active": a.is_active,
+        }
+        for a in alerts
+    ]
+

@@ -448,8 +448,8 @@ git reset --hard origin/main
 **Task 14:** Create folder `docs/` in project root → **(Param — DevOps + Backend)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Run `find backend/ -type d` — should list all 8 sub-folders
-> - [ ] Run `find ml/ -type d` — should list ml/models and ml/data
+> - [x] Run `find backend/ -type d` — should list all 8 sub-folders (Verified)
+> - [x] Run `find ml/ -type d` — should list ml/models and ml/data (Verified)
 
 ---
 
@@ -506,10 +506,10 @@ python-dotenv==1.0.1
 **Task 27:** Create file `backend/alembic.ini` by running `cd backend && alembic init alembic` — this generates the alembic config and migrations folder → **(Param — DevOps + Backend)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Run `cd backend && pip install -r requirements.txt` — no errors
-> - [ ] Run `cd backend && uvicorn app.main:app --reload` — server starts on port 8000
-> - [ ] Open browser at `http://localhost:8000/health` — shows `{"status": "ok"}`
-> - [ ] Open browser at `http://localhost:8000/docs` — FastAPI Swagger UI loads
+> - [x] Run `cd backend && pip install -r requirements.txt` — no errors (Verified)
+> - [x] Run `cd backend && uvicorn app.main:app --reload` — server starts on port 8000 (Verified)
+> - [x] Open browser at `http://localhost:8000/health` — shows `{"status": "ok"}` (Verified)
+> - [x] Open browser at `http://localhost:8000/docs` — FastAPI Swagger UI loads (Verified)
 
 ---
 
@@ -719,9 +719,9 @@ python-dotenv==1.0.1
 **Task 85:** Run `cd backend && alembic upgrade head` — applies migration to `astitva_dev` database → **(Param — DevOps + Backend)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Run `psql astitva_dev -c "\dt"` — shows 17 tables
-> - [ ] Run `psql astitva_dev -c "\d analyses"` — shows all columns for analyses table
-> - [ ] No alembic errors
+> - [x] Run `psql astitva_dev -c "\dt"` — shows 17 tables (Verified)
+> - [x] Run `psql astitva_dev -c "\d analyses"` — shows all columns for analyses table (Verified)
+> - [x] No alembic errors (Verified)
 
 ---
 
@@ -750,9 +750,9 @@ python-dotenv==1.0.1
 **Task 91:** Run `cd backend && python ../scripts/seed_reference_data.py` → **(Om — Backend Developer)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Run `psql astitva_dev -c "SELECT port_name, max_draft_m FROM reference_ports;"` — shows 4 ports with correct draft values
-> - [ ] Run `psql astitva_dev -c "SELECT class_name, dwt_min, dwt_max FROM reference_vessel_classes;"` — shows 4 vessel classes
-> - [ ] Haldia record shows `has_lightering = true`
+> - [x] Run `psql astitva_dev -c "SELECT port_name, max_draft_m FROM reference_ports;"` — shows 4 ports with correct draft values (Verified)
+> - [x] Run `psql astitva_dev -c "SELECT class_name, dwt_min, dwt_max FROM reference_vessel_classes;"` — shows 4 vessel classes (Verified)
+> - [x] Haldia record shows `has_lightering = true` (Verified)
 
 > **🔖 GIT CHECKPOINT — Commit & Push**
 > ```bash
@@ -1415,12 +1415,12 @@ python-dotenv==1.0.1
 **Task 270:** Add to `scripts/reset_demo_db.py` — print a confirmation message: "Demo database reset complete. Ready for fresh demo." → **(Param — DevOps + Backend)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] Run `python scripts/reset_demo_db.py` — completes without errors
-> - [ ] Login as `demo@sail.gov.in` — Dashboard shows the seeded golden demo analysis
-> - [ ] Click the golden demo analysis — Results page shows all sections populated
-> - [ ] The Capesize row shows ❌ with failure_reason "Draft 18.2m exceeds Paradip max draft 16.5m"
-> - [ ] Stock-out alert shows with red border (is_at_risk=True)
-> - [ ] Red Sea disruption alert appears in the dashboard banner
+> - [x] Run `python scripts/reset_demo_db.py` — completes without errors (Verified)
+> - [x] Login as `demo@sail.gov.in` — Dashboard shows the seeded golden demo analysis (Verified)
+> - [x] Click the golden demo analysis — Results page shows all sections populated (Verified)
+> - [x] The Capesize row shows ❌ with failure_reason "Draft 18.2m exceeds Paradip max draft 16.5m" (Verified)
+> - [x] Stock-out alert shows with red border (is_at_risk=True) (Verified)
+> - [x] Red Sea disruption alert appears in the dashboard banner (Verified)
 
 > **🔖 GIT CHECKPOINT — Commit & Push**
 > ```bash
@@ -1813,9 +1813,9 @@ python-dotenv==1.0.1
 **Task 363:** Update `docs/API_CONTRACT.md` — add all new endpoints from Phase 2C: `/auth/register`, `/auth/forgot-password`, `/auth/reset-password`, `/analyses/{id}/decision`, `/analyses/{id}/decision/approve`, `/analyses/{id}/decision/reject`, `/bookings`, `/demand`, `/demand/merge`, `/quotes`, `/map/route`, `/map/ship-position`, `/disruption-alerts` → **(Param — DevOps + Backend)**
 
 > **✅ VERIFICATION CHECKPOINT**
-> - [ ] GET `/map/route?origin_locode=AUNEW&destination_locode=INPDI` returns both lat/lon pairs and distance
-> - [ ] GET `/map/ship-position?...&progress_pct=0.5` returns midpoint coordinates
-> - [ ] GET `/disruption-alerts` returns the seeded Red Sea alert
+> - [x] GET `/map/route?origin_locode=AUNEW&destination_locode=INPDI` returns both lat/lon pairs and distance (Verified)
+> - [x] GET `/map/ship-position?...&progress_pct=0.5` returns midpoint coordinates (Verified)
+> - [x] GET `/disruption-alerts` returns the seeded Red Sea alert (Verified)
 
 > **🔖 GIT CHECKPOINT — Commit & Push**
 > ```bash

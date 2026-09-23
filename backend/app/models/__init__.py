@@ -19,6 +19,9 @@ from app.models.entities import (
     StockOutAlert,
     AuditLog,
 )
+from app.models.vendor_quote import VendorQuote
+from app.models.cargo_request import CargoRequest
+
 
 __all__ = [
     "User",
@@ -39,5 +42,8 @@ __all__ = [
     "DisruptionAlert",
     "StockOutAlert",
     "AuditLog",
+    "VendorQuote",
+    "CargoRequest",
 ]
+
 
