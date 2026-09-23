@@ -69,3 +69,26 @@ def list_reference_ports(db: Session = Depends(get_db)):
             {"id": 4, "port_name": "Haldia", "max_draft_m": 9.1, "max_dwt_mt": 50000, "has_lightering": True}
         ]
     return ports
+
+
+@router.put("/reference/ports/{port_id}")
+def update_reference_port(
+    port_id: int,
+    payload: PortUpdate,
+    db: Session = Depends(get_db)
+):
+    port = db.query(ReferencePort).filter(ReferencePort.id == port_id).first()
+    if not port:
+        raise HTTPException(status_code=404, detail="Port not found")
+    if payload.max_draft_m is not None:
+        port.max_draft_m = payload.max_draft_m
+    if payload.max_dwt_mt is not None:
+        port.max_dwt_mt = payload.max_dwt_mt
+    if payload.max_loa_m is not None:
+        port.max_loa_m = payload.max_loa_m
+    if payload.max_beam_m is not None:
+        port.max_beam_m = payload.max_beam_m
+    db.commit()
+    db.refresh(port)
+    return port
+
