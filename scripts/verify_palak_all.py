@@ -104,6 +104,7 @@ def main():
     # 6. Stockout Alert Engine (Tasks 187-191)
     print("\n[6] STOCK-OUT ALERT ENGINE (Tasks 187-191)")
     alert = stockout_engine.calculate_stockout_alert(analysis, fc)
+    assert alert is not None, "Stockout alert should not be None for golden demo analysis"
     print(f"  * Days to Stockout:    {alert.days_to_stockout:.0f} days (12,000 MT stock / 800 MT daily burn)")
     print(f"  * Best Rate Window:    {alert.days_to_best_window:.0f} days away")
     print(f"  * At Risk Flag:        {alert.is_at_risk}")
@@ -143,6 +144,7 @@ def main():
         },
     )()
     regret = regret_engine.compute_regret_score("past-decision-001", decision_record=past_decision)
+    assert regret is not None, "Regret score should not be None for past decision record"
     print(f"  * Decision Date Rate:      ${regret.chosen_day_rate:.2f}/MT")
     print(f"  * Best Rate in +-14d Range:${regret.best_rate_in_window:.2f}/MT (Window: {regret.window_start} to {regret.window_end})")
     print(f"  * Calculated Regret Score: {regret.regret_pct:.1f}%")
