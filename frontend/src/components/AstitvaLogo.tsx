@@ -74,7 +74,13 @@ export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
           >
             Astitva
           </span>
-          <span className="font-mono text-[9px] uppercase tracking-[0.1em] px-1.5 py-0.5 rounded bg-lime-voltage/20 text-forest-ink font-semibold">
+          <span
+            className={`font-mono text-[9px] uppercase tracking-[0.1em] px-1.5 py-0.5 rounded font-semibold ${
+              isInverse
+                ? "bg-alarm-red text-paper"
+                : "bg-linen-mist text-forest-ink"
+            }`}
+          >
             SAIL
           </span>
         </div>
