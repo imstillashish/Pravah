@@ -128,7 +128,7 @@ export interface StatCardProps {
 **Behavior (from the approved design):**
 - **Sparkline math:** normalize series to the spark box; `monotonePath` cubic interpolation for a smooth line; area path = line closed to baseline. Memoized on `series` + measured box size.
 - **Measured box:** `ResizeObserver` on the spark container (width-driven redraw), initial `getBoundingClientRect` fallback.
-- **Rolling number:** `useTweenNumber(shown)` — new hook in `frontend/src/lib/useTweenNumber.ts` built on **framer-motion** (`useSpring` + `useTransform` + `motion.span`). Spring renders via motion value → DOM text node updates without per-frame React re-renders. Duration ~260ms spring; disabled when `prefers-reduced-motion` (value snaps).
+- **Rolling number:** `useSpringNumber(shown, !reduce)` (§5.2) — the motion value updates the DOM text node directly, no per-frame React re-renders. Settles ≈260ms; snaps when `prefers-reduced-motion`.
 - **Scrub:** spark region is `tabIndex={0}`, `role="img"` lives on the card root with a full summary `aria-label` (`"{label}: {value}, up 2 percent vs 30 days ago."` pattern). Pointer move/down set hover index by nearest x; pointer leave / blur clears. Keyboard: `←`/`→` step, `Home`/`End` jump, all wrapped in a shared `useHoverIndexKeys` helper (local to StatCard.tsx).
 - **While scrubbing:** headline rolls to that day's value; delta line swaps to `day {i+1} of {n}` in Charcoal; scrub dot (r 4.5, Paper fill, 2px series-color ring) tracks the line.
 - **Delta line:** `▲/▼ {abs(pct)}% {deltaLabel}` — glyph + value; colored Spruce when the direction is good for this metric (`goodWhen`), Alarm Red when bad. Direction glyph **always** present so hue is never the sole signal (WCAG 1.4.1).
@@ -136,16 +136,14 @@ export interface StatCardProps {
 - **Entry animation:** draw-in via `pathLength={1}` + `stroke-dasharray: 1` 700ms `EASE_OUT` (existing motion vocabulary `--ease-out-strong`), staggered `index * 70ms`; area fill fades in +180ms; extreme dots (≤5 local extrema, r 2.5) fade in last. All disabled under reduced motion.
 - **Skeleton states:** parent (strip) keeps rendering the existing `Skeleton` sweep cards while loading — StatCard itself only renders with data.
 
-### 5.2 New: `frontend/src/lib/useTweenNumber.ts`
+### 5.2 New: `frontend/src/lib/useSpringNumber.ts`
 
-```ts
-export function useTweenNumber(value: number, opts?: { duration?: number; enabled?: boolean }): MotionValue<string>
-```
-- framer-motion `useSpring(value, { stiffness, damping })` tuned to settle ≈260ms, piped through `useTransform` with the caller's formatter — actually: hook returns a `MotionValue<number>`; the component pairs it with `useTransform(v => format(v))`. Simpler contract:
 ```ts
 export function useSpringNumber(value: number, enabled: boolean): MotionValue<number>
 ```
-- When `enabled=false` (reduced motion), returns a plain motion value that snaps to `value`.
+
+- framer-motion `useSpring(value, { stiffness, damping })` tuned to settle ≈260ms, returned as a `MotionValue<number>`; the component pipes it through `useTransform(v => format(v))` for display.
+- When `enabled=false` (reduced motion), the motion value snaps to `value`.
 - No rAF loops, no setState per frame.
 
 ### 5.3 Rewritten: `frontend/src/components/GlobalMetricsStrip.tsx`
@@ -157,7 +155,7 @@ export function useSpringNumber(value: number, enabled: boolean): MotionValue<nu
   3. **Bunker Fuel · VLSFO** — `series: bunker`, `delta: null`, `caption: "SINGAPORE HUB · STEADY"`, format `$x.xx / MT`.
 - `DeltaChip`, `AnimatedSvgChart` import, and hand-built card markup are deleted from this file.
 - Grid stays `grid-cols-1 gap-3 md:grid-cols-3`; loading skeleton block unchanged.
-- `Pill`/`Fuel` icon usage: the SIN pill moves into the bunker caption row as part of StatCard's `caption` rendering — no, per approved design the caption is text-only. The `Fuel` icon + SIN pill are **dropped** (declutter; label already says VLSFO).
+- `Pill`/`Fuel` icon usage: the SIN pill and `Fuel` icon are **dropped** (declutter; the label already says VLSFO) — the bunker card's footer is the text-only `caption` per the approved design.
 
 ### 5.4 Deleted / orphaned code
 
@@ -171,7 +169,7 @@ export function useSpringNumber(value: number, enabled: boolean): MotionValue<nu
 Card tone="fog" rounded-[10px] p-4, Pebble hairline, flex row justify-between gap-5
 ├─ left column (min-w-0, flex col justify-between)
 │  ├─ label: 13px Inter 400 Charcoal (NOT Slate — 4.40 trap), truncate
-│  ├─ value: IBM Plex Mono 600 ~26px Forest Ink, tabular-nums, rolls
+│  ├─ value: IBM Plex Mono 600 26px Forest Ink, tabular-nums, rolls (via useSpringNumber §5.2 + card `format`)
 │  └─ delta/caption line: 12.5px mono 500, fixed-height (no layout shift on scrub swap)
 │     ├─ good: Spruce + ▲/▼ glyph per direction
 │     ├─ bad: Alarm Red + glyph
