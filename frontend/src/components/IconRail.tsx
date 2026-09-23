@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 
 /**
- * Left icon rail (56px) — Admiralty Chart sheet margin. Foam panel,
- * hairline right edge. 24px icons in Slate ink; the active item
- * carries the 2px Abyss left bar + Shoal wash (DESIGN.md §6).
+ * Left icon rail (56px) — Wise shell. Paper panel, Pebble hairline
+ * right edge. Active item = Linen Mist pill wash + Forest Ink icon
+ * (Wise segmented-control language — no left accent bar, spec §6).
  * Bottom cluster: settings and sign-out.
  */
 const RAIL_ITEMS = [
@@ -30,11 +30,11 @@ export const IconRail: React.FC = () => {
   return (
     <aside
       aria-label="Primary navigation"
-      className="fixed inset-y-0 left-0 z-40 hidden w-14 flex-col items-center justify-between border-r border-line bg-card py-4 md:flex"
+      className="fixed inset-y-0 left-0 z-40 hidden w-14 flex-col items-center justify-between border-r border-pebble bg-paper py-4 md:flex"
     >
-      {/* Brand mark — the one filled-Abyss anchor on the rail */}
+      {/* Brand mark — forest tile + lime glyph (the rail's one lime moment) */}
       <div className="flex flex-col items-center gap-6">
-        <div className="flex size-8 items-center justify-center rounded-md bg-mint-500 text-sea-900">
+        <div className="flex size-8 items-center justify-center rounded-full bg-forest-ink text-lime-voltage">
           <Compass className="size-5" aria-hidden="true" />
         </div>
 
@@ -48,10 +48,10 @@ export const IconRail: React.FC = () => {
                 aria-current={active ? "page" : undefined}
                 aria-label={label}
                 title={label}
-                className={`relative flex size-10 items-center justify-center rounded-sm transition-colors duration-150 ${
+                className={`flex size-10 items-center justify-center rounded-full transition-colors duration-150 ${
                   active
-                    ? "bg-glass-100 text-sea-900 before:absolute before:left-0 before:top-1/2 before:h-5 before:w-0.5 before:-translate-y-1/2 before:bg-sea-600"
-                    : "text-muted hover:bg-wash hover:text-sea-700"
+                    ? "bg-linen-mist text-forest-ink"
+                    : "text-charcoal hover:bg-fog hover:text-forest-ink"
                 }`}
               >
                 <Icon className="size-6" aria-hidden="true" />
@@ -67,23 +67,23 @@ export const IconRail: React.FC = () => {
           type="button"
           aria-label="Settings"
           title="Settings"
-          className="flex size-10 items-center justify-center rounded-sm text-muted transition-colors duration-150 hover:bg-wash hover:text-sea-700"
+          className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors duration-150 hover:bg-fog hover:text-forest-ink"
         >
           <Settings className="size-6" aria-hidden="true" />
         </button>
-        <div className="my-1 h-px w-8 bg-line-strong" aria-hidden="true" />
+        <div className="my-1 h-px w-8 bg-pebble" aria-hidden="true" />
         <button
           type="button"
           onClick={logout}
           aria-label="Sign out of account"
           title="Sign out"
-          className="flex size-10 items-center justify-center rounded-sm text-muted transition-colors duration-150 hover:bg-wash hover:text-sea-700"
+          className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors duration-150 hover:bg-fog hover:text-forest-ink"
         >
           <LogOut className="size-5" aria-hidden="true" />
         </button>
         <div
           aria-hidden="true"
-          className="flex size-8 items-center justify-center rounded-full bg-glass-100 font-mono text-xs text-sea-900"
+          className="flex size-8 items-center justify-center rounded-full bg-linen-mist font-mono text-xs text-forest-ink"
         >
           {initials}
         </div>
