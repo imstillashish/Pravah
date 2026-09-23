@@ -61,8 +61,31 @@ def get_root_disruption_alerts():
     finally:
         db.close()
 
+@app.get("/analyses/{analysis_id}")
+def get_root_analysis_detail(analysis_id: int):
+    from app.database import SessionLocal
+    from app.api.analyses import get_analysis_detail
+    db = SessionLocal()
+    try:
+        return get_analysis_detail(analysis_id, db)
+    finally:
+        db.close()
+
+
+@app.post("/analyses/{analysis_id}/decision")
+def post_root_analysis_decision(analysis_id: int, payload: dict):
+    from app.database import SessionLocal
+    from app.api.analyses import record_decision
+    db = SessionLocal()
+    try:
+        return record_decision(analysis_id, payload, db)
+    finally:
+        db.close()
+
+
 @app.get("/health")
 @app.get("/api/health")
 def health_check():
     return {"status": "ok", "service": "Astitva Core API"}
+
 
