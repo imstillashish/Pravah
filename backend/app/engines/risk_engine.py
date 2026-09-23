@@ -8,12 +8,11 @@ from sqlalchemy.orm import Session
 
 
 try:
-    from app.models import RiskResult
+    from app.models import RiskResult, DisruptionAlert
 except (ImportError, AttributeError):
-    try:
-        from models import RiskResult
-    except (ImportError, AttributeError):
-        class RiskResult:
+    DisruptionAlert = Any
+
+    class RiskResult:
             """RiskResult ORM/Model representation."""
 
             def __init__(
@@ -208,7 +207,6 @@ def run_risk_assessment(
     active_alert = None
     if db is not None:
         try:
-            from app.models import DisruptionAlert
             active_alert = db.query(DisruptionAlert).filter(DisruptionAlert.is_active == True).first()
         except Exception:
             pass

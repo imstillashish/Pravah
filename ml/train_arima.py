@@ -6,12 +6,16 @@ import joblib
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 
-try:
-    from ml.feature_engineering import build_features
-    from ml.train_lgbm import train_quantile_models, FEATURE_COLS
-except ModuleNotFoundError:
-    from feature_engineering import build_features
-    from train_lgbm import train_quantile_models, FEATURE_COLS
+import sys
+from pathlib import Path
+from typing import Optional
+
+_repo_root = Path(__file__).resolve().parent.parent
+if str(_repo_root) not in sys.path:
+    sys.path.insert(0, str(_repo_root))
+
+from ml.feature_engineering import build_features
+from ml.train_lgbm import train_quantile_models, FEATURE_COLS
 
 
 def fit_arima_baseline(series, order: tuple = (5, 1, 0)):
@@ -86,8 +90,8 @@ def compute_confidence_label(p10: float, p50: float, p90: float) -> str:
 
 def run_forecast_engine(
     df_history: pd.DataFrame,
-    feature_vector: pd.DataFrame = None,
-    models: dict = None,
+    feature_vector: Optional[pd.DataFrame] = None,
+    models: Optional[dict] = None,
     steps: int = 14,
 ) -> dict:
     """

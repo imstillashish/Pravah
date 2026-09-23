@@ -9,10 +9,7 @@ from typing import Any, Dict, Optional
 try:
     from app.models import LandedCost
 except (ImportError, AttributeError):
-    try:
-        from models import LandedCost
-    except (ImportError, AttributeError):
-        class LandedCost:
+    class LandedCost:
             """LandedCost ORM/Model representation."""
 
             def __init__(

@@ -17,7 +17,7 @@ VESSEL_CLASSES_ASCENDING = [
 def _infer_vessel_for_qty(quantity_mt: float) -> Optional[Dict[str, Any]]:
     """Finds the smallest efficient vessel class capable of carrying the parcel quantity."""
     for v in VESSEL_CLASSES_ASCENDING:
-        if v["dwt_max"] >= quantity_mt:
+        if float(v["dwt_max"]) >= float(quantity_mt):
             return v
     return None
 

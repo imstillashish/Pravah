@@ -8,10 +8,7 @@ from typing import Any, Dict, List, Optional
 try:
     from app.models import Recommendation
 except (ImportError, AttributeError):
-    try:
-        from models import Recommendation
-    except (ImportError, AttributeError):
-        class Recommendation:
+    class Recommendation:
             """Recommendation ORM/Model representation."""
 
             def __init__(
@@ -203,20 +200,20 @@ def run_recommendation(
         })
 
     # Task 175: Sort total_score DESC, tie-break on lower cost
-    scored_candidates.sort(key=lambda x: (-x["total_score"], x["cost_val"]))
+    scored_candidates.sort(key=lambda x: (-float(x["total_score"]), float(x["cost_val"])))
 
     recommendations: List[Recommendation] = []
     for rank_idx, item in enumerate(scored_candidates, 1):
         rec = Recommendation(
             analysis_id=analysis_id,
             rank=rank_idx,
-            vessel_class=item["vessel_class"],
-            port_id=item["port_id"],
-            port_name=item["port_name"],
-            cost_score=item["cost_score"],
-            confidence_score=item["confidence_score"],
-            coverage_fit_score=item["coverage_fit_score"],
-            total_score=item["total_score"],
+            vessel_class=str(item["vessel_class"]),
+            port_id=int(item["port_id"]) if item.get("port_id") is not None else None,
+            port_name=str(item["port_name"]) if item.get("port_name") is not None else None,
+            cost_score=float(item["cost_score"]),
+            confidence_score=float(item["confidence_score"]),
+            coverage_fit_score=float(item["coverage_fit_score"]),
+            total_score=float(item["total_score"]),
             score_breakdown=item["score_breakdown"],
             is_emergency_mode=is_emergency,
         )
