@@ -1,8 +1,13 @@
 import os
+from pathlib import Path
 from typing import List
 
+_backend_dir = Path(__file__).resolve().parent.parent
+_default_sqlite_path = (_backend_dir / "logistics.db").as_posix()
+
 class Settings:
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./logistics.db")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{_default_sqlite_path}")
+
     SECRET_KEY: str = os.getenv("SECRET_KEY", os.getenv("JWT_SECRET_KEY", "sih26006_dev_secret_key_change_in_production_987123"))
     JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", SECRET_KEY)
     ALGORITHM: str = "HS256"

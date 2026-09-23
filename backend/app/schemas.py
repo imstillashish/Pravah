@@ -79,3 +79,40 @@ class UserRegister(BaseModel):
     password: str
     confirm_password: Optional[str] = None
     role: Optional[str] = "logistics_planner"
+
+
+class VendorQuoteResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    quote_request_label: Optional[str] = None
+    broker_name: str
+    vessel_type: str
+    quoted_rate_usd_per_mt: float
+    delivery_days: int
+    valid_until: str
+    is_sample_data: bool = True
+    sample_data_notice: str = "These quotes are sample data. Real broker integration is not connected."
+
+
+class CargoRequestCreate(BaseModel):
+    plant_id: Optional[int] = None
+    cargo_type_id: Optional[int] = None
+    quantity_mt: float
+    destination_port_id: Optional[int] = None
+
+
+class CargoRequestResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    plant_id: Optional[int] = None
+    plant_name: Optional[str] = None
+    cargo_type_id: Optional[int] = None
+    quantity_mt: float
+    destination_port_id: Optional[int] = None
+    port_name: Optional[str] = None
+    status: str = "OPEN"
+    merged_into_id: Optional[int] = None
+    created_at: Optional[str] = None
+
