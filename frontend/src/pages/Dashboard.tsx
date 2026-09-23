@@ -17,7 +17,7 @@ import { API_BASE } from "../api";
 import { PrimaryButton, Card, VerifiedDot } from "../components/ui";
 import type { AnalysisObject } from "../types/analysis";
 
-/* Shared indicator tile: Foam fill + hairline ring; mono 600 value. */
+/* Shared indicator tile padding. */
 const METRIC_CARD = "p-4";
 
 export const Dashboard: React.FC = () => {
@@ -61,20 +61,30 @@ export const Dashboard: React.FC = () => {
 
   if (!user) return null;
 
+  const hour = new Date().getHours();
+  const daypart =
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const firstName =
+    user.full_name?.split(" ")[0] ?? user.email?.split("@")[0] ?? "operator";
+  const dateLabel = new Date()
+    .toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" })
+    .toUpperCase();
+  const deskCode = isPlanner ? "FR8-PLN" : "PRT-OPS";
+
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
-      {/* Desk header — 32px weight-400 chart-caption voice */}
+      {/* Greeting band — mono eyebrow + 36px Inter 700 greeting (spec §7) */}
       <section aria-labelledby="page-title" className="pb-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
               <VerifiedDot />
-              {isPlanner ? "FR8-PLN / FREIGHT DESK" : "PRT-OPS / OPERATIONS DESK"}
+              {deskCode} · {dateLabel}
             </div>
-            <h1 id="page-title" className="text-[32px] font-semibold leading-tight text-sea-900">
-              {isPlanner ? "Freight & Bulk Chartering Desk" : "Vessel & Port Operations Panel"}
+            <h1 id="page-title" className="text-4xl font-bold tracking-tight text-obsidian">
+              {daypart}, {firstName}
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-body">
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-charcoal">
               {isPlanner
                 ? "Forecast freight volatility across major coal trade lanes, identify optimal charter contract entry windows, and optimize vessel parcel sizes for Indian East Coast terminals."
                 : "Monitor berth readiness, tidal draft clearance, LOA compliance, and vessel turnaround schedules across Paradip, Vizag, Gangavaram, and Haldia."}
@@ -98,23 +108,23 @@ export const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Fetch failure surface — a hazard, marked like a chart hazard */}
+      {/* Fetch failure surface — Wise danger recipe: Fog fill + Alarm Red (spec §3) */}
       {fetchError && (
         <div
           role="alert"
-          className="mb-8 flex flex-col gap-3 rounded-sm border border-coral-500/40 bg-coral-100 p-4 sm:flex-row sm:items-center"
+          className="mb-8 flex flex-col gap-3 rounded-card border border-pebble bg-fog p-4 sm:flex-row sm:items-center"
         >
           <span
             aria-hidden="true"
-            className="flex size-6 shrink-0 items-center justify-center rounded-sm border border-coral-500/50 font-mono text-sm font-semibold text-coral-700"
+            className="flex size-6 shrink-0 items-center justify-center rounded-full border border-alarm-red/40 bg-paper font-mono text-sm font-semibold text-alarm-red"
           >
             !
           </span>
-          <p className="flex-1 text-sm font-semibold text-coral-700">{fetchError}</p>
+          <p className="flex-1 text-sm font-semibold text-alarm-red">{fetchError}</p>
           <button
             type="button"
             onClick={fetchAnalyses}
-            className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-sm border border-coral-500/50 px-3.5 py-2 font-mono text-xs font-medium text-coral-700 transition-colors duration-150 hover:bg-coral-100/70"
+            className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-full border border-alarm-red/40 bg-paper px-3.5 py-2 font-mono text-xs font-semibold text-alarm-red transition-colors duration-150 hover:brightness-95"
           >
             <RefreshCw className="size-3.5" aria-hidden="true" />
             <span>Retry</span>
@@ -126,49 +136,49 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {isPlanner ? (
           <>
-            <Card className={METRIC_CARD}>
+            <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
                   SPOT VS PERIOD GAP
                 </span>
-                <TrendingUp className="size-4 text-sea-600" aria-hidden="true" />
+                <TrendingUp className="size-4 text-forest-ink" aria-hidden="true" />
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
+              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
                 -14.2%
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-body">
+              <p className="mt-2 text-xs leading-relaxed text-charcoal">
                 Short-term voyage contracts currently show significant cost advantage over daily
                 spot market exploration.
               </p>
             </Card>
 
-            <Card className={METRIC_CARD}>
+            <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
                   FORECASTED WINDOW
                 </span>
-                <Calendar className="size-4 text-sea-600" aria-hidden="true" />
+                <Calendar className="size-4 text-forest-ink" aria-hidden="true" />
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
+              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
                 OCT 05–18
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-body">
+              <p className="mt-2 text-xs leading-relaxed text-charcoal">
                 Capesize rates on Hay Point / Gladstone to Paradip route expected to dip to 90-day
                 low.
               </p>
             </Card>
 
-            <Card className={METRIC_CARD}>
+            <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
                   VESSEL PARCEL PAIRING
                 </span>
-                <Compass className="size-4 text-sea-600" aria-hidden="true" />
+                <Compass className="size-4 text-forest-ink" aria-hidden="true" />
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
+              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
                 PMX 75K
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-body">
+              <p className="mt-2 text-xs leading-relaxed text-charcoal">
                 Complies with current 14.5m draft constraints at Haldia Lock Gate and Paradip Berth
                 #2.
               </p>
@@ -176,46 +186,46 @@ export const Dashboard: React.FC = () => {
           </>
         ) : (
           <>
-            <Card className={METRIC_CARD}>
+            <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
                   BERTH AVAILABILITY
                 </span>
-                <Anchor className="size-4 text-sea-600" aria-hidden="true" />
+                <Anchor className="size-4 text-forest-ink" aria-hidden="true" />
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
+              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
                 3 READY
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-body">
+              <p className="mt-2 text-xs leading-relaxed text-charcoal">
                 Mechanized Coal Berths at Paradip &amp; Vizag Outer Harbor open for immediate
                 discharge.
               </p>
             </Card>
 
-            <Card className={METRIC_CARD}>
+            <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
                   DRAFT ADVISORY
                 </span>
-                <ShieldAlert className="size-4 text-amber-500" aria-hidden="true" />
+                <ShieldAlert className="size-4 text-signal-blue" aria-hidden="true" />
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">
+              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
                 14.5M MAX
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-body">
+              <p className="mt-2 text-xs leading-relaxed text-charcoal">
                 Sagar-Sandheads transshipment advisory active for incoming Capesize bulk carriers.
               </p>
             </Card>
 
-            <Card className={METRIC_CARD}>
+            <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
                   AVG TURNAROUND
                 </span>
-                <Clock className="size-4 text-sea-600" aria-hidden="true" />
+                <Clock className="size-4 text-forest-ink" aria-hidden="true" />
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-sea-900">41.8H</div>
-              <p className="mt-2 text-xs leading-relaxed text-body">
+              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">41.8H</div>
+              <p className="mt-2 text-xs leading-relaxed text-charcoal">
                 Idle waiting time reduced by 6.4 hours with automated tender pre-dispatch.
               </p>
             </Card>
