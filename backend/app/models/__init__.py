@@ -16,6 +16,7 @@ from app.models.entities import (
     DecisionRecord,
     RegretScore,
     DisruptionAlert,
+    StockOutAlert,
     AuditLog,
 )
 
@@ -36,5 +37,7 @@ __all__ = [
     "DecisionRecord",
     "RegretScore",
     "DisruptionAlert",
+    "StockOutAlert",
     "AuditLog",
 ]
+
