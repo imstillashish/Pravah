@@ -118,14 +118,14 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
   return (
     <section aria-labelledby="recent-analyses-heading">
       <SectionHeader title="Recent Procurement & Freight Forecasts" />
-      <p className="mt-1 text-sm text-body">
+      <p className="mt-1 text-sm text-charcoal">
         Historical voyage simulations, vessel parcel allocations, and realized cost savings.
       </p>
 
       <Card className="mt-4 overflow-hidden rounded-none p-0">
-        <div className="flex items-center justify-between border-b border-line bg-well px-4 py-3">
+        <div className="flex items-center justify-between border-b border-pebble bg-paper px-4 py-3">
           {/* On washed bands, eyebrow ink steps up to Deep Sea (Slate = 4.45:1 here) */}
-          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
             SIMULATION LOG · {analyses.length} ENTRIES
           </span>
           <SecondaryButton
@@ -145,11 +145,11 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
           role="region"
           aria-label="Recent analyses table, scrollable horizontally"
           tabIndex={0}
-          className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-sea-600"
+          className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-forest-ink"
         >
           <table className="w-full min-w-[720px] border-collapse text-left">
             <thead>
-              <tr className="border-b border-line-strong font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+              <tr className="border-b border-pebble bg-fog font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
                 <th scope="col" className="py-2.5 pl-4 pr-3 font-medium">Trade Route</th>
                 <th scope="col" className="px-3 py-2.5 font-medium">Cargo &amp; Parcel</th>
                 <th scope="col" className="px-3 py-2.5 font-medium">Vessel</th>
@@ -175,12 +175,12 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
               ) : analyses.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="p-6">
-                    <div className="rounded-sm border border-dashed border-line-strong px-6 py-8 text-center">
+                    <div className="rounded-card border border-dashed border-pebble px-6 py-8 text-center">
                       <Layers className="mx-auto mb-2 size-8 text-faint" aria-hidden="true" />
-                      <p className="font-mono text-sm font-medium text-sea-900">
+                      <p className="font-mono text-sm font-medium text-forest-ink">
                         No recent analyses recorded
                       </p>
-                      <p className="mt-1 font-mono text-xs text-muted">
+                      <p className="mt-1 font-mono text-xs text-slate">
                         Run a new scenario to evaluate voyage charter savings.
                       </p>
                     </div>
@@ -188,25 +188,25 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                 </tr>
               ) : (
                 analyses.map((item) => (
-                  <tr key={item.id} className="transition-colors duration-150 hover:bg-glass-50">
+                  <tr key={item.id} className="transition-colors duration-150 hover:bg-fog">
                     {/* Trade route */}
                     <td className="py-3.5 pl-4 pr-3">
-                      <div className="flex items-center gap-1.5 font-medium text-sea-900">
+                      <div className="flex items-center gap-1.5 font-medium text-forest-ink">
                         <span className="truncate">{item.origin_port}</span>
                         <span aria-hidden="true" className="text-faint">→</span>
                         <span className="truncate">{item.destination_port}</span>
                       </div>
-                      <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
                         {item.origin_country}
                       </div>
                     </td>
 
                     {/* Cargo */}
                     <td className="px-3 py-3.5">
-                      <div className="font-mono tabular-nums text-sea-900">
-                        {item.parcel_tonnage.toLocaleString()} <span className="text-muted"> MT</span>
+                      <div className="font-mono tabular-nums text-forest-ink">
+                        {item.parcel_tonnage.toLocaleString()} <span className="text-slate"> MT</span>
                       </div>
-                      <div className="text-xs text-body">{item.commodity}</div>
+                      <div className="text-xs text-charcoal">{item.commodity}</div>
                     </td>
 
                     {/* Vessel */}
@@ -216,18 +216,18 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
 
                     {/* Forecast vs spot */}
                     <td className="px-3 py-3.5">
-                      <div className="font-mono tabular-nums text-sea-900">
+                      <div className="font-mono tabular-nums text-forest-ink">
                         ${item.predicted_rate_pmt.toFixed(2)}
-                        <span className="text-muted"> / MT</span>
+                        <span className="text-slate"> / MT</span>
                       </div>
-                      <div className="font-mono text-xs tabular-nums text-muted">
+                      <div className="font-mono text-xs tabular-nums text-slate">
                         Spot: ${item.benchmark_spot_pmt.toFixed(2)}
                       </div>
                     </td>
 
                     {/* Savings — Slate ink: Deep is 3.5:1, below AA at 14px */}
                     <td className="px-3 py-3.5">
-                      <span className="font-mono font-medium tabular-nums text-sea-800">
+                      <span className="font-mono font-medium tabular-nums text-spruce">
                         <span aria-hidden="true" className="mr-0.5 text-[8px]">▲</span>
                         +${Math.round(item.estimated_savings_usd).toLocaleString()}
                       </span>
@@ -237,7 +237,7 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                     <td className="px-3 py-3.5">{renderStatusBadge(item.status)}</td>
 
                     {/* Time */}
-                    <td className="py-3.5 pl-3 pr-4 text-right font-mono text-xs tabular-nums text-muted">
+                    <td className="py-3.5 pl-3 pr-4 text-right font-mono text-xs tabular-nums text-slate">
                       {formatDate(item.created_at)}
                     </td>
                   </tr>
