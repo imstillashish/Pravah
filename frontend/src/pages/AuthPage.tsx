@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
 import { Compass, Lock, Mail, User, AlertCircle, ArrowRight } from "lucide-react";
 import { PrimaryButton, Card, TextButton } from "../components/ui";
+import { AstitvaLogo } from "../components/AstitvaLogo";
 import { cx } from "../lib/cn";
 
 /**
@@ -76,15 +77,7 @@ export const AuthPage: React.FC = () => {
     <div className="grid min-h-screen lg:grid-cols-[45fr_55fr]">
       {/* Forest Ink hero panel — the brand's display voice (desktop only) */}
       <aside className="m-4 hidden flex-col justify-between rounded-xl bg-forest-ink p-12 lg:flex">
-        <div className="flex items-center gap-2.5">
-          <span className="flex size-8 items-center justify-center rounded-full bg-lime-voltage text-forest-ink">
-            <Compass className="size-5" aria-hidden="true" />
-          </span>
-          <span className="text-sm font-medium text-paper">Intelligent Freight Portal</span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-paper/60">
-            SAIL Bulk Chartering
-          </span>
-        </div>
+        <AstitvaLogo size={32} variant="inverse" subtitle={true} />
 
         <div>
           <h1 className="text-5xl font-black leading-[0.9] tracking-[-0.03em] text-lime-voltage xl:text-[64px] 2xl:text-[89px]">

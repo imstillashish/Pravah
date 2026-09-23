@@ -7,8 +7,8 @@ import {
   BookOpen,
   Settings,
   LogOut,
-  Compass,
 } from "lucide-react";
+import { AstitvaLogo } from "./AstitvaLogo";
 
 /**
  * Left icon rail (56px) — Wise shell. Paper panel, Pebble hairline
@@ -32,11 +32,9 @@ export const IconRail: React.FC = () => {
       aria-label="Primary navigation"
       className="fixed inset-y-0 left-0 z-40 hidden w-14 flex-col items-center justify-between border-r border-pebble bg-paper py-4 md:flex"
     >
-      {/* Brand mark — forest tile + lime glyph (the rail's one lime moment) */}
+      {/* Brand mark — Astitva predictive prow mark */}
       <div className="flex flex-col items-center gap-6">
-        <div className="flex size-8 items-center justify-center rounded-full bg-forest-ink text-lime-voltage">
-          <Compass className="size-5" aria-hidden="true" />
-        </div>
+        <AstitvaLogo size={32} variant="mark-only" />
 
         <nav aria-label="Workspace sections" className="flex flex-col items-center gap-2">
           {RAIL_ITEMS.map(({ icon: Icon, label }, index) => {
