@@ -3,6 +3,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { cx } from "../lib/cn";
 import { EASE_OUT } from "../lib/motion";
 
+/* Data-driven charts: use StatCard (GlobalMetricsStrip). This one draws
+ * illustrative paths for the drawer forecast only. */
 /**
  * Sparkline variants for the Wise world (spec §7): actual = Forest Ink
  * solid, forecast = Charcoal dashed, negative = Alarm Red. Series

@@ -130,11 +130,6 @@ export function Pill({ className, children, tone = "default", ...props }: PillPr
   );
 }
 
-/** Verified marker — Forest Ink dot, paired with a text label by the caller. */
-export function VerifiedDot({ className }: { className?: string }) {
-  return <span aria-hidden className={cx("inline-block size-1.5 rounded-full bg-forest-ink", className)} />;
-}
-
 /** Section title: 20px Inter 600 Forest Ink. */
 export function SectionHeader({ title, action }: { title: string; action?: ReactNode }) {
   return (
