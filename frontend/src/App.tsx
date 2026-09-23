@@ -11,10 +11,10 @@ function MainApp() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-canvas">
+      <div className="flex min-h-screen items-center justify-center bg-paper">
         <div className="flex flex-col items-center gap-3">
-          <div className="size-8 animate-spin rounded-full border-2 border-line-strong border-t-mint-500" />
-          <span className="font-mono text-xs text-muted">Establishing session…</span>
+          <div className="size-8 animate-spin rounded-full border-2 border-pebble border-t-lime-voltage" />
+          <span className="font-mono text-xs text-slate">Establishing session…</span>
         </div>
       </div>
     );
@@ -22,7 +22,7 @@ function MainApp() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-canvas">
+      <div className="min-h-screen bg-paper">
         <AuthPage />
         {import.meta.env.DEV && <Agentation />}
       </div>
@@ -32,7 +32,7 @@ function MainApp() {
   const isPlanner = user.role === "logistics_planner";
 
   return (
-    <div className="min-h-screen bg-canvas">
+    <div className="min-h-screen bg-paper">
       <IconRail />
       <TopBar />
       <div className="flex">
