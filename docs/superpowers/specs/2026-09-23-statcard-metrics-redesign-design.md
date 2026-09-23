@@ -120,7 +120,7 @@ export interface StatCardProps {
   goodWhen?: "up" | "down";    // default "up"
   deltaLabel?: string;         // e.g. "vs 30 days ago"
   caption?: string;            // static footer when no delta (bunker card)
-  delta?: number | null;       // server-provided % change; null hides delta line
+  delta?: number | null;       // server-provided % change; null → caption or empty fixed-height line (§6)
   index?: number;              // stagger position for entry animation
 }
 ```
@@ -196,7 +196,7 @@ Card tone="fog" rounded-[10px] p-4, Pebble hairline, flex row justify-between ga
 - Spark region: `tabIndex={0}`, `aria-hidden="true"` (the card root's label already describes the data; the scrub is a visual pointer aid). Keyboard scrubbing updates the visible value/line so sighted keyboard users get parity; the summary label keeps screen-reader users informed of headline facts without 30 stops.
 - Focus: `focus-visible` 2px Forest Ink ring (global style already applies outline; spark region adds `outline-offset` inset so the ring hugs the spark box).
 - Motion: all entry/roll animation gated on `prefers-reduced-motion` (hook + CSS global rule).
-- Color independence: ▲/▼ glyphs + "up/down" words in the delta line mean hue is never sole signal.
+- Color independence: the ▲/▼ glyph (shape, not hue) always accompanies the delta color — WCAG 1.4.1 satisfied; the "up/down" words live in the card's aria-label for screen readers.
 
 ## 8. Testing & Verification
 
