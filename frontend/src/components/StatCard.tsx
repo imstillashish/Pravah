@@ -8,14 +8,16 @@ import { cx } from "../lib/cn";
 
 /*
  * Wise-dressed StatCard (spec §5.1): real series sparkline, pointer +
- * keyboard scrub, spring rolling headline. Colors from spec §3 —
- * Spruce (good) / Alarm Red (bad); the ▲/▼ glyph is always paired with
- * the delta color so hue is never the sole signal. Lime never appears
- * here (1.47:1 on Paper — spec trap).
+ * keyboard scrub, spring rolling headline. The spark region is an
+ * operable role="slider" scrubber (a11y: focusable + aria-hidden is a
+ * violation; focusable + slider semantics is the correct pattern).
+ * Semantic colors come from the theme tokens via spec §3 — the
+ * ▲/▼ glyph is always paired with the delta color so hue is never
+ * the sole signal.
  */
 
-const UP = "#054d28"; // Spruce — good direction
-const DOWN = "#cb272f"; // Alarm Red — bad direction
+const UP = "#054d28"; // good-direction stroke/text (Spruce in Wise world)
+const DOWN = "#cb272f"; // bad-direction stroke/text (Alarm Red in Wise world)
 
 /** Smooth monotone cubic path (no overshoot on the drawn line). */
 function monotonePath(points: { x: number; y: number }[]): string {
@@ -206,7 +208,17 @@ export const StatCard: React.FC<StatCardProps> = ({
       {n >= 2 && (
         <div
           ref={sparkRef}
-          aria-hidden="true"
+          role="slider"
+          aria-label={`${label} trend — scrub values`}
+          aria-orientation="horizontal"
+          aria-valuemin={1}
+          aria-valuemax={n}
+          aria-valuenow={hover != null ? hover + 1 : n}
+          aria-valuetext={
+            hover != null
+              ? `day ${hover + 1} of ${n}: ${format(series[hover] ?? headline)}`
+              : `latest: ${format(headline)}`
+          }
           tabIndex={0}
           className={cx(
             "relative w-[44%] max-w-52 shrink-0 cursor-crosshair touch-pan-y self-stretch",
@@ -225,6 +237,7 @@ export const StatCard: React.FC<StatCardProps> = ({
             height={box.h}
             viewBox={`0 0 ${box.w} ${box.h}`}
             className="block h-full w-full overflow-visible"
+            aria-hidden="true"
           >
             <defs>
               <linearGradient id={`${gradientId}-fill`} x1="0" y1="0" x2="0" y2="1">
