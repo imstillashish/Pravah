@@ -93,62 +93,7 @@ DEFAULT_VESSELS: List[Dict[str, Any]] = [
 ]
 
 
-try:
-    from app.models import FeasibilityResult, ReferencePort, ReferenceVesselClass
-except (ImportError, AttributeError):
-    ReferencePort = Any
-    ReferenceVesselClass = Any
-
-    class FeasibilityResult:
-            """FeasibilityResult ORM/Model representation."""
-
-            def __init__(
-                self,
-                analysis_id=None,
-                vessel_class: str = "",
-                port_id: Optional[int] = None,
-                port_name: Optional[str] = None,
-                draft_pass: bool = False,
-                loa_pass: bool = False,
-                beam_pass: bool = False,
-                dwt_pass: bool = False,
-                overall_feasible: bool = False,
-                requires_lightering: bool = False,
-                failure_reason: Optional[str] = None,
-                **kwargs,
-            ):
-                self.analysis_id = analysis_id
-                self.vessel_class = vessel_class
-                self.port_id = port_id
-                self.port_name = port_name
-                self.draft_pass = draft_pass
-                self.loa_pass = loa_pass
-                self.beam_pass = beam_pass
-                self.dwt_pass = dwt_pass
-                self.overall_feasible = overall_feasible
-                self.requires_lightering = requires_lightering
-                self.failure_reason = failure_reason
-                for k, v in kwargs.items():
-                    setattr(self, k, v)
-
-            def to_dict(self) -> Dict[str, Any]:
-                return {
-                    "vessel_class": self.vessel_class,
-                    "port_name": self.port_name,
-                    "draft_pass": self.draft_pass,
-                    "loa_pass": self.loa_pass,
-                    "beam_pass": self.beam_pass,
-                    "dwt_pass": self.dwt_pass,
-                    "overall_feasible": self.overall_feasible,
-                    "requires_lightering": self.requires_lightering,
-                    "failure_reason": self.failure_reason,
-                }
-
-            def __repr__(self) -> str:
-                return (
-                    f"<FeasibilityResult {self.vessel_class} feasible={self.overall_feasible} "
-                    f"lightering={self.requires_lightering} reason={self.failure_reason}>"
-                )
+from app.models import FeasibilityResult, ReferencePort, ReferenceVesselClass
 
 
 def _resolve_port_data(analysis: Any, db: Optional[Session]) -> Dict[str, Any]:

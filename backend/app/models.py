@@ -5,6 +5,22 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 
+def _to_float(val: Any, default: float = 0.0) -> float:
+    """Safely converts an ORM attribute/column value to float without buffer protocol mismatch."""
+    try:
+        return float(val) if val is not None else default
+    except (TypeError, ValueError):
+        return default
+
+
+def _to_float_or_none(val: Any) -> Optional[float]:
+    """Safely converts an ORM attribute/column value to Optional[float]."""
+    try:
+        return float(val) if val is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -81,30 +97,31 @@ class ForecastResult(Base):
 
     @property
     def p10(self) -> Optional[float]:
-        return self.p10_usd_per_mt
+        return _to_float_or_none(getattr(self, "p10_usd_per_mt", None))
 
     @property
     def p50(self) -> Optional[float]:
-        return self.p50_usd_per_mt
+        return _to_float_or_none(getattr(self, "p50_usd_per_mt", None))
 
     @property
     def p90(self) -> Optional[float]:
-        return self.p90_usd_per_mt
+        return _to_float_or_none(getattr(self, "p90_usd_per_mt", None))
 
     @property
     def arima_baseline(self) -> Optional[float]:
-        return self.arima_baseline_usd_per_mt
+        return _to_float_or_none(getattr(self, "arima_baseline_usd_per_mt", None))
 
     def to_dict(self) -> Dict[str, Any]:
+        fg_at = getattr(self, "forecast_generated_at", None)
         return {
-            "analysis_id": self.analysis_id,
-            "p10_usd_per_mt": self.p10_usd_per_mt,
-            "p50_usd_per_mt": self.p50_usd_per_mt,
-            "p90_usd_per_mt": self.p90_usd_per_mt,
-            "arima_baseline_usd_per_mt": self.arima_baseline_usd_per_mt,
-            "confidence_label": self.confidence_label,
-            "model_used": self.model_used,
-            "forecast_generated_at": self.forecast_generated_at.isoformat() if self.forecast_generated_at else None,
+            "analysis_id": getattr(self, "analysis_id", None),
+            "p10_usd_per_mt": _to_float_or_none(getattr(self, "p10_usd_per_mt", None)),
+            "p50_usd_per_mt": _to_float_or_none(getattr(self, "p50_usd_per_mt", None)),
+            "p90_usd_per_mt": _to_float_or_none(getattr(self, "p90_usd_per_mt", None)),
+            "arima_baseline_usd_per_mt": _to_float_or_none(getattr(self, "arima_baseline_usd_per_mt", None)),
+            "confidence_label": getattr(self, "confidence_label", None),
+            "model_used": getattr(self, "model_used", None),
+            "forecast_generated_at": fg_at.isoformat() if hasattr(fg_at, "isoformat") else None,
         }
 
 
@@ -126,15 +143,15 @@ class FeasibilityResult(Base):
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "vessel_class": self.vessel_class,
-            "port_name": self.port_name,
-            "draft_pass": self.draft_pass,
-            "loa_pass": self.loa_pass,
-            "beam_pass": self.beam_pass,
-            "dwt_pass": self.dwt_pass,
-            "overall_feasible": self.overall_feasible,
-            "requires_lightering": self.requires_lightering,
-            "failure_reason": self.failure_reason,
+            "vessel_class": getattr(self, "vessel_class", ""),
+            "port_name": getattr(self, "port_name", None),
+            "draft_pass": getattr(self, "draft_pass", False),
+            "loa_pass": getattr(self, "loa_pass", False),
+            "beam_pass": getattr(self, "beam_pass", False),
+            "dwt_pass": getattr(self, "dwt_pass", False),
+            "overall_feasible": getattr(self, "overall_feasible", False),
+            "requires_lightering": getattr(self, "requires_lightering", False),
+            "failure_reason": getattr(self, "failure_reason", None),
         }
 
 
@@ -154,21 +171,25 @@ class Recommendation(Base):
     cost_score_breakdown = Column(Text, nullable=True)
     is_emergency_mode = Column(Boolean, default=False)
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.score_breakdown = kwargs.pop("score_breakdown", [])
         super().__init__(**kwargs)
 
     def to_dict(self) -> Dict[str, Any]:
+        c_score = getattr(self, "cost_score", 0.0)
+        cf_score = getattr(self, "confidence_score", 0.0)
+        cov_score = getattr(self, "coverage_fit_score", 0.0)
+        t_score = getattr(self, "total_score", 0.0)
         return {
-            "rank": self.rank,
-            "vessel_class": self.vessel_class,
-            "port_name": self.port_name,
-            "cost_score": round(float(self.cost_score), 4),
-            "confidence_score": round(float(self.confidence_score), 4),
-            "coverage_fit_score": round(float(self.coverage_fit_score), 4),
-            "total_score": round(float(self.total_score), 4),
+            "rank": getattr(self, "rank", 1),
+            "vessel_class": getattr(self, "vessel_class", ""),
+            "port_name": getattr(self, "port_name", None),
+            "cost_score": round(_to_float(c_score), 4),
+            "confidence_score": round(_to_float(cf_score), 4),
+            "coverage_fit_score": round(_to_float(cov_score), 4),
+            "total_score": round(_to_float(t_score), 4),
             "score_breakdown": getattr(self, "score_breakdown", []),
-            "is_emergency_mode": self.is_emergency_mode,
+            "is_emergency_mode": getattr(self, "is_emergency_mode", False),
         }
 
 
@@ -184,10 +205,10 @@ class RiskResult(Base):
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "risk_category": self.risk_category,
-            "severity": self.severity,
-            "signal_description": self.signal_description,
-            "data_source": self.data_source,
+            "risk_category": getattr(self, "risk_category", ""),
+            "severity": getattr(self, "severity", "NOT_ASSESSED"),
+            "signal_description": getattr(self, "signal_description", None),
+            "data_source": getattr(self, "data_source", None),
         }
 
 
@@ -205,14 +226,21 @@ class LandedCost(Base):
     computed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     def to_dict(self) -> Dict[str, Any]:
+        fr = getattr(self, "freight_rate_usd_per_mt", 0.0)
+        baf = getattr(self, "baf_surcharge_usd_per_mt", 0.0)
+        fx = getattr(self, "usd_inr_rate", 83.5)
+        tot_usd = getattr(self, "total_usd_per_mt", 0.0)
+        tot_inr_pmt = getattr(self, "total_inr_per_mt", 0.0)
+        tot_inr = getattr(self, "total_inr", 0.0)
+        c_at = getattr(self, "computed_at", None)
         return {
-            "freight_rate_usd_per_mt": round(float(self.freight_rate_usd_per_mt), 2),
-            "baf_surcharge_usd_per_mt": round(float(self.baf_surcharge_usd_per_mt), 2),
-            "usd_inr_rate": round(float(self.usd_inr_rate), 2),
-            "total_usd_per_mt": round(float(self.total_usd_per_mt), 2),
-            "total_inr_per_mt": round(float(self.total_inr_per_mt), 2),
-            "total_inr": round(float(self.total_inr), 2),
-            "computed_at": self.computed_at.isoformat() if self.computed_at else None,
+            "freight_rate_usd_per_mt": round(_to_float(fr), 2),
+            "baf_surcharge_usd_per_mt": round(_to_float(baf), 2),
+            "usd_inr_rate": round(_to_float(fx, 83.5), 2),
+            "total_usd_per_mt": round(_to_float(tot_usd), 2),
+            "total_inr_per_mt": round(_to_float(tot_inr_pmt), 2),
+            "total_inr": round(_to_float(tot_inr), 2),
+            "computed_at": c_at.isoformat() if hasattr(c_at, "isoformat") else None,
         }
 
 
@@ -227,11 +255,13 @@ class StockOutAlert(Base):
     alert_message = Column(Text, default="")
 
     def to_dict(self) -> Dict[str, Any]:
+        d_stock = getattr(self, "days_to_stockout", 0.0)
+        d_best = getattr(self, "days_to_best_window", 0.0)
         return {
-            "days_to_stockout": round(float(self.days_to_stockout), 1),
-            "days_to_best_window": round(float(self.days_to_best_window), 1),
-            "is_at_risk": self.is_at_risk,
-            "alert_message": self.alert_message,
+            "days_to_stockout": round(_to_float(d_stock), 1),
+            "days_to_best_window": round(_to_float(d_best), 1),
+            "is_at_risk": getattr(self, "is_at_risk", False),
+            "alert_message": getattr(self, "alert_message", ""),
         }
 
 
@@ -261,13 +291,19 @@ class RegretScore(Base):
     computed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     def to_dict(self) -> Dict[str, Any]:
+        r_pct = getattr(self, "regret_pct", 0.0)
+        c_rate = getattr(self, "chosen_day_rate", 0.0)
+        b_rate = getattr(self, "best_rate_in_window", 0.0)
+        w_start = getattr(self, "window_start", None)
+        w_end = getattr(self, "window_end", None)
+        c_at = getattr(self, "computed_at", None)
         return {
-            "regret_pct": round(float(self.regret_pct), 2),
-            "chosen_day_rate": round(float(self.chosen_day_rate), 2),
-            "best_rate_in_window": round(float(self.best_rate_in_window), 2),
-            "window_start": self.window_start.isoformat() if self.window_start else None,
-            "window_end": self.window_end.isoformat() if self.window_end else None,
-            "computed_at": self.computed_at.isoformat() if self.computed_at else None,
+            "regret_pct": round(_to_float(r_pct), 2),
+            "chosen_day_rate": round(_to_float(c_rate), 2),
+            "best_rate_in_window": round(_to_float(b_rate), 2),
+            "window_start": w_start.isoformat() if hasattr(w_start, "isoformat") else None,
+            "window_end": w_end.isoformat() if hasattr(w_end, "isoformat") else None,
+            "computed_at": c_at.isoformat() if hasattr(c_at, "isoformat") else None,
         }
 
 

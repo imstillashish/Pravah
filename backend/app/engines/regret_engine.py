@@ -10,50 +10,7 @@ import pandas as pd
 from sqlalchemy.orm import Session
 
 
-try:
-    from app.models import RegretScore, DecisionRecord
-except (ImportError, AttributeError):
-    DecisionRecord = Any
-
-    class RegretScore:
-            """RegretScore ORM/Model representation."""
-
-            def __init__(
-                self,
-                decision_record_id=None,
-                regret_pct: float = 0.0,
-                chosen_day_rate: float = 0.0,
-                best_rate_in_window: float = 0.0,
-                window_start: Optional[date] = None,
-                window_end: Optional[date] = None,
-                computed_at: Optional[datetime] = None,
-                **kwargs,
-            ):
-                self.decision_record_id = decision_record_id
-                self.regret_pct = regret_pct
-                self.chosen_day_rate = chosen_day_rate
-                self.best_rate_in_window = best_rate_in_window
-                self.window_start = window_start
-                self.window_end = window_end
-                self.computed_at = computed_at or datetime.now(timezone.utc)
-                for k, v in kwargs.items():
-                    setattr(self, k, v)
-
-            def to_dict(self) -> Dict[str, Any]:
-                return {
-                    "regret_pct": round(self.regret_pct, 2),
-                    "chosen_day_rate": round(self.chosen_day_rate, 2),
-                    "best_rate_in_window": round(self.best_rate_in_window, 2),
-                    "window_start": self.window_start.isoformat() if self.window_start else None,
-                    "window_end": self.window_end.isoformat() if self.window_end else None,
-                    "computed_at": self.computed_at.isoformat() if self.computed_at else None,
-                }
-
-            def __repr__(self) -> str:
-                return (
-                    f"<RegretScore regret={self.regret_pct:.1f}% "
-                    f"chosen={self.chosen_day_rate:.2f} best={self.best_rate_in_window:.2f}>"
-                )
+from app.models import RegretScore, DecisionRecord
 
 
 def _load_historical_prices() -> pd.DataFrame:

@@ -23,75 +23,7 @@ from ml.feature_engineering import build_features
 from ml.train_arima import arima_forecast, fit_arima_baseline
 from ml.train_lgbm import FEATURE_COLS
 
-try:
-    from app.models import Analysis, ForecastResult
-except (ImportError, AttributeError):
-    Analysis = Any
-
-    class ForecastResult:
-        """ForecastResult ORM/Model representation."""
-
-        def __init__(
-            self,
-            analysis_id=None,
-            p10_usd_per_mt: Optional[float] = None,
-            p50_usd_per_mt: Optional[float] = None,
-            p90_usd_per_mt: Optional[float] = None,
-            arima_baseline_usd_per_mt: Optional[float] = None,
-            confidence_label: Optional[str] = None,
-            model_used: Optional[str] = "LightGBM_quantile_ensemble",
-            forecast_generated_at: Optional[datetime] = None,
-            **kwargs,
-        ):
-            self.analysis_id = analysis_id
-            self.p10_usd_per_mt = p10_usd_per_mt
-            self.p50_usd_per_mt = p50_usd_per_mt
-            self.p90_usd_per_mt = p90_usd_per_mt
-            self.arima_baseline_usd_per_mt = arima_baseline_usd_per_mt
-            self.confidence_label = confidence_label
-            self.model_used = model_used
-            self.forecast_generated_at = forecast_generated_at or datetime.now(timezone.utc)
-            for k, v in kwargs.items():
-                setattr(self, k, v)
-
-            @property
-            def p10(self) -> Optional[float]:
-                return self.p10_usd_per_mt
-
-            @property
-            def p50(self) -> Optional[float]:
-                return self.p50_usd_per_mt
-
-            @property
-            def p90(self) -> Optional[float]:
-                return self.p90_usd_per_mt
-
-            @property
-            def arima_baseline(self) -> Optional[float]:
-                return self.arima_baseline_usd_per_mt
-
-            def to_dict(self) -> Dict[str, Any]:
-                return {
-                    "analysis_id": self.analysis_id,
-                    "p10_usd_per_mt": self.p10_usd_per_mt,
-                    "p50_usd_per_mt": self.p50_usd_per_mt,
-                    "p90_usd_per_mt": self.p90_usd_per_mt,
-                    "arima_baseline_usd_per_mt": self.arima_baseline_usd_per_mt,
-                    "confidence_label": self.confidence_label,
-                    "model_used": self.model_used,
-                    "forecast_generated_at": (
-                        self.forecast_generated_at.isoformat()
-                        if self.forecast_generated_at
-                        else None
-                    ),
-                }
-
-            def __repr__(self) -> str:
-                return (
-                    f"<ForecastResult p10={self.p10_usd_per_mt} p50={self.p50_usd_per_mt} "
-                    f"p90={self.p90_usd_per_mt} arima={self.arima_baseline_usd_per_mt} "
-                    f"confidence={self.confidence_label}>"
-                )
+from app.models import Analysis, ForecastResult
 
 
 def _resolve_model_registry_path() -> Path:

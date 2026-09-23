@@ -5,42 +5,7 @@ Tasks 187–191 implementation.
 from typing import Any, Dict, Optional
 
 
-try:
-    from app.models import StockOutAlert
-except (ImportError, AttributeError):
-    class StockOutAlert:
-            """StockOutAlert ORM/Model representation."""
-
-            def __init__(
-                self,
-                analysis_id=None,
-                days_to_stockout: float = 0.0,
-                days_to_best_window: float = 0.0,
-                is_at_risk: bool = False,
-                alert_message: str = "",
-                **kwargs,
-            ):
-                self.analysis_id = analysis_id
-                self.days_to_stockout = days_to_stockout
-                self.days_to_best_window = days_to_best_window
-                self.is_at_risk = is_at_risk
-                self.alert_message = alert_message
-                for k, v in kwargs.items():
-                    setattr(self, k, v)
-
-            def to_dict(self) -> Dict[str, Any]:
-                return {
-                    "days_to_stockout": round(self.days_to_stockout, 1),
-                    "days_to_best_window": round(self.days_to_best_window, 1),
-                    "is_at_risk": self.is_at_risk,
-                    "alert_message": self.alert_message,
-                }
-
-            def __repr__(self) -> str:
-                return (
-                    f"<StockOutAlert at_risk={self.is_at_risk} "
-                    f"stockout_in={self.days_to_stockout:.0f}d best_window_in={self.days_to_best_window:.0f}d>"
-                )
+from app.models import StockOutAlert
 
 
 def calculate_stockout_alert(

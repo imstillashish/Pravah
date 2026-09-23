@@ -6,51 +6,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
 
-try:
-    from app.models import LandedCost
-except (ImportError, AttributeError):
-    class LandedCost:
-            """LandedCost ORM/Model representation."""
-
-            def __init__(
-                self,
-                analysis_id=None,
-                freight_rate_usd_per_mt: float = 0.0,
-                baf_surcharge_usd_per_mt: float = 0.0,
-                usd_inr_rate: float = 83.5,
-                total_usd_per_mt: float = 0.0,
-                total_inr_per_mt: float = 0.0,
-                total_inr: float = 0.0,
-                computed_at: Optional[datetime] = None,
-                **kwargs,
-            ):
-                self.analysis_id = analysis_id
-                self.freight_rate_usd_per_mt = freight_rate_usd_per_mt
-                self.baf_surcharge_usd_per_mt = baf_surcharge_usd_per_mt
-                self.usd_inr_rate = usd_inr_rate
-                self.total_usd_per_mt = total_usd_per_mt
-                self.total_inr_per_mt = total_inr_per_mt
-                self.total_inr = total_inr
-                self.computed_at = computed_at or datetime.now(timezone.utc)
-                for k, v in kwargs.items():
-                    setattr(self, k, v)
-
-            def to_dict(self) -> Dict[str, Any]:
-                return {
-                    "freight_rate_usd_per_mt": round(self.freight_rate_usd_per_mt, 2),
-                    "baf_surcharge_usd_per_mt": round(self.baf_surcharge_usd_per_mt, 2),
-                    "usd_inr_rate": round(self.usd_inr_rate, 2),
-                    "total_usd_per_mt": round(self.total_usd_per_mt, 2),
-                    "total_inr_per_mt": round(self.total_inr_per_mt, 2),
-                    "total_inr": round(self.total_inr, 2),
-                    "computed_at": self.computed_at.isoformat() if self.computed_at else None,
-                }
-
-            def __repr__(self) -> str:
-                return (
-                    f"<LandedCost total_usd={self.total_usd_per_mt:.2f} "
-                    f"total_inr_pmt={self.total_inr_per_mt:.2f} total_inr={self.total_inr:,.0f}>"
-                )
+from app.models import LandedCost
 
 
 def calculate_landed_cost(

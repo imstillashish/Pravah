@@ -2,64 +2,20 @@
 Recommendation Engine.
 Tasks 169–176 implementation.
 """
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
+from app.models import Recommendation
 
 
-try:
-    from app.models import Recommendation
-except (ImportError, AttributeError):
-    class Recommendation:
-            """Recommendation ORM/Model representation."""
-
-            def __init__(
-                self,
-                analysis_id=None,
-                rank: int = 1,
-                vessel_class: str = "",
-                port_id: Optional[int] = None,
-                port_name: Optional[str] = None,
-                cost_score: float = 0.0,
-                confidence_score: float = 0.0,
-                coverage_fit_score: float = 0.0,
-                total_score: float = 0.0,
-                cost_score_breakdown: Optional[str] = None,
-                score_breakdown: Optional[List[Dict[str, Any]]] = None,
-                is_emergency_mode: bool = False,
-                **kwargs,
-            ):
-                self.analysis_id = analysis_id
-                self.rank = rank
-                self.vessel_class = vessel_class
-                self.port_id = port_id
-                self.port_name = port_name
-                self.cost_score = cost_score
-                self.confidence_score = confidence_score
-                self.coverage_fit_score = coverage_fit_score
-                self.total_score = total_score
-                self.cost_score_breakdown = cost_score_breakdown
-                self.score_breakdown = score_breakdown or []
-                self.is_emergency_mode = is_emergency_mode
-                for k, v in kwargs.items():
-                    setattr(self, k, v)
-
-            def to_dict(self) -> Dict[str, Any]:
-                return {
-                    "rank": self.rank,
-                    "vessel_class": self.vessel_class,
-                    "port_name": self.port_name,
-                    "cost_score": round(self.cost_score, 4),
-                    "confidence_score": round(self.confidence_score, 4),
-                    "coverage_fit_score": round(self.coverage_fit_score, 4),
-                    "total_score": round(self.total_score, 4),
-                    "score_breakdown": self.score_breakdown,
-                    "is_emergency_mode": self.is_emergency_mode,
-                }
-
-            def __repr__(self) -> str:
-                return (
-                    f"<Recommendation rank={self.rank} vessel={self.vessel_class} "
-                    f"port={self.port_name} score={self.total_score:.3f}>"
-                )
+class Candidate(TypedDict):
+    vessel_class: str
+    port_id: Optional[int]
+    port_name: Optional[str]
+    cost_score: float
+    confidence_score: float
+    coverage_fit_score: float
+    total_score: float
+    cost_val: float
+    score_breakdown: List[Dict[str, Any]]
 
 
 # Vessel DWT limits for coverage fit
@@ -125,7 +81,7 @@ def run_recommendation(
     p50_base = float(getattr(forecast, "p50_usd_per_mt", None) or getattr(forecast, "p50", None) or 22.3)
 
     # Calculate estimated costs for each feasible option
-    option_costs = []
+    option_costs: List[float] = []
     for opt in feasible_options:
         v_class = getattr(opt, "vessel_class", "")
         multiplier = VESSEL_COST_MULTIPLIER.get(v_class, 1.0)
@@ -135,7 +91,7 @@ def run_recommendation(
     min_c = min(option_costs)
     max_c = max(option_costs)
 
-    scored_candidates = []
+    scored_candidates: List[Candidate] = []
 
     for idx, opt in enumerate(feasible_options):
         v_class = getattr(opt, "vessel_class", "")
@@ -166,7 +122,7 @@ def run_recommendation(
         )
 
         # Task 176: Score breakdown
-        score_breakdown = [
+        score_breakdown: List[Dict[str, Any]] = [
             {
                 "label": "Cost Score (50% weight)",
                 "weight": 0.5,
@@ -187,7 +143,7 @@ def run_recommendation(
             },
         ]
 
-        scored_candidates.append({
+        candidate: Candidate = {
             "vessel_class": v_class,
             "port_id": p_id,
             "port_name": p_name,
@@ -197,23 +153,24 @@ def run_recommendation(
             "total_score": total_score,
             "cost_val": cost_val,
             "score_breakdown": score_breakdown,
-        })
+        }
+        scored_candidates.append(candidate)
 
     # Task 175: Sort total_score DESC, tie-break on lower cost
-    scored_candidates.sort(key=lambda x: (-float(x["total_score"]), float(x["cost_val"])))
+    scored_candidates.sort(key=lambda x: (-x["total_score"], x["cost_val"]))
 
     recommendations: List[Recommendation] = []
     for rank_idx, item in enumerate(scored_candidates, 1):
         rec = Recommendation(
             analysis_id=analysis_id,
             rank=rank_idx,
-            vessel_class=str(item["vessel_class"]),
-            port_id=int(item["port_id"]) if item.get("port_id") is not None else None,
-            port_name=str(item["port_name"]) if item.get("port_name") is not None else None,
-            cost_score=float(item["cost_score"]),
-            confidence_score=float(item["confidence_score"]),
-            coverage_fit_score=float(item["coverage_fit_score"]),
-            total_score=float(item["total_score"]),
+            vessel_class=item["vessel_class"],
+            port_id=item["port_id"],
+            port_name=item["port_name"],
+            cost_score=item["cost_score"],
+            confidence_score=item["confidence_score"],
+            coverage_fit_score=item["coverage_fit_score"],
+            total_score=item["total_score"],
             score_breakdown=item["score_breakdown"],
             is_emergency_mode=is_emergency,
         )

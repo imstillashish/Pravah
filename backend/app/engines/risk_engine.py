@@ -7,41 +7,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.orm import Session
 
 
-try:
-    from app.models import RiskResult, DisruptionAlert
-except (ImportError, AttributeError):
-    DisruptionAlert = Any
-
-    class RiskResult:
-            """RiskResult ORM/Model representation."""
-
-            def __init__(
-                self,
-                analysis_id=None,
-                risk_category: str = "",
-                severity: str = "NOT_ASSESSED",
-                signal_description: Optional[str] = None,
-                data_source: Optional[str] = None,
-                **kwargs,
-            ):
-                self.analysis_id = analysis_id
-                self.risk_category = risk_category
-                self.severity = severity
-                self.signal_description = signal_description
-                self.data_source = data_source
-                for k, v in kwargs.items():
-                    setattr(self, k, v)
-
-            def to_dict(self) -> Dict[str, Any]:
-                return {
-                    "risk_category": self.risk_category,
-                    "severity": self.severity,
-                    "signal_description": self.signal_description,
-                    "data_source": self.data_source,
-                }
-
-            def __repr__(self) -> str:
-                return f"<RiskResult category='{self.risk_category}' severity='{self.severity}'>"
+from app.models import RiskResult, DisruptionAlert
 
 
 def run_risk_assessment(
