@@ -1,66 +1,55 @@
 @import "tailwindcss";
 
 /*
- * Sea-Glass design world — single source of truth: DESIGN.md (v4).
- * Mint-teal accent ramp over sea-glass tinted neutrals. Three semantic
- * hues with strict monopolies (amber=pending, coral=danger). Measured
- * AA contrast; the ONLY allowed box-shadow is .shadow-sheet (overlays).
+ * Wise visual world — single source of truth: DESIGN.md (v5) + spec
+ * docs/superpowers/specs/2026-09-23-wise-visual-world-design.md
+ * Contrast matrix in the spec §3 is binding. Lime is fill-only on light
+ * surfaces (1.47:1 as ink — never text/icon/stroke/chart).
  */
 @theme {
-  /* Mint ramp (accent) */
-  --color-glass-50: #effaf5;
-  --color-glass-100: #dcf3ea;
-  --color-glass-200: #bfe9db;
-  --color-glass-300: #97ddc6;
-  --color-glass-400: #63d1ab;
-  --color-mint-500: #2fbf94;
-  --color-mint-hover: #2ab08b;
-  --color-sea-600: #0d7a61;
-  --color-sea-700: #0a5c49;
-  --color-sea-800: #07453a;
-  --color-sea-900: #08362c;
+  /* Wise palette */
+  --color-forest-ink: #163300;
+  --color-lime-voltage: #9fe870;
+  --color-spruce: #054d28;
+  --color-linen-mist: #e2f6d5;
+  --color-signal-blue: #0b4c72;
+  --color-alarm-red: #cb272f;
+  --color-charcoal: #454745;
+  --color-obsidian: #0e0f0c;
+  --color-pebble: #868685;
+  --color-slate: #6a6c6a;
+  --color-fog: #e8ebe6;
+  --color-paper: #ffffff;
 
-  /* Sea-glass neutrals */
-  --color-canvas: #ecf1ee;
-  --color-card: #ffffff;
-  --color-well: #f7faf8;
-  --color-line: #d8e2dc;
-  --color-line-strong: #c2d2c9;
-  --color-wash: #e2ebe6;
-  --color-ink: #0d1f1c;
-  --color-body: #243935;
-  --color-muted: #56706a;
-  --color-faint: #748c85;
-
-  /* Semantic ramps (text-legal 700s + graphics 500s + tints) */
-  --color-amber-100: #fdf2d7;
-  --color-amber-300: #ecd9a4;
-  --color-amber-500: #d99a26;
-  --color-amber-700: #7a4f01;
-  --color-coral-100: #fdeae4;
-  --color-coral-500: #e85c3a;
-  --color-coral-700: #b03616;
-
-  /* Typography — unchanged faces */
+  /* Fonts — Inter UI, IBM Plex Mono numerals (deliberate Wise deviation) */
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Radius scale — 4px chips / 8px cards / 12px inputs / full pills */
+  /* Radii — pill geometry is the signature (buttons/tags/nav use Tailwind's
+     built-in rounded-full = 9999px; --radius-pill kept for spec fidelity) */
   --radius-*: initial;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-pill: 9999px;
+  --radius-card: 10px;
+  --radius-xl: 28px;
   --radius-full: 9999px;
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 10px;
+
+  /* Shadows — elevated/floating surfaces ONLY */
+  --shadow-lg: 0px 6px 20px 0px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0px 10px 32px 0px rgba(0, 0, 0, 0.15),
+    0px 40px 40px 0px rgba(0, 0, 0, 0.04);
 }
 
 @layer base {
   ::selection {
-    background-color: #dcf3ea;
-    color: #08362c;
+    background-color: #e2f6d5;
+    color: #163300;
   }
 
   *:focus-visible {
-    outline: 2px solid #0d7a61;
+    outline: 2px solid #163300;
     outline-offset: 2px;
   }
 
@@ -70,8 +59,8 @@
 
   body {
     margin: 0;
-    background-color: var(--color-canvas);
-    color: var(--color-body);
+    background-color: var(--color-paper);
+    color: var(--color-charcoal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -88,11 +77,6 @@
 }
 
 @layer utilities {
-  /* The ONLY shadow in the system — overlays/drawer sheets (DESIGN.md §6). */
-  .shadow-sheet {
-    box-shadow: 0 8px 24px rgba(8, 54, 44, 0.1);
-  }
-
   /* Skeleton sweep — an authored light band gliding across, NOT a
      ping/pulse (banned as AI-slop; see .geminirules and DESIGN.md §7). */
   @keyframes skeleton-sweep {
