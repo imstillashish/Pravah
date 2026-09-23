@@ -51,40 +51,91 @@ export const TopBar: React.FC = () => {
           </kbd>
         </div>
 
-        {/* Primary View Navigation Pills */}
+        {/* Primary View Navigation Pills (Tasks 394, 401, 405, 406) */}
         <nav aria-label="Main Views" className="hidden lg:flex items-center gap-1 ml-2">
           <button
             type="button"
             onClick={() => { window.location.hash = "#dashboard"; }}
-            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
           >
             Dashboard
           </button>
           <button
             type="button"
             onClick={() => { window.location.hash = "#results"; }}
-            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
           >
             Analysis Results
           </button>
           <button
             type="button"
             onClick={() => { window.location.hash = "#scenario"; }}
-            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
           >
             Scenario Studio
           </button>
+          {/* Task 394: Demand Board Nav Link (visible to all authenticated roles) */}
           <button
             type="button"
-            onClick={() => { window.location.hash = "#admin-reference"; }}
-            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+            onClick={() => { window.location.hash = "#demand"; }}
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
           >
-            Admin Reference
+            Demand Board
+          </button>
+          {/* Task 401: Live Map Nav Link */}
+          <button
+            type="button"
+            onClick={() => { window.location.hash = "#live-map"; }}
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+          >
+            Live Map
           </button>
           <button
             type="button"
+            onClick={() => { window.location.hash = "#booking"; }}
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+          >
+            Bookings
+          </button>
+          <button
+            type="button"
+            onClick={() => { window.location.hash = "#quotes"; }}
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+          >
+            Vendor Quotes
+          </button>
+          <button
+            type="button"
+            onClick={() => { window.location.hash = "#history"; }}
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+          >
+            History
+          </button>
+
+          {/* Task 406: Admin Reference and Admin Users only visible if user.role === "ADMIN" */}
+          {(user.role === "ADMIN" || user.role === "admin") && (
+            <>
+              <button
+                type="button"
+                onClick={() => { window.location.hash = "#admin-reference"; }}
+                className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+              >
+                Admin Ref
+              </button>
+              <button
+                type="button"
+                onClick={() => { window.location.hash = "#admin-users"; }}
+                className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+              >
+                Admin Users
+              </button>
+            </>
+          )}
+
+          <button
+            type="button"
             onClick={() => { window.location.hash = "#audit-logs"; }}
-            className="rounded-full px-3 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
+            className="rounded-full px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog hover:text-forest-ink transition-colors"
           >
             Audit Logs
           </button>

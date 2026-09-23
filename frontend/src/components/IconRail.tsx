@@ -17,10 +17,10 @@ import { AstitvaLogo } from "./AstitvaLogo";
  * Bottom cluster: settings and sign-out.
  */
 const RAIL_ITEMS = [
-  { icon: LayoutGrid, label: "Overview" },
-  { icon: Ship, label: "Vessels" },
-  { icon: BarChart3, label: "Markets" },
-  { icon: BookOpen, label: "Reports" },
+  { icon: LayoutGrid, label: "Overview", hash: "#dashboard" },
+  { icon: Ship, label: "Live Fleet Map", hash: "#live-map" },
+  { icon: BarChart3, label: "Analysis Results", hash: "#results" },
+  { icon: BookOpen, label: "Historical Records", hash: "#history" },
 ];
 
 export const IconRail: React.FC = () => {
@@ -34,15 +34,23 @@ export const IconRail: React.FC = () => {
     >
       {/* Brand mark — Astitva predictive prow mark */}
       <div className="flex flex-col items-center gap-6">
-        <AstitvaLogo size={32} variant="mark-only" />
+        <div 
+          onClick={() => { window.location.hash = "#dashboard"; }}
+          className="cursor-pointer"
+          title="Return to Dashboard"
+        >
+          <AstitvaLogo size={32} variant="mark-only" />
+        </div>
 
         <nav aria-label="Workspace sections" className="flex flex-col items-center gap-2">
-          {RAIL_ITEMS.map(({ icon: Icon, label }, index) => {
-            const active = index === 0;
+          {RAIL_ITEMS.map(({ icon: Icon, label, hash }) => {
+            const currentHash = window.location.hash || "#dashboard";
+            const active = currentHash === hash;
             return (
               <button
                 key={label}
                 type="button"
+                onClick={() => { window.location.hash = hash; }}
                 aria-current={active ? "page" : undefined}
                 aria-label={label}
                 title={label}
@@ -63,8 +71,9 @@ export const IconRail: React.FC = () => {
       <div className="flex flex-col items-center gap-2">
         <button
           type="button"
+          onClick={() => { window.location.hash = "#admin-reference"; }}
           aria-label="Settings"
-          title="Settings"
+          title="Settings / Admin"
           className="flex size-10 items-center justify-center rounded-full text-charcoal transition-colors duration-150 hover:bg-fog hover:text-forest-ink"
         >
           <Settings className="size-6" aria-hidden="true" />

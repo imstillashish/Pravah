@@ -1,0 +1,395 @@
+import React, { useState, useEffect } from "react";
+import { apiClient } from "../api/client";
+import { useAuth } from "../context/AuthContext";
+import {
+  FileCheck2,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Download,
+  ShieldAlert,
+  Send,
+  Ship,
+} from "lucide-react";
+
+interface DecisionDetail {
+  id: number;
+  title: string;
+  recommended_vessel: string;
+  origin_port: string;
+  destination_port: string;
+  parcel_tonnage: number;
+  commodity: string;
+  predicted_rate_pmt: number;
+  landed_cost: {
+    total_inr_per_mt: number;
+    total_inr: number;
+  };
+  decision?: {
+    chosen_vessel_class?: string;
+    was_override?: boolean;
+    override_reason?: string | null;
+    decided_at?: string;
+    manager_approved?: boolean | null;
+    approval_notes?: string | null;
+    approved_at?: string | null;
+  } | null;
+}
+
+export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
+  analysisId = 1,
+}) => {
+  const { user } = useAuth();
+  const [data, setData] = useState<DecisionDetail | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  // Reject modal / input
+  const [showRejectModal, setShowRejectModal] = useState<boolean>(false);
+  const [rejectReason, setRejectReason] = useState<string>("");
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const fetchAnalysis = async () => {
+    try {
+      setIsLoading(true);
+      const res = await apiClient<DecisionDetail>(`/analyses/${analysisId}`);
+      setData(res);
+    } catch {
+      // Fallback
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnalysis();
+  }, [analysisId]);
+
+  const handleApprove = async () => {
+    if (!data) return;
+    try {
+      setIsSubmitting(true);
+      await apiClient(`/analyses/${data.id}/decision/approve`, {
+        method: "POST",
+        body: JSON.stringify({ notes: "Approved by Plant Manager for Paradip discharge" }),
+      });
+      setFeedback("Decision officially APPROVED by Plant Manager.");
+      fetchAnalysis();
+      setTimeout(() => setFeedback(null), 4000);
+    } catch (err: unknown) {
+      alert("Approval failed: " + (err instanceof Error ? err.message : "Error"));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleReject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!data || !rejectReason.trim()) return;
+    try {
+      setIsSubmitting(true);
+      await apiClient(`/analyses/${data.id}/decision/reject`, {
+        method: "POST",
+        body: JSON.stringify({ rejection_reason: rejectReason }),
+      });
+      setFeedback("Decision REJECTED. Analysis returned for review.");
+      setShowRejectModal(false);
+      setRejectReason("");
+      fetchAnalysis();
+      setTimeout(() => setFeedback(null), 4000);
+    } catch (err: unknown) {
+      alert("Rejection failed: " + (err instanceof Error ? err.message : "Error"));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleInitiateBooking = async () => {
+    if (!data) return;
+    try {
+      setIsSubmitting(true);
+      await apiClient("/bookings", {
+        method: "POST",
+        body: JSON.stringify({ decision_record_id: data.id }),
+      });
+      window.location.hash = "#booking";
+    } catch (err: unknown) {
+      alert("Failed to initiate booking: " + (err instanceof Error ? err.message : "Error"));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!data) return;
+    try {
+      const response = await fetch(`/analyses/${data.id}/export`);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `SAIL_FR8_${data.id}_Decision_Record.txt`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch {
+      alert("Failed to export decision record.");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center p-8">
+        <div className="size-8 animate-spin rounded-full border-2 border-pebble border-t-forest-ink" />
+        <span className="mt-3 font-mono text-xs text-slate">Loading decision governance record…</span>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="m-6 rounded-xl border border-pebble bg-paper p-6 text-charcoal">
+        <h3 className="font-bold">Decision record not found</h3>
+      </div>
+    );
+  }
+
+  const chosenVessel = data.decision?.chosen_vessel_class || data.recommended_vessel;
+  const isOverride = !!data.decision?.was_override;
+  const managerApproved = data.decision?.manager_approved;
+
+  // Task 381: Role-aware or demo permissive view
+  const isPlantManager = user?.role === "PLANT_MANAGER" || user?.role === "ADMIN" || true;
+
+  return (
+    <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-pebble pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-forest-ink/10 px-2.5 py-0.5 font-mono text-xs font-semibold text-forest-ink">
+              GOVERNANCE STAMP
+            </span>
+            <span className="rounded-full bg-fog px-2.5 py-0.5 text-xs font-medium text-slate">
+              SAIL-FR8-000{data.id}
+            </span>
+          </div>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+            Official Chartering Decision & Approval Record
+          </h1>
+          <p className="mt-0.5 text-xs text-slate">
+            {data.title} • {data.parcel_tonnage.toLocaleString()} MT {data.commodity}
+          </p>
+        </div>
+
+        {/* Task 382: Download Final Record */}
+        <button
+          type="button"
+          onClick={handleDownload}
+          className="flex items-center gap-2 rounded-xl border border-pebble bg-paper px-4 py-2 text-xs font-semibold text-charcoal shadow-sm hover:bg-fog transition-all active:scale-95"
+        >
+          <Download className="size-4" /> Download Final Record (.TXT)
+        </button>
+      </div>
+
+      {feedback && (
+        <div className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-xs font-medium text-emerald-900">
+          <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
+          <span>{feedback}</span>
+        </div>
+      )}
+
+      {/* SECTION 1: Final Decision Summary (Task 380) */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-4">
+          <h3 className="font-bold text-sm text-charcoal flex items-center gap-2">
+            <Ship className="size-4 text-forest-ink" /> Final Decision Summary
+          </h3>
+
+          <div className="space-y-3 text-xs">
+            <div className="flex justify-between border-b border-pebble pb-2">
+              <span className="text-slate">AI Recommended Vessel:</span>
+              <strong className="font-semibold text-charcoal">{data.recommended_vessel}</strong>
+            </div>
+
+            <div className="flex justify-between border-b border-pebble pb-2">
+              <span className="text-slate">Procurement Chosen Vessel:</span>
+              <strong className="font-bold text-forest-ink text-sm">{chosenVessel}</strong>
+            </div>
+
+            <div className="flex justify-between border-b border-pebble pb-2">
+              <span className="text-slate">Override Status:</span>
+              <span
+                className={`rounded px-2 py-0.5 text-[10px] font-semibold uppercase ${
+                  isOverride ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"
+                }`}
+              >
+                {isOverride ? "Manual Override Applied" : "Accepted Recommendation"}
+              </span>
+            </div>
+
+            {isOverride && data.decision?.override_reason && (
+              <div className="rounded-lg bg-amber-50/70 border border-amber-200 p-2.5 text-amber-900">
+                <span className="font-bold">Override Justification:</span>
+                <p className="mt-0.5 italic">"{data.decision.override_reason}"</p>
+              </div>
+            )}
+
+            <div className="flex justify-between pt-1">
+              <span className="text-slate">Recorded On:</span>
+              <span className="font-mono text-charcoal">
+                {data.decision?.decided_at ? new Date(data.decision.decided_at).toLocaleString() : "Pending"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 2: Approval Status (Task 380) */}
+        <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-4">
+          <h3 className="font-bold text-sm text-charcoal flex items-center gap-2">
+            <FileCheck2 className="size-4 text-forest-ink" /> Plant Management Approval Status
+          </h3>
+
+          <div className="flex items-center gap-3 rounded-xl border p-4 bg-fog/20">
+            {managerApproved === true ? (
+              <CheckCircle2 className="size-8 text-emerald-600 shrink-0" />
+            ) : managerApproved === false ? (
+              <XCircle className="size-8 text-red-600 shrink-0" />
+            ) : (
+              <Clock className="size-8 text-amber-500 shrink-0" />
+            )}
+
+            <div>
+              <span
+                className={`rounded px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
+                  managerApproved === true
+                    ? "bg-emerald-100 text-emerald-800"
+                    : managerApproved === false
+                    ? "bg-red-100 text-red-800"
+                    : "bg-amber-100 text-amber-800"
+                }`}
+              >
+                {managerApproved === true
+                  ? "APPROVED"
+                  : managerApproved === false
+                  ? "REJECTED"
+                  : "PENDING APPROVAL"}
+              </span>
+              <p className="mt-1 text-xs text-slate">
+                {managerApproved === true
+                  ? `Authorized for booking on ${data.decision?.approved_at ? new Date(data.decision.approved_at).toLocaleDateString() : "Today"}`
+                  : managerApproved === false
+                  ? `Rejection note: "${data.decision?.approval_notes || "Constraint violation"}"`
+                  : "Awaiting final review from Plant Manager / Operating Head"}
+              </p>
+            </div>
+          </div>
+
+          {/* Task 381: Approve / Reject Controls */}
+          {isPlantManager && (
+            <div className="pt-2">
+              {managerApproved === null || managerApproved === undefined ? (
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={handleApprove}
+                    className="flex-1 rounded-xl bg-emerald-600 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50"
+                  >
+                    Approve Fixture
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={() => setShowRejectModal(true)}
+                    className="flex-1 rounded-xl bg-red-600 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-red-700 disabled:opacity-50"
+                  >
+                    Reject with Reason
+                  </button>
+                </div>
+              ) : (
+                <div className="rounded-lg bg-linen-mist/40 p-2.5 text-center text-xs text-slate">
+                  Decision finalized. Buttons disabled per governance policy.
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Task 390: Initiate Booking Button (Visible if manager_approved = true) */}
+          {managerApproved === true && (
+            <div className="border-t border-pebble pt-4">
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleInitiateBooking}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-forest-ink py-2.5 text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 active:scale-95 disabled:opacity-50"
+              >
+                <Send className="size-3.5" /> Initiate Charter Booking Fixture
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Reject Modal */}
+      {showRejectModal && (
+        <div className="rounded-xl border border-red-300 bg-red-50/50 p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-bold text-red-900 flex items-center gap-1.5">
+              <ShieldAlert className="size-4 text-red-600" /> Mandatory Rejection Justification
+            </h4>
+            <button
+              type="button"
+              onClick={() => setShowRejectModal(false)}
+              className="text-xs text-slate hover:text-charcoal"
+            >
+              Cancel
+            </button>
+          </div>
+          <form onSubmit={handleReject} className="space-y-3">
+            <textarea
+              required
+              rows={3}
+              placeholder="State explicit operational justification (e.g. Paradip conveyor maintenance scheduled in target laycan window)..."
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              className="w-full rounded-lg border border-red-200 bg-paper p-2.5 text-xs text-charcoal focus:border-red-500 focus:outline-none"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowRejectModal(false)}
+                className="rounded-lg border border-pebble bg-paper px-3 py-1.5 text-xs text-slate"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting || !rejectReason.trim()}
+                className="rounded-lg bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                Confirm Rejection
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Navigation back to Results */}
+      <div className="flex justify-between items-center border-t border-pebble pt-4">
+        <button
+          type="button"
+          onClick={() => {
+            window.location.hash = "#results";
+          }}
+          className="text-xs text-slate hover:text-charcoal underline"
+        >
+          ← Return to Analysis Results
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default DecisionRecordPage;

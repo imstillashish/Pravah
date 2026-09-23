@@ -145,3 +145,97 @@ def test_vessel_recommendation_and_haldia_constraint():
     assert res_haldia.status_code == 200
     assert res_haldia.json()["recommended_vessel"] in ["Panamax", "Handysize"]
     assert res_haldia.json()["status"] == "overridden"
+
+
+def test_decision_record_and_booking_lifecycle():
+    reg = client.post("/api/auth/signup", json={
+        "full_name": "Decision Officer",
+        "email": "officer@sail.gov.in",
+        "password": "Password123"
+    })
+    token = reg.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    create_res = client.post("/api/analyses", headers=headers, json={
+        "origin_country": "Australia",
+        "origin_port": "Newcastle",
+        "destination_port": "Paradip",
+        "commodity": "Coking Coal",
+        "parcel_tonnage": 75000,
+    })
+    analysis_id = create_res.json()["id"]
+
+    # 1. Reject without reason -> 400
+    rej_fail = client.post(f"/api/analyses/{analysis_id}/decision/reject", json={})
+    assert rej_fail.status_code == 400
+
+    # 2. Reject with reason -> 200
+    rej = client.post(f"/api/analyses/{analysis_id}/decision/reject", json={"reason": "Berth occupied"})
+    assert rej.status_code == 200
+    assert rej.json()["status"] == "rejected"
+
+    # 3. Cannot book unapproved decision -> 400
+    book_fail = client.post("/api/bookings", json={"decision_record_id": analysis_id})
+    assert book_fail.status_code == 400
+
+    # 4. Approve decision -> 200
+    appr = client.post(f"/api/analyses/{analysis_id}/decision/approve", json={"notes": "Approved for Paradip"})
+    assert appr.status_code == 200
+    assert appr.json()["status"] == "approved"
+
+    # 5. Export decision record -> 200 plain text
+    export = client.get(f"/api/analyses/{analysis_id}/export")
+    assert export.status_code == 200
+    assert "ASTITVA" in export.text
+
+    # 6. Book approved decision -> 201
+    book_res = client.post("/api/bookings", json={"decision_record_id": analysis_id})
+    assert book_res.status_code == 201
+    booking_id = book_res.json()["id"]
+
+    # 7. Confirm booking -> 200
+    conf_res = client.patch(f"/api/bookings/{booking_id}/confirm", json={"note": "Signed laycan"})
+    assert conf_res.status_code == 200
+    assert conf_res.json()["status"] == "CONFIRMED"
+
+
+def test_demand_board_pooling():
+    # 1. Create two requests for Paradip (port 1)
+    req1 = client.post("/api/demand", json={
+        "plant_id": 1,
+        "cargo_type_id": 1,
+        "quantity_mt": 40000,
+        "destination_port_id": 1
+    }).json()
+
+    req2 = client.post("/api/demand", json={
+        "plant_id": 2,
+        "cargo_type_id": 1,
+        "quantity_mt": 35000,
+        "destination_port_id": 1
+    }).json()
+
+    # 2. Create third request for Haldia (port 4)
+    req3 = client.post("/api/demand", json={
+        "plant_id": 3,
+        "cargo_type_id": 1,
+        "quantity_mt": 25000,
+        "destination_port_id": 4
+    }).json()
+
+    # 3. Merge different ports -> 400
+    merge_diff = client.post("/api/demand/merge", json={
+        "request_id_a": req1["id"],
+        "request_id_b": req3["id"]
+    })
+    assert merge_diff.status_code == 400
+    assert "different ports" in merge_diff.json()["detail"]
+
+    # 4. Merge same port -> 200 (combined 75,000 MT)
+    merge_ok = client.post("/api/demand/merge", json={
+        "request_id_a": req1["id"],
+        "request_id_b": req2["id"]
+    })
+    assert merge_ok.status_code == 200
+    assert merge_ok.json()["combined_quantity_mt"] == 75000
+
