@@ -3,6 +3,7 @@ import type { MotionValue } from "framer-motion";
 import { useReducedMotion, useTransform } from "framer-motion";
 import { motion } from "framer-motion";
 import { Card } from "./ui";
+import { ArrowUp, ArrowDown } from "lucide-react";
 import { useSpringNumber } from "../lib/useSpringNumber";
 import { cx } from "../lib/cn";
 
@@ -196,8 +197,13 @@ export const StatCard: React.FC<StatCardProps> = ({
               day {hover + 1} of {n}
             </span>
           ) : computedDelta != null ? (
-            <span style={{ color }}>
-              {rising ? "▲" : "▼"} {Math.abs(computedDelta).toFixed(1)}% {deltaLabel}
+            <span style={{ color }} className="inline-flex items-center gap-0.5">
+              {rising ? (
+                <ArrowUp className="size-3.5 stroke-[2.5]" aria-hidden="true" />
+              ) : (
+                <ArrowDown className="size-3.5 stroke-[2.5]" aria-hidden="true" />
+              )}
+              <span>{Math.abs(computedDelta).toFixed(1)}% {deltaLabel}</span>
             </span>
           ) : (
             <span className="text-charcoal">{caption ?? ""}</span>

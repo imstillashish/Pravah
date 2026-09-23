@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { RefreshCw, Layers } from "lucide-react";
+import { RefreshCw, Layers, ArrowUp } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
 import { Card, Pill, SecondaryButton, SectionHeader, Skeleton } from "./ui";
@@ -85,9 +85,7 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
       case "finalized":
         return (
           <Pill tone="positive">
-            <span aria-hidden="true" className="text-[8px] leading-none">
-              ▲
-            </span>
+            <ArrowUp className="size-3 stroke-[2.5]" aria-hidden="true" />
             <span>Finalized</span>
           </Pill>
         );
@@ -225,11 +223,11 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                       </div>
                     </td>
 
-                    {/* Savings — High psychological reward Emerald Green */}
+                    {/* Savings — High psychological reward Emerald Green with clean ArrowUp */}
                     <td className="px-3 py-3.5">
-                      <span className="font-mono font-semibold tabular-nums text-emerald-profit">
-                        <span aria-hidden="true" className="mr-0.5 text-[9px]">▲</span>
-                        +${Math.round(item.estimated_savings_usd).toLocaleString()}
+                      <span className="inline-flex items-center gap-1 font-mono font-semibold tabular-nums text-emerald-profit">
+                        <ArrowUp className="size-3.5 stroke-[2.5]" aria-hidden="true" />
+                        <span>+${Math.round(item.estimated_savings_usd).toLocaleString()}</span>
                       </span>
                     </td>
 
