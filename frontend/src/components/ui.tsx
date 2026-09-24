@@ -161,3 +161,74 @@ export function Skeleton({ className, ...props }: HTMLAttributes<HTMLDivElement>
     </div>
   );
 }
+
+export const LoadingSkeleton = Skeleton;
+export const Badge = Pill;
+
+/** Accessible error banner with optional retry trigger */
+export function ErrorStateBanner({
+  message,
+  onRetry,
+  className,
+}: {
+  message: string;
+  onRetry?: () => void;
+  className?: string;
+}) {
+  return (
+    <div
+      role="alert"
+      className={cx(
+        "flex items-center justify-between gap-3 rounded-card border border-alarm-red/20 bg-alarm-wash p-3.5 text-sm text-alarm-red",
+        className,
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <span className="font-mono text-base font-bold" aria-hidden>⚠</span>
+        <span className="font-medium">{message}</span>
+      </div>
+      {onRetry && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="rounded-full border border-alarm-red/40 bg-paper px-3 py-1 font-mono text-xs font-semibold text-alarm-red transition hover:bg-alarm-wash focus-visible:outline-2 focus-visible:outline-alarm-red"
+        >
+          Retry
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** Microscopic empty state container */
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+  className,
+}: {
+  icon?: ReactNode;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cx("flex flex-col items-center justify-center p-8 text-center", className)}>
+      {icon && <div className="mb-3 text-slate">{icon}</div>}
+      <h3 className="text-base font-semibold text-forest-ink">{title}</h3>
+      {description && <p className="mt-1 max-w-sm text-sm text-slate">{description}</p>}
+      {action && <div className="mt-4">{action}</div>}
+    </div>
+  );
+}
+
+/** Responsive table wrapper with oceanic card styling */
+export function TableWrapper({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={cx("overflow-x-auto rounded-card border border-pebble bg-paper", className)}>
+      {children}
+    </div>
+  );
+}
