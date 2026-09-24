@@ -1,24 +1,23 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
-import { Compass, Lock, Mail, User, AlertCircle, ArrowRight } from "lucide-react";
+import { Compass, Lock, Mail, User, AlertCircle, ArrowRight, Anchor } from "lucide-react";
 import { PrimaryButton, Card, TextButton } from "../components/ui";
 import { AstitvaLogo } from "../components/AstitvaLogo";
 import { MaritimeGlobe } from "../components/MaritimeGlobe";
-import { cx } from "../lib/cn";
 
 /**
- * AuthPage — Wise recomposition (spec §7): asymmetric split. Left 45%
- * is the Forest Ink panel with the 89px Inter 900 Lime display
- * headline — the one Persuade surface in the app. Right 55% is the
- * auth card on Paper. All auth logic ported unchanged.
+ * AuthPage — Strict Oceanic Theme & Wise Architectural Recomposition
+ * Strict WCAG AA contrast (≥ 4.5:1).
+ * Left hero panel on Forest Ink with high-visibility Electric Cyan accents.
+ * Right side high-contrast auth card on Paper canvas.
  */
 const INPUT_CLASS =
   "w-full rounded-card border border-pebble bg-paper py-2.5 pl-10 pr-3.5 text-sm " +
-  "text-charcoal placeholder:text-slate transition-colors duration-150 " +
-  "hover:border-charcoal focus:border-forest-ink focus:outline-none";
+  "text-charcoal placeholder:text-charcoal/50 shadow-sm transition-colors duration-150 " +
+  "hover:border-forest-ink focus:border-forest-ink focus:ring-2 focus:ring-signal-blue focus:ring-offset-1 focus:outline-none";
 
-const LABEL_CLASS = "mb-1.5 block text-sm font-normal text-charcoal";
+const LABEL_CLASS = "mb-1.5 block text-xs font-bold text-forest-ink";
 
 export interface AuthPageProps {
   onNavigateToSignUp?: () => void;
@@ -52,36 +51,27 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
 
       const data = await res.json();
       if (!res.ok) {
-        setErrorMsg(data.detail || "Something didn't work. Please check your details and try again.");
+        setErrorMsg(data.detail || "Authentication failed. Please verify your credentials and try again.");
       } else {
         login(data.access_token, data.user);
       }
     } catch {
-      setErrorMsg("Unable to reach the server right now. Please try again in a moment.");
+      setErrorMsg("Unable to reach the maritime intelligence gateway. Please verify network connectivity and try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const deskOptions = [
-    {
-      value: "logistics_planner" as const,
-      code: "FR8-PLN",
-      title: "Freight & Chartering",
-      sub: "Procurement & contracts",
-    },
-    {
-      value: "port_operator" as const,
-      code: "PRT-OPS",
-      title: "Port Operations",
-      sub: "Berth clearance & dispatch",
-    },
-  ];
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter" && !loading) {
+      // Allow default form submit behavior
+    }
+  };
 
   return (
     <div className="grid min-h-screen lg:grid-cols-[45fr_55fr]">
-      {/* Forest Ink hero panel — the brand's display voice (desktop only) */}
-      <aside className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-xl bg-forest-ink p-12 lg:flex">
+      {/* Forest Ink hero panel — Deep Oceanic Abyss Surface (desktop only) */}
+      <aside className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-xl bg-forest-ink p-12 lg:flex shadow-xl">
         <div className="relative z-10">
           <AstitvaLogo size={32} variant="inverse" subtitle={true} />
         </div>
@@ -92,71 +82,76 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
         </div>
 
         <div className="relative z-10">
-          <h1 className="text-5xl font-black leading-[0.9] tracking-[-0.03em] text-lime-voltage xl:text-[64px] 2xl:text-[89px]">
+          <h1 className="text-5xl font-black leading-[0.95] tracking-[-0.03em] text-lime-voltage xl:text-[64px] 2xl:text-[80px]">
             Know your rate before you book.
           </h1>
           <p className="mt-5 max-w-[46ch] text-base leading-relaxed text-paper/90">
-            Forecasted rates, plant windows, and booking guidance for SAIL&apos;s
-            freight desk, powered by live market signals.
+            Forecasted rates, plant stock thresholds, and authoritative charter recommendations for SAIL&apos;s
+            freight desk, powered by multi-agent intelligence.
           </p>
-          <PrimaryButton className="mt-8" onClick={() => emailRef.current?.focus()}>
+          <PrimaryButton
+            className="mt-8 shadow-md"
+            onClick={() => emailRef.current?.focus()}
+          >
             Run your first analysis
             <ArrowRight className="size-4" aria-hidden="true" />
           </PrimaryButton>
         </div>
 
-        <div className="relative z-10 flex items-center justify-between font-mono text-xs text-paper/60">
-          <span>Steel in motion, rates on time</span>
-          <span className="flex items-center gap-1.5 text-lime-voltage">
-            <span className="size-1.5 animate-pulse rounded-full bg-lime-voltage" />
+        <div className="relative z-10 flex items-center justify-between font-mono text-xs text-paper/70 border-t border-paper/10 pt-4">
+          <span>Authoritative Maritime Intelligence</span>
+          <span className="flex items-center gap-1.5 font-bold text-lime-voltage">
+            <span className="size-2 animate-pulse rounded-full bg-lime-voltage" />
             Live Global Route Radar
           </span>
         </div>
       </aside>
 
-      {/* Auth side — Paper canvas, card centered */}
-      <main className="flex flex-col justify-center px-4 py-10 sm:px-8">
+      {/* Auth side — Paper canvas with high-contrast card */}
+      <main className="flex flex-col justify-center px-4 py-10 sm:px-8 bg-paper">
         {/* Mobile banner — condensed hero */}
-        <div className="mb-6 rounded-xl bg-forest-ink p-6 lg:hidden">
+        <div className="mb-6 rounded-xl bg-forest-ink p-6 lg:hidden shadow-md">
           <div className="mb-3 flex items-center gap-2">
             <span className="flex size-6 items-center justify-center rounded-full bg-lime-voltage text-forest-ink">
               <Compass className="size-4" aria-hidden="true" />
             </span>
-            <span className="text-sm font-medium text-paper">Intelligent Freight Portal</span>
+            <span className="text-sm font-bold text-paper">Astitva Maritime Portal</span>
           </div>
           <h1 className="text-2xl font-black leading-tight tracking-[-0.02em] text-lime-voltage">
             Know your rate before you book.
           </h1>
         </div>
 
-        <Card className="mx-auto w-full max-w-md p-6 sm:p-8">
-          <h2 className="text-xl font-semibold leading-tight text-forest-ink">
-            {isRegister ? "Create your operations account" : "Access the freight terminal"}
+        <Card className="mx-auto w-full max-w-md p-6 sm:p-8 bg-paper border border-pebble shadow-sm">
+          <h2 className="text-xl font-bold leading-tight text-forest-ink">
+            {isRegister ? "Create Authorized Operations Account" : "Access Maritime Freight Terminal"}
           </h2>
-          <p className="mt-1.5 text-sm leading-relaxed text-charcoal">
+          <p className="mt-1.5 text-xs text-charcoal leading-relaxed">
             {isRegister
-              ? "Sign up to track freight indices, forecast charter rates, and plan berthing at Indian East Coast ports."
-              : "Sign in to access your freight forecasting desk and port operations panel."}
+              ? "Sign up to track freight indices, evaluate vessel fixtures, and optimize berthing at Indian East Coast ports."
+              : "Sign in with your SAIL or official credentials to access the forecasting desk and operational controls."}
           </p>
 
+          {/* High-contrast visible error message with role="alert" */}
           {errorMsg && (
             <div
               id="auth-error"
               role="alert"
-              className="mt-5 flex items-start gap-3 rounded-card border border-pebble bg-fog p-4"
+              aria-live="assertive"
+              className="mt-5 flex items-start gap-3 rounded-card border border-alarm-red/40 bg-alarm-wash p-3.5 shadow-sm"
             >
-              <span
-                aria-hidden="true"
-                className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-alarm-red/40 font-mono text-xs font-semibold text-alarm-red"
-              >
-                !
-              </span>
-              <div className="flex-1 text-sm font-semibold text-alarm-red">{errorMsg}</div>
-              <AlertCircle className="mt-0.5 size-5 shrink-0 text-alarm-red" aria-hidden="true" />
+              <AlertCircle className="mt-0.5 size-4 shrink-0 text-alarm-red" aria-hidden="true" />
+              <div className="flex-1 text-xs font-semibold leading-relaxed text-alarm-red">
+                {errorMsg}
+              </div>
             </div>
           )}
 
-          <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
+          <form
+            className="mt-5 space-y-4"
+            onSubmit={handleSubmit}
+            onKeyDown={handleKeyDown}
+          >
             {isRegister && (
               <div>
                 <label htmlFor="full-name" className={LABEL_CLASS}>
@@ -164,7 +159,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
                 </label>
                 <div className="relative">
                   <User
-                    className="absolute left-3.5 top-3 size-4 text-slate"
+                    className="absolute left-3.5 top-3 size-4 text-charcoal/60"
                     aria-hidden="true"
                   />
                   <input
@@ -174,7 +169,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
                     autoComplete="name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Arjun Verma"
+                    placeholder="e.g. Ramesh Kumar"
                     aria-invalid={!!errorMsg}
                     aria-describedby={errorMsg ? "auth-error" : undefined}
                     className={INPUT_CLASS}
@@ -185,11 +180,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
 
             <div>
               <label htmlFor="work-email" className={LABEL_CLASS}>
-                Work Email Address
+                Official Work Email
               </label>
               <div className="relative">
                 <Mail
-                  className="absolute left-3.5 top-3 size-4 text-slate"
+                  className="absolute left-3.5 top-3 size-4 text-charcoal/60"
                   aria-hidden="true"
                 />
                 <input
@@ -214,7 +209,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
               </label>
               <div className="relative">
                 <Lock
-                  className="absolute left-3.5 top-3 size-4 text-slate"
+                  className="absolute left-3.5 top-3 size-4 text-charcoal/60"
                   aria-hidden="true"
                 />
                 <input
@@ -232,52 +227,55 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
               </div>
             </div>
 
+            {/* Role Select Dropdown in Registration Mode */}
             {isRegister && (
               <div>
-                <span className="mb-2 block text-sm font-normal text-charcoal">
-                  Choose your starting desk
-                </span>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {deskOptions.map((desk) => {
-                    const selected = role === desk.value;
-                    return (
-                      <button
-                        key={desk.value}
-                        type="button"
-                        onClick={() => setRole(desk.value)}
-                        aria-pressed={selected}
-                        className={cx(
-                          "flex min-h-[76px] cursor-pointer flex-col justify-between rounded-card border p-3 text-left transition-colors duration-150",
-                          selected
-                            ? "border-forest-ink bg-linen-mist"
-                            : "border-pebble bg-paper hover:border-forest-ink",
-                        )}
-                      >
-                        <div className="flex w-full items-center justify-between">
-                          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-                            {desk.code}
-                          </span>
-                          <span
-                            aria-hidden="true"
-                            className={cx(
-                              "size-2.5 rounded-full transition-colors",
-                              selected ? "bg-forest-ink" : "border border-pebble",
-                            )}
-                          />
-                        </div>
-                        <div className="mt-1">
-                          <div className="text-sm font-medium text-forest-ink">{desk.title}</div>
-                          <div className="text-xs text-charcoal">{desk.sub}</div>
-                        </div>
-                      </button>
-                    );
-                  })}
+                <label htmlFor="auth-role" className={LABEL_CLASS}>
+                  Operational Desk & Authority Role
+                </label>
+                <div className="relative">
+                  {role === "logistics_planner" ? (
+                    <Compass className="absolute left-3.5 top-3 size-4 text-spruce" aria-hidden="true" />
+                  ) : (
+                    <Anchor className="absolute left-3.5 top-3 size-4 text-amber-warning" aria-hidden="true" />
+                  )}
+                  <select
+                    id="auth-role"
+                    value={role}
+                    onChange={(e) =>
+                      setRole(e.target.value as "logistics_planner" | "port_operator")
+                    }
+                    className="w-full rounded-card border border-pebble bg-paper py-2.5 pl-10 pr-8 text-sm font-semibold text-charcoal shadow-sm transition duration-150 hover:border-forest-ink focus:border-forest-ink focus:ring-2 focus:ring-signal-blue focus:ring-offset-1 focus:outline-none"
+                  >
+                    <option value="logistics_planner">Freight & Chartering Desk (logistics_planner)</option>
+                    <option value="port_operator">Port Terminal Operations Desk (port_operator)</option>
+                  </select>
+                </div>
+
+                <div className="mt-2 rounded-lg border border-pebble bg-fog p-2.5">
+                  <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-forest-ink">
+                    <span
+                      className={`inline-block size-2 rounded-full ${
+                        role === "logistics_planner" ? "bg-spruce" : "bg-amber-warning"
+                      }`}
+                    />
+                    <span>{role === "logistics_planner" ? "CLEARANCE: FR8-PLN" : "CLEARANCE: PRT-OPS"}</span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-charcoal leading-relaxed">
+                    {role === "logistics_planner"
+                      ? "Authorizes parcel demand consolidation, voyage charter party optimization, and landed cost simulation."
+                      : "Authorizes port draft constraint administration, lightering directives, and vessel discharge priority overrides."}
+                  </p>
                 </div>
               </div>
             )}
 
-            <PrimaryButton type="submit" disabled={loading} className="mt-5 w-full">
-              <span>{loading ? "Verifying…" : isRegister ? "Create Account" : "Sign In"}</span>
+            <PrimaryButton
+              type="submit"
+              disabled={loading}
+              className="mt-5 w-full shadow-sm focus-visible:ring-2 focus-visible:ring-signal-blue"
+            >
+              <span>{loading ? "Verifying Credentials…" : isRegister ? "Create Operations Account" : "Sign In to Terminal"}</span>
               <ArrowRight className="size-4" aria-hidden="true" />
             </PrimaryButton>
           </form>
@@ -292,6 +290,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
                   setErrorMsg(null);
                 }
               }}
+              className="font-medium text-forest-ink hover:text-spruce"
             >
               {isRegister
                 ? "Already have an account? Sign in here"
@@ -303,3 +302,5 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
     </div>
   );
 };
+
+export default AuthPage;
