@@ -3,56 +3,71 @@
 > **Project**: Astitva (SIH26006) — Intelligent Maritime Freight Forecasting & Bulk Chartering System  
 > **Client / Target**: SAIL (Steel Authority of India Limited) / Ministry of Steel, Government of India  
 > **Repository**: `imstillashish/Astitva`  
+> **Active Feature Branch**: `feat/ps-features` (anchored to `origin/main` at `fb6ed7c`)  
 > **Operating Mode**: Ponytail Ultra Mode (YAGNI, minimal code, root-cause fixes, zero unrequested bloat)
 
 ---
 
 ## 1. System Overview & Problem Statement
 
-Astitva solves overseas raw material procurement (coking coal, iron ore, limestone, thermal coal) bulk vessel chartering for Indian steel manufacturing. It ingests global trade lane indicators, forecasts freight rate quantiles, enforces dual-port physical berth feasibility, integrates climatological disruption factors, and calculates vessel idle time turnaround with alternative employment fixtures.
+Astitva is a specialized maritime intelligence platform that optimizes raw material procurement (coking coal, iron ore, limestone, thermal coal) and vessel chartering for Indian steel manufacturing. It ingests global trade lane indicators, forecasts freight rate quantiles, enforces dual-port physical berth feasibility, integrates climatological disruption factors, and calculates vessel idle time turnaround with alternative employment fixtures.
 
-### Key Problem Statement (SIH26006) Pillars
-1. **Idle Time Forecasting & Alternative Employment**:
-   - Quantifies load and discharge berth waiting times, contract laytime, and financial demurrage risk.
-   - Recommends 4 ranked commercial alternative employments (Coastal Cabotage, Backhaul Mineral Export, Period Relet, Virtual Arrival Eco-Speed) to monetize vessel idle days and eliminate unladen ballast deadheading.
-2. **Global Origin Ports Infrastructure & Dual-Port Feasibility**:
-   - Tracks 14 verified global load and discharge terminals across Australia (Hay Point, Gladstone, Newcastle, Abbot Point), United States (Hampton Roads, Baltimore), Mozambique (Maputo, Beira), and Indonesia (Samarinda, Balikpapan).
-   - Validates draft, LOA, beam, and DWT limits at **both** origin load berth and Indian discharge port (`Paradip`, `Dhamra`, `Gangavaram`, `Haldia`).
+### Core Problem Statement (SIH26006) Feature Pillars
+
+1. **Idle Time Forecasting & Alternative Employment Recommendations**:
+   - Computes origin load berth wait (`1.4d` to `4.1d`), Indian discharge berth queue (`1.5d` to `4.5d`), contract laytime, and financial demurrage risk exposure.
+   - Demurrage benchmarks: Handysize ($14,000/d), Supramax ($18,500/d), Panamax ($24,000/d), Capesize ($36,000/d).
+   - Generates and ranks 4 actionable commercial alternative employments to absorb empty ballast deadheading (typically 15–18.5 days return steaming):
+     * **Domestic Cabotage**: Coastal Coal Cabotage (`Paradip` → `Ennore / Tuticorin`) under DG Shipping RSR guidelines.
+     * **Backhaul Export**: Mineral pellet or bauxite export run (`Paradip / Vizag` → `Qingdao, China`).
+     * **Time-Charter Relet**: Short-term period relet in Southeast Asian trades (`Singapore Hub / Malacca Strait`).
+     * **Speed Optimization**: Virtual Arrival & Eco-Speed slow steaming at 10.8 knots to synchronize berth readiness with ~28% bunker savings.
+2. **Global Origin Ports Infrastructure & Dual-Port Feasibility Validator**:
+   - Tracks 14 verified terminals with LOCODE coordinates, depth, beam, LOA, loading rates, and live vessel queues:
+     * **Australia (4)**: Hay Point DBCT (`AUHPT`, 19.5m draft, 220k DWT), Gladstone (`AUGLT`, 17.5m draft), Newcastle (`AUNTL`, 15.2m draft), Abbot Point (`AUABP`, 18.5m draft).
+     * **United States (2)**: Hampton Roads / Norfolk (`USORF`, 15.2m draft), Baltimore (`USBAL`, 15.5m draft).
+     * **Mozambique (2)**: Maputo Matola Coal (`MZMPM`, 13.0m draft), Beira (`MZBEW`, 10.5m draft).
+     * **Indonesia (2)**: Samarinda (`IDSRI`, 12.5m draft), Balikpapan (`IDBPN`, 14.0m draft).
+     * **India Discharge (4)**: Paradip (`INPRT`, 16.5m draft), Dhamra (`INDHM`, 18.0m draft), Visakhapatnam / Gangavaram (`INGAV`, 21.0m draft), Haldia (`INHLD`, 9.1m draft).
+   - Dual-Port Feasibility validates draft, LOA, beam, and DWT limits at **both** origin load port and discharge port.
 3. **Month-Indexed Seasonal Climatology & Bilingual Explainability**:
-   - Indexes 12 monthly climatological trade multipliers (1.05x to 1.26x) capturing South-West Monsoon swells, Sandheads lightering suspension, Queensland tropical cyclone tracks, and East Asian winter heating restocking.
-   - Provides side-by-side bilingual (English & Hindi) explainability narratives for procurement auditing.
+   - 12-month climatological profiles (multipliers `1.05x` to `1.26x`):
+     * *Months 6–8*: South-West Monsoon in the Bay of Bengal (heavy sea swell, Sandheads lightering suspended, Paradip discharge slowdown).
+     * *Months 1–2*: Queensland tropical cyclone season (Hay Point / Gladstone rail outages & anchorage closures).
+     * *Months 11–12*: East Asian winter heating and raw material restocking rush.
+   - Bilingual (English & Hindi) explainability narrative generator embedded in Section 4B with real-time toggle.
 4. **Global Economic Indicators & Port Congestion Telemetry**:
-   - Real-time Baltic Dry indices (BDI, BCI, BPI, BSI), Australian Coking Coal FOB, 62% Fe Iron Ore CFR, Domestic Coal parity, Global Manufacturing PMI, and China Blast Furnace Utilization.
+   - Real-time Baltic Dry indices (BDI, BCI, BPI, BSI), Australian Coking Coal FOB ($/MT), 62% Fe Iron Ore CFR ($/MT), Domestic Coal parity (₹/MT), Global Manufacturing PMI, and China Blast Furnace Utilization (%).
 
 ---
 
-## 2. Technology Stack
+## 2. Technology Stack & Runtime Topology
 
 ### Backend Stack
 | Layer | Technology | Version | Location / Details |
 |---|---|---|---|
 | **Language** | Python | 3.13.14 | `backend/venv/` |
-| **API Framework** | FastAPI | >= 0.110.0 | `backend/app/main.py` |
-| **ASGI Server** | Uvicorn | >= 0.29.0 | Port 8000 |
+| **Framework** | FastAPI | >= 0.110.0 | `backend/app/main.py` |
+| **ASGI Server** | Uvicorn | >= 0.29.0 | Port 8000 (`uvicorn app.main:app --port 8000`) |
 | **Database ORM** | SQLAlchemy | >= 2.0.28 | `backend/app/database.py` |
 | **Database** | SQLite | 3.x | `backend/logistics.db` (`check_same_thread=False`) |
-| **Authentication** | PyJWT, Passlib (bcrypt) | >= 2.8.0 | `backend/app/api/auth.py`, `security.py` |
-| **Data Validation** | Pydantic v2 | >= 2.6.0 | `backend/app/schemas.py` |
-| **Testing** | Pytest | >= 8.1.0 | `backend/tests/` (Run with `backend/venv/bin/pytest`) |
+| **Auth & Crypto** | PyJWT, Passlib (bcrypt) | >= 2.8.0 | `backend/app/api/auth.py`, `security.py` |
+| **Validation** | Pydantic v2 | >= 2.6.0 | `backend/app/schemas.py` |
+| **Test Runner** | Pytest | >= 8.1.0 | `backend/tests/` (Run with `backend/venv/bin/pytest`) |
 
 ### Machine Learning Stack
 | Component | Technology | Artifacts / Models | Purpose |
 |---|---|---|---|
 | **Quantile Regression** | LightGBM (`lightgbm`) | `ml/models/lgbm_p10.pkl`, `lgbm_p50.pkl`, `lgbm_p90.pkl` | Probabilistic freight bounds (P10 best case, P50 median, P90 worst case) |
-| **Baseline Correctors**| Statsmodels (`statsmodels`) | `ml/models/arima_freight.pkl` | Residual auto-regressive error correction & baseline benchmark |
-| **Feature Engineering**| Pandas, NumPy, Scikit-Learn | `ml/feature_engineering.py` | Rolling 7d/30d EMA, lag deltas (1, 7, 14, 30), and volatility spreads |
+| **Residual Correction** | Statsmodels (`statsmodels`) | `ml/models/arima_freight.pkl` | ARIMA baseline residual correction |
+| **Feature Pipelines** | Pandas, NumPy, Scikit-Learn | `ml/feature_engineering.py` | 7d/30d rolling EMA, lag deltas (1, 7, 14, 30), and volatility spreads |
 
 ### Frontend Stack
 | Layer | Technology | Version | Location / Details |
 |---|---|---|---|
 | **Framework** | React | 19.2.8 | `frontend/src/` |
 | **Language** | TypeScript | ~6.0.2 | Strict type checking (`tsc -b`) |
-| **Build Tool** | Vite | 8.3.0 | `frontend/vite.config.ts` |
+| **Bundler** | Vite | 8.3.0 | `frontend/vite.config.ts` |
 | **Styling** | Tailwind CSS v4 (`@theme`) | 4.3.3 | `frontend/src/index.css` |
 | **Icons** | Lucide React | 1.47.0 | `lucide-react` |
 | **Motion** | Framer Motion | 13.4.0 | Interactive transitions & drawer animations |
@@ -61,53 +76,73 @@ Astitva solves overseas raw material procurement (coking coal, iron ore, limesto
 
 ---
 
-## 3. Directory Layout
+## 3. Directory Layout & Key Modules
 
 ```
 .
 ├── backend/
 │   ├── app/
-│   │   ├── api/                     # FastAPI route handlers (/api/analyses, /api/auth, /api/market, /api/admin)
-│   │   ├── connectors/              # Market data connectors & port LOCODE reference (locode_data.json)
+│   │   ├── api/                     # Dual-prefix API endpoints (/api/* and /*)
+│   │   │   ├── admin.py             # Reference ports & users management (filters: port_type, country)
+│   │   │   ├── analyses.py          # /analyses/{id}, /idle-employment, /seasonal-factor, /decision
+│   │   │   ├── audit.py             # Immutable decision audit log retrieval
+│   │   │   ├── auth.py              # /auth/signup, /auth/login, /auth/me, /auth/switch-role
+│   │   │   ├── bookings.py          # Fixture booking and contract workflow
+│   │   │   ├── demand.py            # Plant demand board & stockout levels
+│   │   │   ├── map.py               # Great-circle routes & AIS vessel positions
+│   │   │   ├── market.py            # /market/indicators (Baltic, commodities, PMIs, queues)
+│   │   │   ├── metrics.py           # Real-time KPIs for executive strip
+│   │   │   └── quotes.py            # Shipbroker quote capture
+│   │   ├── connectors/              # Market data connectors & LOCODE data
+│   │   │   ├── locode_data.json     # 14 global origin & discharge port coordinates
+│   │   │   └── market_indicators_connector.py # Live/benchmark market data provider
 │   │   ├── engines/                 # 12 specialized calculation engines
 │   │   │   ├── feasibility_engine.py       # Dual-port vessel draft/LOA/beam/DWT constraint validator
-│   │   │   ├── seasonal_engine.py          # Month-indexed seasonal factor & EN/HI narratives
-│   │   │   ├── idle_employment_engine.py   # Turnaround metrics, demurrage risk & 4 alternative fixtures
-│   │   │   ├── forecast_engine.py          # LightGBM quantile prediction integration
-│   │   │   ├── landed_cost_engine.py       # Landed cost in USD/MT and INR Cr
-│   │   │   ├── recommendation_engine.py    # Multi-objective composite decision scorer
+│   │   │   ├── seasonal_engine.py          # 12-month climatology factors & bilingual EN/HI narratives
+│   │   │   ├── idle_employment_engine.py   # Turnaround metrics, demurrage & 4 alternative fixtures
+│   │   │   ├── forecast_engine.py          # LightGBM quantile inference (P10/P50/P90)
+│   │   │   ├── landed_cost_engine.py       # Freight + BAF + USD/INR conversion to ₹/MT and Cr
+│   │   │   ├── recommendation_engine.py    # Multi-objective composite scoring: 50% Cost, 30% Conf, 20% Fit
 │   │   │   ├── risk_engine.py              # 6-vector supply chain telemetry
-│   │   │   └── ...
-│   │   ├── models/                  # SQLAlchemy ORM entities (User, Analysis, ReferencePort, MarketIndicator)
-│   │   ├── schemas.py               # Pydantic request/response validation schemas
-│   │   ├── config.py                # App settings and environment variables
-│   │   ├── database.py              # Engine, SessionLocal, and DB dependency injection
-│   │   └── main.py                  # FastAPI application entry point with CORS & router mounts
-│   ├── tests/                       # Pytest test suite (37 tests)
-│   ├── logistics.db                 # Active SQLite database file
-│   └── requirements.txt             # Python dependencies
+│   │   │   ├── regret_engine.py            # Historical chartering regret percentage
+│   │   │   ├── stockout_engine.py          # Plant burn rate and stockout arrival alert
+│   │   │   ├── coa_comparison_engine.py    # Spot fixture vs 10-voyage COA agreement (~8% volume discount)
+│   │   │   ├── pooling_engine.py           # Multi-plant cargo parcel consolidation
+│   │   │   └── context_engine.py           # Route nautical miles and vessel class inference
+│   │   ├── models/                  # SQLAlchemy ORM entity definitions
+│   │   │   ├── core.py              # User, Analysis
+│   │   │   ├── entities.py          # ForecastResult, FeasibilityResult, LandedCost, RiskResult, etc.
+│   │   │   └── reference.py         # ReferencePort (extended with port_type, queues), MarketIndicator
+│   │   ├── schemas.py               # Pydantic request/response schemas
+│   │   ├── config.py                # Environment configuration and settings
+│   │   ├── database.py              # Database engine & session injection
+│   │   └── main.py                  # App entry point, CORS middleware, and router mounts
+│   ├── tests/                       # Pytest test suite (7 files, 37 passing tests)
+│   ├── logistics.db                 # Active SQLite runtime database
+│   └── requirements.txt             # Python backend dependencies
 ├── frontend/
 │   ├── src/
 │   │   ├── api/                     # Typed client wrapper (client.ts)
-│   │   ├── components/              # UI components
-│   │   │   ├── MarketIntelligenceStrip.tsx # Live Baltic indices, commodities & port congestion lineup
-│   │   │   ├── NewAnalysisDrawer.tsx       # Slide-in analysis console with origin selector & seasonal alerts
+│   │   ├── components/              # Reusable UI widgets
+│   │   │   ├── MarketIntelligenceStrip.tsx # Baltic tickers, commodity prices & origin/discharge queues
+│   │   │   ├── NewAnalysisDrawer.tsx       # Analysis console with origin selector & seasonal advisory
 │   │   │   ├── MaritimeGlobe.tsx           # Three.js 3D global shipping routes & chokepoints
-│   │   │   ├── RouteMap.tsx                # Great-circle voyage route renderer
-│   │   │   ├── TopBar.tsx, IconRail.tsx    # High-density navigation chrome
-│   │   │   └── ui.tsx                      # Button, Card, Badge primitives
-│   │   ├── pages/                   # Application views
+│   │   │   ├── RouteMap.tsx                # SVG great-circle route line and waypoints
+│   │   │   ├── TopBar.tsx, IconRail.tsx    # App shell navigation
+│   │   │   └── ui.tsx                      # Buttons, Cards, Badges
+│   │   ├── pages/                   # 19 application page views
 │   │   │   ├── Dashboard.tsx               # Executive Freight Terminal & intelligence feed
-│   │   │   ├── AnalysisResultsPage.tsx     # 12-section comprehensive decision report
-│   │   │   ├── DemandBoardPage.tsx         # Steel plant inventory & stockout monitoring
+│   │   │   ├── AnalysisResultsPage.tsx     # 12-section decision document
+│   │   │   ├── DemandBoardPage.tsx         # Steel plant inventory monitoring
+│   │   │   ├── BookingPage.tsx             # Charter fixture booking execution
 │   │   │   └── AuthPage.tsx                # Secure role-based login/signup
 │   │   ├── index.css                # Tailwind CSS v4 design tokens (@theme)
-│   │   └── App.tsx                  # HashRouter & page route dispatch
+│   │   └── App.tsx                  # Client router
 │   └── package.json                 # Node.js dependencies & scripts
 ├── ml/                              # LightGBM and ARIMA model training scripts & artifacts
 ├── scripts/
-│   └── seed_reference_data.py       # Seeds 14 ports, vessel classes, plants, and market benchmarks
-└── .planning/                       # Architectural specs and knowledge graph indices
+│   └── seed_reference_data.py       # Seeds 14 ports, 4 vessel classes, 5 plants, market benchmarks
+└── .planning/                       # Architectural design documents and memory graphs
 ```
 
 ---
@@ -154,26 +189,28 @@ app.include_router(market.router, prefix="/market", tags=["market-legacy"])
 ```
 This ensures zero breakage across legacy frontend callers and strict API gateways.
 
-### Core Endpoints
-* `GET /api/market/indicators`: Returns real-time Baltic indices, commodity benchmarks, macro PMIs, and port queues.
-* `GET /api/analyses/{id}`: Returns complete 12-section analysis payload including dual-port feasibility, seasonal factors, and alternative employment rankings.
-* `POST /api/analyses/idle-employment`: Dynamic calculation of turnaround waiting queues, demurrage exposure, and alternative employment options.
-* `GET /api/analyses/seasonal-factor`: Month-indexed seasonal rate multipliers with English and Hindi advisories.
-* `GET /api/admin/reference/ports`: Filterable reference ports by `port_type` (`load`/`discharge`) and `country`.
+### Core Endpoints Reference
+* `GET /api/market/indicators`: Real-time Baltic indices (BDI, BCI, BPI, BSI), commodity benchmarks, macro PMIs, and port queues.
+* `GET /api/analyses/{id}`: Complete 12-section analysis payload including dual-port feasibility, seasonal factors, and alternative employment rankings.
+* `POST /api/analyses/idle-employment`: Dynamic calculation of turnaround waiting queues, demurrage exposure, and 4 alternative employment options.
+* `GET /api/analyses/seasonal-factor?laycan_month={m}&origin_port={p}&destination_port={d}`: Month-indexed seasonal rate multipliers with English and Hindi advisories.
+* `GET /api/admin/reference/ports?port_type={load|discharge}&country={c}`: Filterable reference ports by type and country.
+* `POST /api/analyses/{id}/decision`: Records procurement officer decision and audit trail.
 
 ---
 
 ## 6. Developer & Agent Operational Rules
 
-1. **Ponytail Ultra Mode**:
+1. **Ponytail Ultra Mode (ALWAYS ACTIVE)**:
    - Write the minimum working code. Deletion before addition.
    - Do not introduce speculative abstractions or heavy external frameworks without explicit user request.
    - Mark intentional simplifications with `ponytail:` comments naming limits and upgrade paths.
 2. **Database Migrations (SQLite Self-Healing)**:
    - When introducing columns to SQLAlchemy models in SQLite, always include self-healing `PRAGMA table_info` alter checks (see `scripts/seed_reference_data.py`) because SQLite `create_all()` does not alter existing tables.
-3. **Environment & Testing**:
-   - Backend tests **must** run via virtual environment: `backend/venv/bin/pytest`.
+3. **Environment & Verification Commands**:
+   - Backend tests **must** run via virtual environment: `backend/venv/bin/pytest` (all 37 tests must pass).
    - Frontend verification **must** run `npm run build` in `frontend/` to enforce strict TypeScript safety.
+   - Database re-seeding: `backend/venv/bin/python scripts/seed_reference_data.py`.
 4. **Git Hygiene & Worktree Isolation**:
-   - Keep experimental branches isolated (`feat/ps-features`).
-   - Treat `origin/main` as the source of truth. Never stage or push local-only audit documents, scratch scripts, or unrequested folders.
+   - Feature development lives on `feat/ps-features` which fast-forwards directly to `origin/main`.
+   - Never stage or push local-only audit documents, scratch scripts, or unrequested folders (`SIH26006/`, `UX_JUDGE_AUDIT_REPORT.md`, `local_user_files_backup/`).
