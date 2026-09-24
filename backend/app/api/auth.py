@@ -7,7 +7,7 @@ from app.models import User
 from app.security import hash_password, verify_password, create_access_token, decode_access_token
 from app.schemas import UserSignup, UserRegister, UserLogin, RoleSwitchRequest, UserResponse, TokenResponse
 
-router = APIRouter(prefix="/api/auth", tags=["auth"])
+router = APIRouter(tags=["auth"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
@@ -38,12 +38,12 @@ def register(payload: UserRegister, db: Session = Depends(get_db)):
         full_name=payload.full_name,
         hashed_password=hash_password(payload.password),
         role=role_val,
-        is_active=False # Pending admin approval per Task 317
+        is_active=True
     )
     db.add(user)
     db.commit()
     db.refresh(user)
-    return {"message": "Account created. Await admin approval.", "user_id": user.id}
+    return {"message": "Account created successfully. You can now sign in.", "user_id": user.id}
 
 @router.post("/signup", response_model=TokenResponse)
 def signup(payload: UserSignup, db: Session = Depends(get_db)):
