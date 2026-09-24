@@ -12,13 +12,51 @@ export default defineConfig({
         target: "http://localhost:8000",
         changeOrigin: true,
       },
+      "/analyses": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/bookings": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/demand": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/quotes": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/map": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
     },
   },
   preview: {
-    // Same proxy for `vite preview` so the production bundle is testable
-    // locally without setting VITE_API_BASE.
     proxy: {
       "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/analyses": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/bookings": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/demand": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/quotes": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/map": {
         target: "http://localhost:8000",
         changeOrigin: true,
       },
