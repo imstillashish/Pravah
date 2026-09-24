@@ -2,14 +2,14 @@ import React, { useEffect, useState, useCallback } from "react";
 import { RefreshCw, Layers, ArrowUp } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
-import { Card, Pill, SecondaryButton, SectionHeader, Skeleton } from "./ui";
+import { Card, Pill, SecondaryButton, SectionHeader, LoadingSkeleton, EmptyState } from "./ui";
 import type { AnalysisObject } from "../types/analysis";
 
 /**
  * Recent analyses — the simulation log. Mono tabular numerals,
- * Shoal header band, 1px hairline row rules, Shoal hover wash.
- * Savings carry the ▲ glyph in Deep; overridden status is a hazard
- * (Abyss 600 + "!") — never a second hue (DESIGN.md §7).
+ * Oceanic header band, 1px hairline row rules, Fog hover wash.
+ * Savings carry the ▲ glyph in Emerald Profit; overridden status is a hazard
+ * (Alarm Red + "!") — never a second hue (DESIGN.md §7).
  */
 export interface RecentAnalysesTableProps {
   analyses?: AnalysisObject[];
@@ -53,6 +53,8 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
       if (res.ok) {
         const data: AnalysisObject[] = await res.json();
         setInternalAnalyses(data);
+      } else {
+        console.warn("RecentAnalysesTable: server responded with", res.status);
       }
     } catch (err) {
       console.error("RecentAnalysesTable: failed to fetch analyses", err);
@@ -65,8 +67,7 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
     if (propAnalyses === undefined) {
       fetchInternal();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [propAnalyses, fetchInternal]);
 
   const analyses = propAnalyses ?? internalAnalyses;
   const isLoading = propIsLoading !== undefined ? propIsLoading : internalLoading;
@@ -120,9 +121,8 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
         Historical voyage simulations, vessel parcel allocations, and realized cost savings.
       </p>
 
-      <Card className="mt-4 overflow-hidden rounded-none p-0">
+      <Card className="mt-4 overflow-hidden rounded-card border border-pebble bg-paper p-0">
         <div className="flex items-center justify-between border-b border-pebble bg-paper px-4 py-3">
-          {/* On washed bands, eyebrow ink steps up to Deep Sea (Slate = 4.45:1 here) */}
           <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
             SIMULATION LOG · {analyses.length} ENTRIES
           </span>
@@ -148,50 +148,55 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
           <table className="w-full min-w-[720px] border-collapse text-left">
             <thead>
               <tr className="border-b border-pebble bg-fog font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
-                <th scope="col" className="py-2.5 pl-4 pr-3 font-medium">Trade Route</th>
-                <th scope="col" className="px-3 py-2.5 font-medium">Cargo &amp; Parcel</th>
-                <th scope="col" className="px-3 py-2.5 font-medium">Vessel</th>
-                <th scope="col" className="px-3 py-2.5 font-medium">Forecast vs. Spot</th>
-                <th scope="col" className="px-3 py-2.5 font-medium">Savings</th>
-                <th scope="col" className="px-3 py-2.5 font-medium">Status</th>
-                <th scope="col" className="py-2.5 pl-3 pr-4 text-right font-medium">Run Time</th>
+                <th scope="col" className="py-2.5 pl-4 pr-3 font-semibold">Trade Route</th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">Cargo &amp; Parcel</th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">Vessel</th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">Forecast vs. Spot</th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">Savings</th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">Status</th>
+                <th scope="col" className="py-2.5 pl-3 pr-4 text-right font-semibold">Run Time</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-line text-sm">
+            <tbody className="divide-y divide-pebble bg-paper text-sm">
               {isLoading ? (
-                [1, 2, 3].map((i) => (
-                  <tr key={i}>
-                    <td className="py-3.5 pl-4 pr-3"><Skeleton className="h-4 w-32" /></td>
-                    <td className="px-3 py-3.5"><Skeleton className="h-4 w-24" /></td>
-                    <td className="px-3 py-3.5"><Skeleton className="h-4 w-20" /></td>
-                    <td className="px-3 py-3.5"><Skeleton className="h-4 w-24" /></td>
-                    <td className="px-3 py-3.5"><Skeleton className="h-4 w-20" /></td>
-                    <td className="px-3 py-3.5"><Skeleton className="h-4 w-16" /></td>
-                    <td className="py-3.5 pl-3 pr-4"><Skeleton className="ml-auto h-4 w-16" /></td>
+                [1, 2, 3, 4, 5].map((i) => (
+                  <tr key={i} className="border-b border-pebble">
+                    <td className="py-3.5 pl-4 pr-3">
+                      <LoadingSkeleton className="h-4 w-32" />
+                      <LoadingSkeleton className="mt-1 h-3 w-16" />
+                    </td>
+                    <td className="px-3 py-3.5">
+                      <LoadingSkeleton className="h-4 w-24" />
+                      <LoadingSkeleton className="mt-1 h-3 w-16" />
+                    </td>
+                    <td className="px-3 py-3.5"><LoadingSkeleton className="h-6 w-20 rounded-full" /></td>
+                    <td className="px-3 py-3.5">
+                      <LoadingSkeleton className="h-4 w-24" />
+                      <LoadingSkeleton className="mt-1 h-3 w-20" />
+                    </td>
+                    <td className="px-3 py-3.5"><LoadingSkeleton className="h-5 w-24" /></td>
+                    <td className="px-3 py-3.5"><LoadingSkeleton className="h-6 w-16 rounded-full" /></td>
+                    <td className="py-3.5 pl-3 pr-4"><LoadingSkeleton className="ml-auto h-4 w-20" /></td>
                   </tr>
                 ))
               ) : analyses.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-6">
-                    <div className="rounded-card border border-dashed border-pebble px-6 py-8 text-center">
-                      <Layers className="mx-auto mb-2 size-8 text-faint" aria-hidden="true" />
-                      <p className="font-mono text-sm font-medium text-forest-ink">
-                        No recent analyses recorded
-                      </p>
-                      <p className="mt-1 font-mono text-xs text-slate">
-                        Run a new scenario to evaluate voyage charter savings.
-                      </p>
-                    </div>
+                  <td colSpan={7} className="p-8">
+                    <EmptyState
+                      icon={<Layers className="size-8" aria-hidden="true" />}
+                      title="No recent analyses recorded"
+                      description="Run a new simulation to evaluate voyage charter savings, vessel parcel allocation, and route economics."
+                    />
                   </td>
                 </tr>
               ) : (
                 analyses.map((item) => (
-                  <tr key={item.id} className="transition-colors duration-150 hover:bg-fog">
+                  <tr key={item.id} className="transition-colors duration-150 hover:bg-fog/60">
                     {/* Trade route */}
                     <td className="py-3.5 pl-4 pr-3">
-                      <div className="flex items-center gap-1.5 font-medium text-forest-ink">
+                      <div className="flex items-center gap-1.5 font-semibold text-forest-ink">
                         <span className="truncate">{item.origin_port}</span>
-                        <span aria-hidden="true" className="text-faint">→</span>
+                        <span aria-hidden="true" className="font-mono text-slate">→</span>
                         <span className="truncate">{item.destination_port}</span>
                       </div>
                       <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
@@ -201,8 +206,8 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
 
                     {/* Cargo */}
                     <td className="px-3 py-3.5">
-                      <div className="font-mono tabular-nums text-forest-ink">
-                        {item.parcel_tonnage.toLocaleString()} <span className="text-slate"> MT</span>
+                      <div className="font-mono font-medium tabular-nums text-forest-ink">
+                        {item.parcel_tonnage.toLocaleString()} <span className="font-sans text-xs text-slate">MT</span>
                       </div>
                       <div className="text-xs text-charcoal">{item.commodity}</div>
                     </td>
@@ -214,12 +219,12 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
 
                     {/* Forecast vs spot */}
                     <td className="px-3 py-3.5">
-                      <div className="font-mono tabular-nums text-forest-ink">
+                      <div className="font-mono font-medium tabular-nums text-forest-ink">
                         ${item.predicted_rate_pmt.toFixed(2)}
-                        <span className="text-slate"> / MT</span>
+                        <span className="font-sans text-xs text-slate">/MT</span>
                       </div>
                       <div className="font-mono text-xs tabular-nums text-slate">
-                        Spot: ${item.benchmark_spot_pmt.toFixed(2)}
+                        Spot: ${item.benchmark_spot_pmt.toFixed(2)}/MT
                       </div>
                     </td>
 

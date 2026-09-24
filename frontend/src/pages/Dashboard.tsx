@@ -5,27 +5,34 @@ import {
   ShieldAlert,
   Clock,
   Plus,
-  RefreshCw,
 } from "lucide-react";
 import { GlobalMetricsStrip } from "../components/GlobalMetricsStrip";
 import { MarketIntelligenceStrip } from "../components/MarketIntelligenceStrip";
 import { RecentAnalysesTable } from "../components/RecentAnalysesTable";
 import { NewAnalysisDrawer } from "../components/NewAnalysisDrawer";
 import { API_BASE } from "../api";
-import { PrimaryButton, Card } from "../components/ui";
+import { PrimaryButton, Card, ErrorStateBanner } from "../components/ui";
 import type { AnalysisObject } from "../types/analysis";
 
 /* Shared indicator tile padding. */
 const METRIC_CARD = "p-4";
 
 export const Dashboard: React.FC = () => {
-  const { user, token } = useAuth();
+  const { user, token, switchRole } = useAuth();
   const [analyses, setAnalyses] = useState<AnalysisObject[]>([]);
   const [isLoadingAnalyses, setIsLoadingAnalyses] = useState<boolean>(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [isSwitchingRole, setIsSwitchingRole] = useState<boolean>(false);
 
   const isPlanner = user?.role === "logistics_planner";
+
+  const handleRoleSwitch = async (role: "logistics_planner" | "port_operator") => {
+    if (user?.role === role || isSwitchingRole) return;
+    setIsSwitchingRole(true);
+    await switchRole(role);
+    setIsSwitchingRole(false);
+  };
 
   const fetchAnalyses = useCallback(async () => {
     if (!token) {
@@ -71,14 +78,63 @@ export const Dashboard: React.FC = () => {
 
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
-      {/* Greeting band — mono eyebrow + 36px Inter 700 greeting (spec §7) */}
+      {/* Greeting band — mono eyebrow + role switch badges + 36px Inter 700 greeting */}
       <section aria-labelledby="page-title" className="pb-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-              {deskCode} · {dateLabel}
+            <div className="mb-2.5 flex flex-wrap items-center gap-3">
+              <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
+                {deskCode} · {dateLabel}
+              </span>
+              <span className="text-pebble" aria-hidden="true">|</span>
+              {/* Role switch badges */}
+              <div
+                role="group"
+                aria-label="Active desk role switcher"
+                className="inline-flex items-center rounded-full border border-pebble bg-fog p-0.5"
+              >
+                <button
+                  type="button"
+                  onClick={() => handleRoleSwitch("logistics_planner")}
+                  disabled={isSwitchingRole}
+                  aria-pressed={isPlanner}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[11px] transition-all duration-150 focus-visible:outline-2 focus-visible:outline-forest-ink ${
+                    isPlanner
+                      ? "bg-forest-ink font-semibold text-paper shadow-sm"
+                      : "text-charcoal hover:bg-paper/80 hover:text-forest-ink"
+                  }`}
+                >
+                  <span
+                    className={`size-1.5 rounded-full ${
+                      isPlanner ? "bg-lime-voltage" : "bg-pebble"
+                    }`}
+                    aria-hidden="true"
+                  />
+                  <span>Freight Planner</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRoleSwitch("port_operator")}
+                  disabled={isSwitchingRole}
+                  aria-pressed={!isPlanner}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[11px] transition-all duration-150 focus-visible:outline-2 focus-visible:outline-forest-ink ${
+                    !isPlanner
+                      ? "bg-forest-ink font-semibold text-paper shadow-sm"
+                      : "text-charcoal hover:bg-paper/80 hover:text-forest-ink"
+                  }`}
+                >
+                  <span
+                    className={`size-1.5 rounded-full ${
+                      !isPlanner ? "bg-lime-voltage" : "bg-pebble"
+                    }`}
+                    aria-hidden="true"
+                  />
+                  <span>Port Operations</span>
+                </button>
+              </div>
             </div>
-            <h1 id="page-title" className="text-4xl font-bold tracking-tight text-obsidian">
+
+            <h1 id="page-title" className="text-3xl font-bold tracking-tight text-forest-ink sm:text-4xl">
               {daypart}, {firstName}
             </h1>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-charcoal">
@@ -88,7 +144,7 @@ export const Dashboard: React.FC = () => {
             </p>
           </div>
           {isPlanner && (
-            <div className="shrink-0">
+            <div className="shrink-0 pt-1">
               <PrimaryButton onClick={() => setIsDrawerOpen(true)}>
                 <Plus className="size-4" aria-hidden="true" />
                 <span>Run New Analysis</span>
@@ -106,27 +162,10 @@ export const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Fetch failure surface — Wise danger recipe: Fog fill + Alarm Red (spec §3) */}
+      {/* Fetch failure surface — ErrorStateBanner */}
       {fetchError && (
-        <div
-          role="alert"
-          className="mb-8 flex flex-col gap-3 rounded-card border border-pebble bg-fog p-4 sm:flex-row sm:items-center"
-        >
-          <span
-            aria-hidden="true"
-            className="flex size-6 shrink-0 items-center justify-center rounded-full border border-alarm-red/40 bg-paper font-mono text-sm font-semibold text-alarm-red"
-          >
-            !
-          </span>
-          <p className="flex-1 text-sm font-semibold text-alarm-red">{fetchError}</p>
-          <button
-            type="button"
-            onClick={fetchAnalyses}
-            className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-full border border-alarm-red/40 bg-paper px-3.5 py-2 font-mono text-xs font-semibold text-alarm-red transition-colors duration-150 hover:brightness-95"
-          >
-            <RefreshCw className="size-3.5" aria-hidden="true" />
-            <span>Retry</span>
-          </button>
+        <div className="mb-8">
+          <ErrorStateBanner message={fetchError} onRetry={fetchAnalyses} />
         </div>
       )}
 
@@ -136,10 +175,10 @@ export const Dashboard: React.FC = () => {
           <>
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-charcoal">
                   SPOT VS PERIOD GAP
                 </span>
-                <span className="inline-flex items-center gap-1 rounded bg-emerald-wash px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-profit">
+                <span className="inline-flex items-center gap-1 rounded border border-emerald-profit/30 bg-emerald-wash px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-profit">
                   SAVINGS OPPORTUNITY
                 </span>
               </div>
@@ -154,10 +193,10 @@ export const Dashboard: React.FC = () => {
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-charcoal">
                   FORECASTED WINDOW
                 </span>
-                <span className="inline-flex items-center gap-1 rounded bg-linen-mist px-2 py-0.5 font-mono text-[10px] font-semibold text-signal-blue">
+                <span className="inline-flex items-center gap-1 rounded border border-spruce/25 bg-linen-mist px-2 py-0.5 font-mono text-[10px] font-bold text-spruce">
                   AI RECOMMENDATION
                 </span>
               </div>
@@ -172,10 +211,10 @@ export const Dashboard: React.FC = () => {
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-charcoal">
                   VESSEL PARCEL PAIRING
                 </span>
-                <span className="inline-flex items-center gap-1 rounded bg-amber-wash px-2 py-0.5 font-mono text-[10px] font-semibold text-amber-warning">
+                <span className="inline-flex items-center gap-1 rounded border border-amber-warning/30 bg-amber-wash px-2 py-0.5 font-mono text-[10px] font-bold text-amber-warning">
                   BERTH OPTIMAL
                 </span>
               </div>
@@ -192,12 +231,12 @@ export const Dashboard: React.FC = () => {
           <>
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-charcoal">
                   BERTH AVAILABILITY
                 </span>
                 <Anchor className="size-4 text-forest-ink" aria-hidden="true" />
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
+              <div className="font-mono text-2xl font-bold tabular-nums text-forest-ink">
                 3 READY
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
@@ -208,12 +247,12 @@ export const Dashboard: React.FC = () => {
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-charcoal">
                   DRAFT ADVISORY
                 </span>
                 <ShieldAlert className="size-4 text-signal-blue" aria-hidden="true" />
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">
+              <div className="font-mono text-2xl font-bold tabular-nums text-forest-ink">
                 14.5M MAX
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
@@ -223,12 +262,14 @@ export const Dashboard: React.FC = () => {
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-charcoal">
                   AVG TURNAROUND
                 </span>
                 <Clock className="size-4 text-forest-ink" aria-hidden="true" />
               </div>
-              <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">41.8H</div>
+              <div className="font-mono text-2xl font-bold tabular-nums text-forest-ink">
+                41.8H
+              </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
                 Idle waiting time reduced by 6.4 hours with automated tender pre-dispatch.
               </p>

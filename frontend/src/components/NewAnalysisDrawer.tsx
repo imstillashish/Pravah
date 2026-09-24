@@ -101,12 +101,14 @@ const TONNAGE_QUICK_CHIPS = [
 const INPUT_CLASS =
   "w-full rounded-card border border-pebble bg-paper px-3 py-2 text-sm " +
   "text-charcoal transition-colors duration-150 hover:border-charcoal " +
-  "focus:border-forest-ink focus:outline-none";
+  "focus:border-forest-ink focus:outline-none " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink " +
+  "focus-visible:ring-2 focus-visible:ring-forest-ink/20";
 
 const FIELD_LABEL_CLASS =
-  "mb-1 block font-mono text-[10px] uppercase tracking-[0.08em] text-slate";
+  "mb-1 block font-mono text-xs font-semibold uppercase tracking-[0.08em] text-charcoal";
 const GROUP_LABEL_CLASS =
-  "block font-mono text-[10px] uppercase tracking-[0.08em] text-slate";
+  "block font-mono text-xs font-semibold uppercase tracking-[0.08em] text-charcoal";
 
 export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
   isOpen,
@@ -131,7 +133,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
         name: "South-West Monsoon (Bay of Bengal)",
         factor: destPort.toLowerCase().includes("haldia") ? "1.31x" : "1.26x",
         alert: "⚠️ Rough sea swell reduces discharge rate by ~28%; offshore lightering at Sandheads suspended.",
-        badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
+        badgeColor: "bg-amber-wash text-amber-warning border-amber-warning/30",
       };
     }
     if ([1, 2].includes(month)) {
@@ -139,7 +141,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
         name: "Queensland Wet & Cyclone Window",
         factor: "1.22x",
         alert: "⚠️ Potential loading berth/rail washouts at DBCT/Gladstone; elevated Capesize charter demand.",
-        badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
+        badgeColor: "bg-amber-wash text-amber-warning border-amber-warning/30",
       };
     }
     if ([11, 12].includes(month)) {
@@ -147,7 +149,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
         name: "Asian Winter Restocking Surge",
         factor: "1.18x",
         alert: "⚡ Blast furnace coal replenishment across East Asia; tight Capesize vessel supply.",
-        badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
+        badgeColor: "bg-linen-mist text-signal-blue border-signal-blue/30",
       };
     }
     if ([4, 5].includes(month)) {
@@ -155,14 +157,14 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
         name: "Pre-Monsoon Strategic Stocking",
         factor: "1.12x",
         alert: "📦 Accelerated procurement by Indian mills to build 30-day stockyard buffer.",
-        badgeColor: "bg-emerald-100 text-emerald-900 border-emerald-300",
+        badgeColor: "bg-emerald-wash text-emerald-profit border-emerald-profit/30",
       };
     }
     return {
       name: "Normal Navigation Climatology",
       factor: "1.05x",
       alert: "✅ Favorable weather window with high handling productivity and low queue risk.",
-      badgeColor: "bg-linen-mist text-forest-ink border-pebble",
+      badgeColor: "bg-fog text-charcoal border-pebble",
     };
   };
 
@@ -350,7 +352,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                   type="button"
                   onClick={onClose}
                   aria-label="Close drawer"
-                  className="cursor-pointer rounded-full p-2 text-slate transition-colors duration-150 hover:bg-fog hover:text-forest-ink"
+                  className="cursor-pointer rounded-full p-2 text-slate transition-colors duration-150 hover:bg-fog hover:text-forest-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink"
                 >
                   <X className="size-5" aria-hidden="true" />
                 </button>
@@ -413,12 +415,12 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                     </div>
 
                     {ORIGIN_PORT_SPECS[originPort] && (
-                      <div className="col-span-2 flex flex-wrap items-center justify-between gap-1 rounded-lg border border-pebble/70 bg-fog/30 px-3 py-1.5 font-mono text-[11px] text-slate">
-                        <span>Max Draft: <strong className="text-charcoal">{ORIGIN_PORT_SPECS[originPort].draft}m</strong></span>
-                        <span>·</span>
-                        <span>Max DWT: <strong className="text-charcoal">{ORIGIN_PORT_SPECS[originPort].dwt.toLocaleString()} MT</strong></span>
-                        <span>·</span>
-                        <span>Queue: <strong className="text-forest-ink">{ORIGIN_PORT_SPECS[originPort].queue} ships (~{ORIGIN_PORT_SPECS[originPort].waitDays}d)</strong></span>
+                      <div className="col-span-2 flex flex-wrap items-center justify-between gap-1 rounded-lg border border-pebble bg-fog px-3 py-1.5 font-mono text-[11px] text-charcoal tabular-nums">
+                        <span>Max Draft: <strong className="font-semibold text-forest-ink">{ORIGIN_PORT_SPECS[originPort].draft.toFixed(1)}m</strong></span>
+                        <span className="text-pebble" aria-hidden="true">·</span>
+                        <span>Max DWT: <strong className="font-semibold text-forest-ink">{ORIGIN_PORT_SPECS[originPort].dwt.toLocaleString()} MT</strong></span>
+                        <span className="text-pebble" aria-hidden="true">·</span>
+                        <span>Queue: <strong className="font-semibold text-forest-ink">{ORIGIN_PORT_SPECS[originPort].queue} ships (~{ORIGIN_PORT_SPECS[originPort].waitDays.toFixed(1)}d)</strong></span>
                       </div>
                     )}
                   </div>
@@ -449,7 +451,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                     <label htmlFor="laycan-month" className={GROUP_LABEL_CLASS}>
                       Laycan Window (Seasonal Demand-Supply Factor)
                     </label>
-                    <span className="font-mono text-xs font-semibold text-forest-ink">
+                    <span className="font-mono text-xs font-semibold tabular-nums text-forest-ink">
                       Multiplier: {getSeasonalProfile(laycanMonth, destinationPort).factor}
                     </span>
                   </div>
@@ -466,7 +468,10 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                     ))}
                   </select>
 
-                  <div className={cx("rounded-lg border p-2.5 text-xs transition-colors", getSeasonalProfile(laycanMonth, destinationPort).badgeColor)}>
+                  <div
+                    aria-live="polite"
+                    className={cx("rounded-lg border p-2.5 text-xs transition-colors", getSeasonalProfile(laycanMonth, destinationPort).badgeColor)}
+                  >
                     <div className="font-semibold">{getSeasonalProfile(laycanMonth, destinationPort).name}</div>
                     <div className="mt-0.5 text-[11px] opacity-90">{getSeasonalProfile(laycanMonth, destinationPort).alert}</div>
                   </div>
@@ -525,10 +530,11 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                           onClick={() => setParcelTonnage(chip.value)}
                           aria-pressed={isSelected}
                           className={cx(
-                            "min-h-11 cursor-pointer rounded-card border px-2.5 py-2 text-left transition-colors duration-150",
+                            "min-h-11 cursor-pointer rounded-card border px-2.5 py-2 text-left transition duration-150 active:scale-[0.98]",
                             isSelected
-                              ? "border-forest-ink bg-linen-mist"
-                              : "border-pebble bg-paper hover:border-forest-ink",
+                              ? "border-forest-ink bg-linen-mist ring-1 ring-forest-ink"
+                              : "border-pebble bg-paper hover:border-forest-ink hover:bg-fog/60 active:bg-fog",
+                            "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest-ink",
                           )}
                         >
                           <div className="font-mono text-xs font-medium tabular-nums text-forest-ink">
@@ -536,8 +542,8 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                           </div>
                           <div
                             className={cx(
-                              "mt-0.5 font-mono text-[10px]",
-                              isSelected ? "text-forest-ink" : "text-slate",
+                              "mt-0.5 font-mono text-[10px] tabular-nums",
+                              isSelected ? "font-semibold text-forest-ink" : "text-charcoal",
                             )}
                           >
                             {chip.vessel}

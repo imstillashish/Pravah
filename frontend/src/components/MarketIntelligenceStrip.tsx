@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { API_BASE } from "../api";
 import { Globe, TrendingUp, TrendingDown, Anchor } from "lucide-react";
+import { LoadingSkeleton } from "./ui";
 
 interface MetricItem {
   current: number;
@@ -105,8 +106,28 @@ export const MarketIntelligenceStrip: React.FC = () => {
 
   if (isLoading && !market) {
     return (
-      <div className="rounded-xl border border-pebble bg-paper p-4 text-xs text-slate">
-        Loading Global Commodity & Port Lineup Feeds...
+      <div className="space-y-4">
+        <div className="rounded-card border border-pebble bg-paper p-4">
+          <div className="flex items-center justify-between border-b border-pebble pb-3">
+            <div className="flex items-center gap-2">
+              <LoadingSkeleton className="size-7 rounded-lg" />
+              <div>
+                <LoadingSkeleton className="h-4 w-48" />
+                <LoadingSkeleton className="mt-1 h-3 w-64" />
+              </div>
+            </div>
+            <LoadingSkeleton className="h-4 w-36" />
+          </div>
+          <div className="grid grid-cols-2 gap-3 pt-3 sm:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="rounded-card border border-pebble bg-fog p-3">
+                <LoadingSkeleton className="h-3 w-20" />
+                <LoadingSkeleton className="mt-2 h-6 w-16" />
+                <LoadingSkeleton className="mt-1.5 h-3 w-24" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -117,111 +138,143 @@ export const MarketIntelligenceStrip: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* 1. Global Commodity & Baltic Ticker Banner */}
-      <div className="rounded-xl border border-pebble bg-gradient-to-r from-paper via-fog/30 to-paper p-4 shadow-sm">
+      <div className="rounded-card border border-pebble bg-paper p-4">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-pebble pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-forest-ink/10 text-forest-ink">
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-linen-mist text-forest-ink">
               <Globe className="size-4" />
             </div>
             <div>
-              <h2 className="font-serif text-sm font-bold text-charcoal">
-                Global Commodity & Baltic Maritime Tickers
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="font-sans text-sm font-bold text-forest-ink">
+                  Global Commodity & Baltic Maritime Tickers
+                </h2>
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-profit/30 bg-emerald-wash px-2 py-0.5">
+                  <span className="relative flex size-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-profit opacity-75"></span>
+                    <span className="relative inline-flex size-1.5 rounded-full bg-emerald-profit"></span>
+                  </span>
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-emerald-profit">
+                    LIVE
+                  </span>
+                </div>
+              </div>
               <p className="font-mono text-[10px] uppercase tracking-wider text-slate">
                 SIH26006 Macro Risk & Raw Material Indices · Verified Benchmarks
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 font-mono text-[11px] text-slate">
-            <span>Global Mfg PMI: <strong className="text-forest-ink">{market?.macro_indicators.global_manufacturing_pmi}</strong></span>
-            <span>·</span>
-            <span>China Blast Furnace: <strong className="text-charcoal">{market?.macro_indicators.china_blast_furnace_utilization_pct}%</strong></span>
+          <div className="flex flex-wrap items-center gap-2.5 font-mono text-[11px] text-slate">
+            <span>
+              Global Mfg PMI:{" "}
+              <strong className="font-mono tabular-nums text-forest-ink font-bold">
+                {market?.macro_indicators.global_manufacturing_pmi.toFixed(1)}
+              </strong>
+            </span>
+            <span className="text-pebble" aria-hidden="true">·</span>
+            <span>
+              China Blast Furnace:{" "}
+              <strong className="font-mono tabular-nums text-forest-ink font-bold">
+                {market?.macro_indicators.china_blast_furnace_utilization_pct.toFixed(1)}%
+              </strong>
+            </span>
           </div>
         </div>
 
         {/* Ticker Cards Grid */}
         <div className="grid grid-cols-2 gap-3 pt-3 sm:grid-cols-4">
           {/* Coking Coal */}
-          <div className="rounded-lg border border-pebble/80 bg-paper p-3">
-            <span className="font-mono text-[10px] uppercase text-slate">Aus Coking Coal FOB</span>
+          <div className="rounded-card border border-pebble bg-fog p-3">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.05em] text-charcoal">
+              Aus Coking Coal FOB
+            </span>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="font-serif text-lg font-bold text-charcoal">
+              <span className="font-mono text-lg font-bold tabular-nums text-forest-ink">
                 ${market?.commodity_prices.coking_coal_fob_usd.current.toFixed(1)}
               </span>
-              <span className="flex items-center text-xs font-semibold text-emerald-700">
+              <span className="inline-flex items-center font-mono text-xs font-bold tabular-nums text-emerald-profit">
                 <TrendingUp className="mr-0.5 size-3" />
                 +{market?.commodity_prices.coking_coal_fob_usd.change_pct}%
               </span>
             </div>
-            <span className="text-[10px] text-slate">Premium Hard Coking Coal</span>
+            <span className="font-mono text-[10px] text-charcoal/80">Premium Hard Coking Coal</span>
           </div>
 
           {/* Iron Ore */}
-          <div className="rounded-lg border border-pebble/80 bg-paper p-3">
-            <span className="font-mono text-[10px] uppercase text-slate">Iron Ore 62% Fe CFR</span>
+          <div className="rounded-card border border-pebble bg-fog p-3">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.05em] text-charcoal">
+              Iron Ore 62% Fe CFR
+            </span>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="font-serif text-lg font-bold text-charcoal">
+              <span className="font-mono text-lg font-bold tabular-nums text-forest-ink">
                 ${market?.commodity_prices.iron_ore_cfr_usd.current.toFixed(1)}
               </span>
-              <span className="flex items-center text-xs font-semibold text-amber-700">
+              <span className="inline-flex items-center font-mono text-xs font-bold tabular-nums text-amber-warning">
                 <TrendingDown className="mr-0.5 size-3" />
                 {market?.commodity_prices.iron_ore_cfr_usd.change_pct}%
               </span>
             </div>
-            <span className="text-[10px] text-slate">Qingdao Benchmark $/MT</span>
+            <span className="font-mono text-[10px] text-charcoal/80">Qingdao Benchmark $/MT</span>
           </div>
 
           {/* Baltic Capesize (BCI) */}
-          <div className="rounded-lg border border-pebble/80 bg-paper p-3">
-            <span className="font-mono text-[10px] uppercase text-slate">Baltic Capesize (BCI)</span>
+          <div className="rounded-card border border-pebble bg-fog p-3">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.05em] text-charcoal">
+              Baltic Capesize (BCI)
+            </span>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="font-serif text-lg font-bold text-charcoal">
+              <span className="font-mono text-lg font-bold tabular-nums text-forest-ink">
                 {market?.baltic_indices.bci.current.toLocaleString()}
               </span>
-              <span className="flex items-center text-xs font-semibold text-emerald-700">
+              <span className="inline-flex items-center font-mono text-xs font-bold tabular-nums text-emerald-profit">
                 <TrendingUp className="mr-0.5 size-3" />
                 +{market?.baltic_indices.bci.change_pct}%
               </span>
             </div>
-            <span className="text-[10px] text-slate">180k DWT Heavy Haul</span>
+            <span className="font-mono text-[10px] text-charcoal/80">180k DWT Heavy Haul</span>
           </div>
 
           {/* Baltic Panamax (BPI) */}
-          <div className="rounded-lg border border-pebble/80 bg-paper p-3">
-            <span className="font-mono text-[10px] uppercase text-slate">Baltic Panamax (BPI)</span>
+          <div className="rounded-card border border-pebble bg-fog p-3">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.05em] text-charcoal">
+              Baltic Panamax (BPI)
+            </span>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="font-serif text-lg font-bold text-charcoal">
+              <span className="font-mono text-lg font-bold tabular-nums text-forest-ink">
                 {market?.baltic_indices.bpi.current.toLocaleString()}
               </span>
-              <span className="flex items-center text-xs font-semibold text-slate">
+              <span className="inline-flex items-center font-mono text-xs font-bold tabular-nums text-charcoal">
+                <TrendingDown className="mr-0.5 size-3 text-alarm-red" />
                 {market?.baltic_indices.bpi.change_pct}%
               </span>
             </div>
-            <span className="text-[10px] text-slate">75k DWT Workhorse</span>
+            <span className="font-mono text-[10px] text-charcoal/80">75k DWT Workhorse</span>
           </div>
         </div>
       </div>
 
       {/* 2. Global Port Congestion & Lineup Monitor */}
-      <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
-        <div className="flex items-center justify-between border-b border-pebble pb-2">
+      <div className="rounded-card border border-pebble bg-paper p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-pebble pb-2.5">
           <div className="flex items-center gap-2">
             <Anchor className="size-4 text-forest-ink" />
-            <h3 className="font-serif text-xs font-bold uppercase tracking-wider text-charcoal">
+            <h3 className="font-sans text-xs font-bold uppercase tracking-wider text-forest-ink">
               Global Port Congestion & Lineup Monitor (Load Ports vs India Discharge)
             </h3>
           </div>
-          <span className="font-mono text-[10px] text-slate">Verified Port Operations</span>
+          <span className="inline-flex items-center rounded-full border border-pebble bg-fog px-2.5 py-0.5 font-mono text-[10px] font-semibold text-charcoal">
+            Verified Port Operations
+          </span>
         </div>
 
-        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* Origin Load Ports Lineups */}
-          <div className="rounded-lg border border-pebble/60 bg-fog/30 p-3">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="font-mono text-[11px] font-bold text-charcoal uppercase">
+          <div className="rounded-card border border-pebble bg-fog p-3.5">
+            <div className="mb-2.5 flex items-center justify-between border-b border-pebble pb-2">
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-forest-ink">
                 Global Origin Terminals
               </span>
-              <span className="text-[10px] text-slate">Waiting / Lineup</span>
+              <span className="font-mono text-[10px] font-medium text-charcoal">Waiting / Lineup</span>
             </div>
             <div className="space-y-2">
               {(originPorts.length > 0
@@ -233,16 +286,16 @@ export const MarketIntelligenceStrip: React.FC = () => {
                     { port_name: "Maputo (Matola)", country: "Mozambique", current_vessels_in_queue: 7, typical_waiting_days: 4.1, max_draft_m: 13.0 },
                   ]
               ).map((p, idx) => (
-                <div key={idx} className="flex items-center justify-between text-xs border-b border-pebble/30 pb-1.5 last:border-0 last:pb-0">
+                <div key={idx} className="flex items-center justify-between text-xs border-b border-pebble py-1.5 last:border-0 last:pb-0">
                   <div>
-                    <span className="font-medium text-charcoal">{p.port_name}</span>
-                    <span className="ml-1 text-[10px] text-slate">({p.country} · {p.max_draft_m}m draft)</span>
+                    <span className="font-semibold text-forest-ink">{p.port_name}</span>
+                    <span className="ml-1.5 font-mono text-[11px] text-charcoal">({p.country} · {p.max_draft_m.toFixed(1)}m draft)</span>
                   </div>
-                  <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                    <span className="rounded bg-pebble/50 px-1.5 py-0.5 text-charcoal">
+                  <div className="flex items-center gap-2 font-mono text-[11px] tabular-nums">
+                    <span className="rounded-full border border-pebble bg-paper px-2 py-0.5 font-semibold text-forest-ink">
                       {p.current_vessels_in_queue} ships
                     </span>
-                    <span className="text-slate">~{p.typical_waiting_days}d queue</span>
+                    <span className="font-medium text-charcoal">~{p.typical_waiting_days.toFixed(1)}d queue</span>
                   </div>
                 </div>
               ))}
@@ -250,12 +303,12 @@ export const MarketIntelligenceStrip: React.FC = () => {
           </div>
 
           {/* Indian Discharge Terminals Lineups */}
-          <div className="rounded-lg border border-pebble/60 bg-fog/30 p-3">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="font-mono text-[11px] font-bold text-charcoal uppercase">
+          <div className="rounded-card border border-pebble bg-fog p-3.5">
+            <div className="mb-2.5 flex items-center justify-between border-b border-pebble pb-2">
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-forest-ink">
                 Indian Discharge Ports (SAIL Inward)
               </span>
-              <span className="text-[10px] text-slate">Turnaround Queue</span>
+              <span className="font-mono text-[10px] font-medium text-charcoal">Turnaround Queue</span>
             </div>
             <div className="space-y-2">
               {(destPorts.length > 0
@@ -266,16 +319,16 @@ export const MarketIntelligenceStrip: React.FC = () => {
                     { port_name: "Haldia", country: "India", current_vessels_in_queue: 11, typical_waiting_days: 4.5, max_draft_m: 9.1 },
                   ]
               ).map((p, idx) => (
-                <div key={idx} className="flex items-center justify-between text-xs border-b border-pebble/30 pb-1.5 last:border-0 last:pb-0">
+                <div key={idx} className="flex items-center justify-between text-xs border-b border-pebble py-1.5 last:border-0 last:pb-0">
                   <div>
-                    <span className="font-medium text-charcoal">{p.port_name}</span>
-                    <span className="ml-1 text-[10px] text-slate">({p.country} · {p.max_draft_m}m draft)</span>
+                    <span className="font-semibold text-forest-ink">{p.port_name}</span>
+                    <span className="ml-1.5 font-mono text-[11px] text-charcoal">({p.country} · {p.max_draft_m.toFixed(1)}m draft)</span>
                   </div>
-                  <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                    <span className="rounded bg-pebble/50 px-1.5 py-0.5 text-charcoal">
+                  <div className="flex items-center gap-2 font-mono text-[11px] tabular-nums">
+                    <span className="rounded-full border border-pebble bg-paper px-2 py-0.5 font-semibold text-forest-ink">
                       {p.current_vessels_in_queue} ships
                     </span>
-                    <span className="text-slate">~{p.typical_waiting_days}d queue</span>
+                    <span className="font-medium text-charcoal">~{p.typical_waiting_days.toFixed(1)}d queue</span>
                   </div>
                 </div>
               ))}
