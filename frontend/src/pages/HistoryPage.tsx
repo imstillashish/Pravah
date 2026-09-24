@@ -104,7 +104,7 @@ export const HistoryPage: React.FC = () => {
   const fetchAnalyses = async () => {
     try {
       setIsLoading(true);
-      const data = await apiClient<AnalysisRecord[]>("/analyses");
+      const data = await apiClient<AnalysisRecord[]>("/analyses/recent");
       if (Array.isArray(data) && data.length > 0) {
         const normalized = data.map((item, idx) => ({
           ...item,
