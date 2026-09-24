@@ -191,17 +191,17 @@ export const DemandBoardPage: React.FC = () => {
       {/* Toast Notification */}
       {toastMessage && (
         <div
-          className={`flex items-center justify-between rounded-xl p-4 text-xs font-semibold shadow-md transition-all ${
+          className={`flex items-center justify-between rounded-card p-4 text-xs font-semibold shadow-md transition-all ${
             toastMessage.type === "success"
               ? "bg-forest-ink text-paper"
-              : "border border-red-300 bg-red-100 text-red-900"
+              : "border border-alarm-red/40 bg-fog text-alarm-red"
           }`}
         >
           <div className="flex items-center gap-2">
             {toastMessage.type === "success" ? (
               <CheckCircle2 className="size-4 text-lime-voltage" />
             ) : (
-              <AlertCircle className="size-4 text-red-600" />
+              <AlertCircle className="size-4 text-alarm-red" />
             )}
             <span>{toastMessage.text}</span>
           </div>
@@ -226,7 +226,7 @@ export const DemandBoardPage: React.FC = () => {
               SAIL CARGO POOLING HUB
             </span>
           </div>
-          <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+          <h1 className="mt-1 font-sans text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             SAIL Plant Demand Board & Cargo Pooling
           </h1>
           <p className="mt-0.5 text-xs text-slate">
@@ -239,7 +239,7 @@ export const DemandBoardPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="flex items-center gap-1.5 rounded-xl bg-forest-ink px-3.5 py-2 text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 rounded-full bg-lime-voltage px-3.5 py-2 text-xs font-medium text-forest-ink hover:brightness-95 active:scale-95 transition-all"
           >
             {showCreateForm ? <X className="size-3.5" /> : <Plus className="size-3.5" />}
             <span>{showCreateForm ? "Close Form" : "Post New Request"}</span>
@@ -249,7 +249,7 @@ export const DemandBoardPage: React.FC = () => {
             type="button"
             onClick={fetchDemand}
             aria-label="Refresh demand board"
-            className="flex items-center gap-1.5 rounded-xl border border-pebble bg-paper px-3 py-2 text-xs font-medium text-charcoal shadow-sm hover:bg-linen-mist/50"
+            className="flex items-center gap-1.5 rounded-full border border-forest-ink bg-paper px-3 py-2 text-xs font-medium text-forest-ink hover:bg-fog transition-colors"
           >
             <RotateCcw className="size-3.5" />
           </button>
@@ -258,24 +258,24 @@ export const DemandBoardPage: React.FC = () => {
 
       {/* KPI Overview Banner */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <span className="font-mono text-[10px] uppercase tracking-wider text-slate">Open Plant Requests</span>
-          <div className="mt-1 font-serif text-2xl font-bold text-charcoal">{requests.length}</div>
+          <div className="mt-1 font-mono text-2xl font-bold text-obsidian">{requests.length}</div>
           <p className="mt-0.5 text-[11px] text-slate">Awaiting consolidation or chartering</p>
         </div>
 
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <span className="font-mono text-[10px] uppercase tracking-wider text-slate">Aggregated Tonnage</span>
-          <div className="mt-1 font-serif text-2xl font-bold text-charcoal">
+          <div className="mt-1 font-mono text-2xl font-bold text-obsidian">
             {totalDemandMT.toLocaleString()} <span className="text-sm font-sans font-normal text-slate">MT</span>
           </div>
           <p className="mt-0.5 text-[11px] text-slate">Total open coking & thermal demand</p>
         </div>
 
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <span className="font-mono text-[10px] uppercase tracking-wider text-slate">Capesize Consolidation Potential</span>
-          <div className="mt-1 flex items-center gap-2 font-serif text-2xl font-bold text-forest-ink">
-            <Sparkles className="size-5 text-lime-voltage" />
+          <div className="mt-1 flex items-center gap-2 font-mono text-2xl font-bold text-forest-ink">
+            <Sparkles className="size-5 text-forest-ink" />
             <span>{totalDemandMT >= 70000 ? "Ready for Capesize" : "Panamax Ideal"}</span>
           </div>
           <p className="mt-0.5 text-[11px] text-slate">
@@ -286,11 +286,11 @@ export const DemandBoardPage: React.FC = () => {
 
       {/* Task 393: Inline Form (Not a separate page) */}
       {showCreateForm && (
-        <div className="rounded-xl border-2 border-forest-ink/30 bg-linen-mist/20 p-5 shadow-sm transition-all">
+        <div className="rounded-card border border-forest-ink/30 bg-linen-mist/20 p-5 transition-all">
           <div className="flex items-center justify-between border-b border-pebble pb-3">
             <div className="flex items-center gap-2">
               <Plus className="size-4 text-forest-ink" />
-              <h3 className="font-serif text-sm font-bold text-charcoal">
+              <h3 className="font-sans text-sm font-bold text-obsidian">
                 Post New Plant Cargo Demand
               </h3>
             </div>
@@ -303,7 +303,7 @@ export const DemandBoardPage: React.FC = () => {
               <select
                 value={newPlantId}
                 onChange={(e) => setNewPlantId(Number(e.target.value))}
-                className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+                className="mt-1 w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
               >
                 {plants.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -318,7 +318,7 @@ export const DemandBoardPage: React.FC = () => {
               <select
                 value={newCargoTypeId}
                 onChange={(e) => setNewCargoTypeId(Number(e.target.value))}
-                className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+                className="mt-1 w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
               >
                 {cargoTypes.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -337,7 +337,7 @@ export const DemandBoardPage: React.FC = () => {
                 required
                 value={newQuantity}
                 onChange={(e) => setNewQuantity(Number(e.target.value))}
-                className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none font-mono"
+                className="mt-1 w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none font-mono"
               />
             </div>
 
@@ -346,7 +346,7 @@ export const DemandBoardPage: React.FC = () => {
               <select
                 value={newPortId}
                 onChange={(e) => setNewPortId(Number(e.target.value))}
-                className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+                className="mt-1 w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
               >
                 {ports.map((pt) => (
                   <option key={pt.id} value={pt.id}>
@@ -360,14 +360,14 @@ export const DemandBoardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowCreateForm(false)}
-                className="rounded-lg border border-pebble bg-paper px-4 py-2 text-xs font-semibold text-slate hover:bg-linen-mist/50"
+                className="rounded-full border border-pebble bg-paper px-4 py-2 text-xs font-medium text-charcoal hover:bg-fog"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center gap-1.5 rounded-lg bg-forest-ink px-5 py-2 text-xs font-semibold text-paper hover:bg-forest-ink/90 disabled:opacity-50"
+                className="flex items-center gap-1.5 rounded-full bg-forest-ink px-5 py-2 text-xs font-medium text-paper hover:bg-forest-ink/90 disabled:opacity-50"
               >
                 <Plus className="size-3.5" /> Submit Demand to Board
               </button>
@@ -377,11 +377,11 @@ export const DemandBoardPage: React.FC = () => {
       )}
 
       {/* Task 392: Merge Action Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-pebble bg-paper p-4">
         <div className="flex items-center gap-3">
           <GitMerge className="size-5 text-forest-ink" />
           <div>
-            <div className="text-xs font-bold text-charcoal">
+            <div className="text-xs font-bold text-obsidian">
               Consolidated Cargo Pooling ({selectedIds.length} of 2 selected)
             </div>
             <div className="text-[11px] text-slate">
@@ -395,7 +395,7 @@ export const DemandBoardPage: React.FC = () => {
           type="button"
           disabled={selectedIds.length !== 2 || isMerging}
           onClick={handleMerge}
-          className="flex items-center gap-2 rounded-xl bg-forest-ink px-4 py-2 text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all"
+          className="flex items-center gap-2 rounded-full bg-lime-voltage px-4 py-2 text-xs font-medium text-forest-ink hover:brightness-95 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all"
         >
           <GitMerge className="size-3.5" />
           <span>Merge Selected Requests</span>
@@ -403,7 +403,7 @@ export const DemandBoardPage: React.FC = () => {
       </div>
 
       {/* Task 391: Table of Open Requests */}
-      <div className="overflow-hidden rounded-xl border border-pebble bg-paper shadow-sm">
+      <div className="overflow-hidden rounded-card border border-pebble bg-paper">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-pebble bg-linen-mist/40 font-mono text-[10px] uppercase tracking-wider text-slate">

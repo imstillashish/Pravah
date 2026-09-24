@@ -85,23 +85,23 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-xl border border-pebble bg-paper shadow-sm ${className}`}
+      className={`relative overflow-hidden rounded-card border border-pebble bg-paper ${className}`}
     >
       {/* Map Header Toolbar */}
       <div className="flex flex-wrap items-center justify-between border-b border-pebble bg-linen-mist/40 px-4 py-2.5 text-xs text-charcoal">
         <div className="flex items-center gap-2 font-medium">
           <Navigation className="size-4 text-forest-ink" />
           <span>Maritime Sailing Corridor & Port Constraints</span>
-          <span className="rounded-full bg-forest-ink/10 px-2 py-0.5 font-mono text-[10px] text-forest-ink">
+          <span className="rounded-full bg-forest-ink/10 px-2.5 py-0.5 font-mono text-[10px] text-forest-ink">
             Great-Circle Approximation
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center rounded-lg border border-pebble bg-paper p-0.5">
+          <div className="flex items-center rounded-full border border-pebble bg-paper p-0.5">
             <button
               type="button"
               onClick={() => setZoomLevel("corridor")}
-              className={`rounded px-2 py-1 text-[11px] transition-colors ${
+              className={`rounded-full px-2.5 py-1 text-[11px] transition-colors ${
                 zoomLevel === "corridor"
                   ? "bg-forest-ink font-medium text-paper"
                   : "text-slate hover:text-forest-ink"
@@ -112,7 +112,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
             <button
               type="button"
               onClick={() => setZoomLevel("bay")}
-              className={`rounded px-2 py-1 text-[11px] transition-colors ${
+              className={`rounded-full px-2.5 py-1 text-[11px] transition-colors ${
                 zoomLevel === "bay"
                   ? "bg-forest-ink font-medium text-paper"
                   : "text-slate hover:text-forest-ink"
@@ -307,26 +307,26 @@ export const RouteMap: React.FC<RouteMapProps> = ({
         </svg>
 
         {/* Distance Badge Overlay */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1 rounded-lg border border-white/10 bg-slate-900/80 p-2.5 backdrop-blur-md">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
-            <Compass className="size-3.5 text-sky-400" />
+        <div className="absolute top-3 left-3 flex flex-col gap-1 rounded-card border border-pebble/30 bg-forest-ink/90 p-2.5 backdrop-blur-md">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-paper">
+            <Compass className="size-3.5 text-lime-voltage" />
             <span>{distanceNm.toLocaleString()} Nautical Miles</span>
           </div>
-          <span className="text-[10px] text-slate-400">
+          <span className="text-[10px] text-fog">
             Route: {originName.split(" ")[0]} → {destinationName.split(" ")[0]}
           </span>
         </div>
 
         {/* Quick Legend Overlay */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded-lg border border-white/10 bg-slate-900/80 px-3 py-1.5 text-[10px] text-slate-300 backdrop-blur-md">
+        <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded-card border border-pebble/30 bg-forest-ink/90 px-3 py-1.5 text-[10px] text-fog backdrop-blur-md">
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-emerald-500" /> Destination Port
+            <span className="size-2 rounded-full bg-lime-voltage" /> Destination Port
           </span>
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-amber-500" /> Origin Port
+            <span className="size-2 rounded-full bg-amber-400" /> Origin Port
           </span>
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-sky-400" /> Alternate Ports
+            <span className="size-2 rounded-full bg-paper" /> Alternate Ports
           </span>
         </div>
       </div>
@@ -337,11 +337,11 @@ export const RouteMap: React.FC<RouteMapProps> = ({
           <div className="flex items-center gap-2">
             <Anchor className="size-4 text-forest-ink" />
             <h4 className="font-semibold text-charcoal">{selectedPort.name}</h4>
-            <span className="rounded bg-fog px-1.5 py-0.5 font-mono text-[10px] text-slate">
+            <span className="rounded-full bg-fog px-2 py-0.5 font-mono text-[10px] text-slate">
               LOCODE: {selectedPort.locode}
             </span>
             {selectedPort.isDestination && (
-              <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+              <span className="flex items-center gap-1 rounded-full bg-linen-mist px-2.5 py-0.5 text-[10px] font-semibold text-forest-ink">
                 <ShieldCheck className="size-3" /> Target Analysis Port
               </span>
             )}
@@ -362,8 +362,8 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
         {/* Constraint Warning for Paradip */}
         {selectedPort.id === "INPRT" && (
-          <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/70 p-2 text-xs text-amber-900">
-            <AlertCircle className="mt-0.5 size-3.5 shrink-0 text-amber-700" />
+          <div className="mt-2 flex items-start gap-2 rounded-card border border-pebble bg-linen-mist/50 p-2.5 text-xs text-forest-ink">
+            <AlertCircle className="mt-0.5 size-3.5 shrink-0 text-forest-ink" />
             <span>
               <strong>Draft Restriction Notice:</strong> Paradip's 16.5m maximum permissible draught requires Capesize vessels (18.2m draft) to undergo offshore lightering or diverts to Panamax class (recommended).
             </span>

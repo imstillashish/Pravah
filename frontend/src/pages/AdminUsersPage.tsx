@@ -123,7 +123,7 @@ export const AdminUsersPage: React.FC = () => {
               Role-Based Access Control
             </span>
           </div>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             User Access & Authority Management
           </h1>
           <p className="mt-0.5 text-xs text-slate">
@@ -134,22 +134,22 @@ export const AdminUsersPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 rounded-xl bg-forest-ink px-4 py-2.5 text-xs font-semibold text-paper shadow-sm transition-all hover:bg-forest-ink/90 active:scale-95"
+          className="flex items-center gap-2 rounded-full bg-forest-ink px-4 py-2.5 text-xs font-semibold text-paper transition-all hover:bg-forest-ink/90 active:scale-95"
         >
           <UserPlus className="size-4" /> Create New User
         </button>
       </div>
 
       {feedback && (
-        <div className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-xs font-medium text-emerald-900">
-          <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
+        <div className="flex items-center gap-2 rounded-card border border-pebble bg-linen-mist p-3 text-xs font-medium text-forest-ink">
+          <CheckCircle2 className="size-4 text-forest-ink shrink-0" />
           <span>{feedback}</span>
         </div>
       )}
 
       {/* Create User Modal / Drawer */}
       {showCreateModal && (
-        <div className="rounded-xl border border-forest-ink/30 bg-linen-mist/20 p-5 shadow-sm space-y-4">
+        <div className="rounded-card border border-pebble bg-fog/30 p-5 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-charcoal flex items-center gap-2">
               <UserPlus className="size-4 text-forest-ink" /> Create Authorized System User
@@ -172,7 +172,7 @@ export const AdminUsersPage: React.FC = () => {
                 placeholder="e.g. Ramesh Kumar"
                 value={newFullName}
                 onChange={(e) => setNewFullName(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+                className="mt-1 w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
               />
             </div>
             <div>
@@ -183,7 +183,7 @@ export const AdminUsersPage: React.FC = () => {
                 placeholder="name@sail.gov.in"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+                className="mt-1 w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
               />
             </div>
             <div>
@@ -194,7 +194,7 @@ export const AdminUsersPage: React.FC = () => {
                 placeholder="••••••••••••"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+                className="mt-1 w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
               />
             </div>
             <div>
@@ -202,7 +202,7 @@ export const AdminUsersPage: React.FC = () => {
               <select
                 value={newRole}
                 onChange={(e) => setNewRole(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+                className="mt-1 w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
               >
                 <option value="logistics_planner">Logistics Planner</option>
                 <option value="PROCUREMENT_OFFICER">Procurement Officer</option>
@@ -215,14 +215,14 @@ export const AdminUsersPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="rounded-lg border border-pebble bg-paper px-3 py-1.5 text-xs text-slate hover:text-charcoal"
+                className="rounded-full border border-pebble bg-paper px-3.5 py-1.5 text-xs text-charcoal hover:bg-fog"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isCreating}
-                className="flex items-center gap-1.5 rounded-lg bg-forest-ink px-4 py-1.5 text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 disabled:opacity-50"
+                className="flex items-center gap-1.5 rounded-full bg-forest-ink px-4 py-1.5 text-xs font-semibold text-paper hover:bg-forest-ink/90 disabled:opacity-50"
               >
                 {isCreating ? <RefreshCw className="size-3.5 animate-spin" /> : <UserCheck className="size-3.5" />}
                 Confirm & Create User
@@ -233,7 +233,7 @@ export const AdminUsersPage: React.FC = () => {
       )}
 
       {/* Users Table */}
-      <div className="rounded-xl border border-pebble bg-paper shadow-sm overflow-hidden">
+      <div className="rounded-card border border-pebble bg-paper overflow-hidden">
         <div className="p-4 border-b border-pebble bg-linen-mist/30 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users className="size-4 text-forest-ink" />
@@ -270,17 +270,17 @@ export const AdminUsersPage: React.FC = () => {
                     <span
                       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase ${
                         user.is_active
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-red-100 text-red-800"
+                          ? "bg-linen-mist text-forest-ink"
+                          : "bg-alarm-red/10 text-alarm-red"
                       }`}
                     >
                       {user.is_active ? (
                         <>
-                          <span className="size-1.5 rounded-full bg-emerald-600" /> Active
+                          <span className="size-1.5 rounded-full bg-forest-ink" /> Active
                         </>
                       ) : (
                         <>
-                          <span className="size-1.5 rounded-full bg-red-600" /> Deactivated
+                          <span className="size-1.5 rounded-full bg-alarm-red" /> Deactivated
                         </>
                       )}
                     </span>
@@ -290,7 +290,7 @@ export const AdminUsersPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleDeactivate(user.id)}
-                        className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50/60 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors"
+                        className="inline-flex items-center gap-1 rounded-full border border-alarm-red/30 bg-paper px-3 py-1 text-xs font-semibold text-alarm-red hover:bg-alarm-red/10 transition-colors"
                       >
                         <UserX className="size-3.5" /> Deactivate
                       </button>

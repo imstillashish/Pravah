@@ -106,8 +106,8 @@ export const VendorQuotesPage: React.FC = () => {
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Task 396: Persistent Non-Dismissible Amber Sample Data Banner */}
-      <div className="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50/95 p-4 text-amber-900 shadow-sm">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
+      <div className="flex items-start gap-3 rounded-card border border-amber-300 bg-amber-50 p-4 text-amber-900">
+        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-warning" />
         <div className="text-xs leading-relaxed">
           <span className="font-bold uppercase tracking-wider text-amber-950">
             Sample Data Notice:{" "}
@@ -118,7 +118,7 @@ export const VendorQuotesPage: React.FC = () => {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="flex items-center gap-2 rounded-xl bg-forest-ink p-3.5 text-xs font-semibold text-paper shadow-md">
+        <div className="flex items-center gap-2 rounded-card bg-forest-ink p-3.5 text-xs font-semibold text-paper">
           <CheckCircle2 className="size-4 text-lime-voltage" />
           <span>{toastMessage}</span>
         </div>
@@ -135,7 +135,7 @@ export const VendorQuotesPage: React.FC = () => {
               BROKER BENCHMARK DESK
             </span>
           </div>
-          <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+          <h1 className="mt-1 font-sans text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             Baltic Shipbroker Quotations & Valuation
           </h1>
           <p className="mt-0.5 text-xs text-slate">
@@ -148,7 +148,7 @@ export const VendorQuotesPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-1.5 rounded-xl bg-forest-ink px-4 py-2 text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 rounded-full bg-lime-voltage px-4 py-2 text-xs font-medium text-forest-ink hover:brightness-95 active:scale-95 transition-all"
           >
             <Send className="size-3.5" />
             <span>Send for Quotes</span>
@@ -158,7 +158,7 @@ export const VendorQuotesPage: React.FC = () => {
             type="button"
             onClick={fetchQuotes}
             aria-label="Refresh quotes"
-            className="flex items-center gap-1.5 rounded-xl border border-pebble bg-paper px-3 py-2 text-xs font-medium text-charcoal shadow-sm hover:bg-linen-mist/50"
+            className="flex items-center gap-1.5 rounded-full border border-forest-ink bg-paper px-3 py-2 text-xs font-medium text-forest-ink hover:bg-fog transition-colors"
           >
             <RotateCcw className="size-3.5" />
           </button>
@@ -167,11 +167,11 @@ export const VendorQuotesPage: React.FC = () => {
 
       {/* Comparison Reference KPI */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <span className="font-mono text-[10px] uppercase tracking-wider text-slate">
             System P50 Model Forecast
           </span>
-          <div className="mt-1 font-serif text-2xl font-bold text-forest-ink">
+          <div className="mt-1 font-mono text-2xl font-bold text-forest-ink">
             ${systemP50Rate.toFixed(2)}{" "}
             <span className="text-xs font-sans font-normal text-slate">/ MT</span>
           </div>
@@ -180,11 +180,11 @@ export const VendorQuotesPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <span className="font-mono text-[10px] uppercase tracking-wider text-slate">
             Active Broker Quotes
           </span>
-          <div className="mt-1 font-serif text-2xl font-bold text-charcoal">
+          <div className="mt-1 font-mono text-2xl font-bold text-obsidian">
             {quotes.length}{" "}
             <span className="text-xs font-sans font-normal text-slate">indications</span>
           </div>
@@ -193,12 +193,12 @@ export const VendorQuotesPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <span className="font-mono text-[10px] uppercase tracking-wider text-slate">
             Best Market Offer
           </span>
-          <div className="mt-1 flex items-center gap-2 font-serif text-2xl font-bold text-emerald-700">
-            <TrendingDown className="size-5 text-emerald-600" />
+          <div className="mt-1 flex items-center gap-2 font-mono text-2xl font-bold text-forest-ink">
+            <TrendingDown className="size-5 text-forest-ink" />
             <span>
               $
               {quotes.length > 0
@@ -214,9 +214,9 @@ export const VendorQuotesPage: React.FC = () => {
       </div>
 
       {/* Task 395: Table of Quotes with P50 Comparison */}
-      <div className="overflow-hidden rounded-xl border border-pebble bg-paper shadow-sm">
+      <div className="overflow-hidden rounded-card border border-pebble bg-paper">
         <div className="border-b border-pebble bg-linen-mist/20 px-6 py-3.5">
-          <h2 className="font-serif text-sm font-bold text-charcoal">
+          <h2 className="font-sans text-sm font-bold text-obsidian">
             Received Broker Quotes vs Astitva P50 Engine
           </h2>
         </div>
@@ -279,13 +279,13 @@ export const VendorQuotesPage: React.FC = () => {
                       <td className="px-5 py-3.5 text-right font-mono text-xs">
                         <div className="flex items-center justify-end gap-1">
                           {isLower ? (
-                            <TrendingDown className="size-3.5 text-emerald-600" />
+                            <TrendingDown className="size-3.5 text-forest-ink" />
                           ) : (
-                            <TrendingUp className="size-3.5 text-red-600" />
+                            <TrendingUp className="size-3.5 text-alarm-red" />
                           )}
                           <span
                             className={`font-semibold ${
-                              isLower ? "text-emerald-700" : "text-red-700"
+                              isLower ? "text-forest-ink" : "text-alarm-red"
                             }`}
                           >
                             {isLower ? "-" : "+"}${Math.abs(variance).toFixed(2)} / MT
@@ -311,7 +311,7 @@ export const VendorQuotesPage: React.FC = () => {
                       </td>
 
                       <td className="px-5 py-3.5 text-center">
-                        <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 font-mono text-[10px] font-bold text-amber-800">
+                        <span className="inline-flex items-center rounded-full bg-amber-wash px-2.5 py-0.5 font-mono text-[10px] font-bold text-amber-warning border border-amber-300">
                           SAMPLE DATA
                         </span>
                       </td>
@@ -326,12 +326,12 @@ export const VendorQuotesPage: React.FC = () => {
 
       {/* Task 397: Modal for "Send for Quotes" */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-pebble bg-paper p-6 shadow-xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-obsidian/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-[28px] border border-pebble bg-paper p-6 shadow-xl space-y-4">
             <div className="flex items-center justify-between border-b border-pebble pb-3">
               <div className="flex items-center gap-2">
                 <Send className="size-4 text-forest-ink" />
-                <h3 className="font-serif text-sm font-bold text-charcoal">
+                <h3 className="font-sans text-sm font-bold text-obsidian">
                   Request Broker Quotations
                 </h3>
               </div>
@@ -345,9 +345,9 @@ export const VendorQuotesPage: React.FC = () => {
             </div>
 
             {/* Task 397 exact modal text */}
-            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900 leading-relaxed">
+            <div className="rounded-card border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900 leading-relaxed">
               <div className="flex items-center gap-2 font-bold mb-1">
-                <HelpCircle className="size-4 text-amber-700" />
+                <HelpCircle className="size-4 text-amber-warning" />
                 <span>Simulation Protocol</span>
               </div>
               In the full system, this would notify registered brokers. Currently logged for reference only.
@@ -361,14 +361,14 @@ export const VendorQuotesPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="rounded-lg border border-pebble bg-paper px-4 py-2 text-xs font-semibold text-slate hover:bg-linen-mist/50"
+                className="rounded-full border border-pebble bg-paper px-4 py-2 text-xs font-medium text-charcoal hover:bg-fog"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmSendQuotes}
-                className="rounded-lg bg-forest-ink px-4 py-2 text-xs font-semibold text-paper hover:bg-forest-ink/90 active:scale-95 transition-all"
+                className="rounded-full bg-forest-ink px-4 py-2 text-xs font-medium text-paper hover:bg-forest-ink/90 active:scale-95 transition-all"
               >
                 Confirm Request
               </button>
