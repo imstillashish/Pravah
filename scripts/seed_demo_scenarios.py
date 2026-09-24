@@ -4,6 +4,7 @@ Tasks 256–268, 357, 402–403 implementation.
 Data Classification: GENERATED DEMO DATA
 """
 import sys
+from typing import Any
 from datetime import datetime, timezone, date, timedelta
 from pathlib import Path
 
@@ -281,13 +282,13 @@ def seed_past_decisions_for_regret(db, user_id: int):
     existing = db.query(DecisionRecord).first()
     if not existing:
         today = date.today()
-        scenarios = [
+        scenarios: list[dict[str, Any]] = [
             {"rate": 21.50, "best": 21.39, "pct": 0.5, "days_ago": 45, "vessel": "Panamax", "port": "Paradip", "qty": 75000.0},
             {"rate": 22.80, "best": 22.09, "pct": 3.2, "days_ago": 30, "vessel": "Panamax", "port": "Dhamra", "qty": 70000.0},
             {"rate": 24.10, "best": 22.29, "pct": 8.1, "days_ago": 18, "vessel": "Supramax", "port": "Haldia", "qty": 55000.0},
         ]
         for idx, s in enumerate(scenarios, 1):
-            dec_date = datetime.now(timezone.utc) - timedelta(days=s["days_ago"])
+            dec_date = datetime.now(timezone.utc) - timedelta(days=int(s["days_ago"]))
             past_analysis = Analysis(
                 user_id=user_id,
                 title=f"Historical Voyage #{idx} — {s['vessel']} to {s['port']}",
@@ -428,8 +429,8 @@ def seed_all_demo_scenarios():
         print("=" * 60)
         print("ASTITVA — SEEDING DEMO SCENARIOS")
         print("=" * 60)
-        user = create_demo_user(db)
-        analysis = seed_golden_demo_analysis(db, user.id)
+        user: Any = create_demo_user(db)
+        analysis: Any = seed_golden_demo_analysis(db, user.id)
         seed_forecast_result(db, analysis.id)
         seed_feasibility_results(db, analysis.id)
         seed_landed_cost(db, analysis.id)

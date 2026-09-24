@@ -15,9 +15,14 @@ if str(_scripts_dir) not in sys.path:
 if str(_backend_dir) not in sys.path:
     sys.path.insert(0, str(_backend_dir))
 
+from sqlalchemy import text
 from app.database import SessionLocal, engine, Base
-from seed_reference_data import seed_all_reference_data
-from seed_demo_scenarios import seed_all_demo_scenarios
+try:
+    from seed_reference_data import seed_all_reference_data
+    from seed_demo_scenarios import seed_all_demo_scenarios
+except ImportError:
+    from scripts.seed_reference_data import seed_all_reference_data
+    from scripts.seed_demo_scenarios import seed_all_demo_scenarios
 
 
 
@@ -58,13 +63,13 @@ def reset_to_clean_state():
             # PostgreSQL TRUNCATE CASCADE
             try:
                 tables_str = ", ".join(table_names)
-                conn.execute(f"TRUNCATE TABLE {tables_str} RESTART IDENTITY CASCADE;")
+                conn.execute(text(f"TRUNCATE TABLE {tables_str} RESTART IDENTITY CASCADE;"))
                 print("  [x] Truncated tables with CASCADE (PostgreSQL)")
             except Exception as e:
                 print(f"  [!] Fallback to individual deletes: {e}")
                 for tbl in table_names:
                     try:
-                        conn.execute(f"DELETE FROM {tbl};")
+                        conn.execute(text(f"DELETE FROM {tbl};"))
                     except Exception:
                         pass
         else:
