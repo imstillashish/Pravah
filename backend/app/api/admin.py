@@ -59,16 +59,52 @@ def deactivate_user(user_id: int, current_user: User = Depends(require_admin), d
     return {"status": "deactivated", "user_id": user_id}
 
 @router.get("/reference/ports")
-def list_reference_ports(db: Session = Depends(get_db)):
-    ports = db.query(ReferencePort).filter(ReferencePort.is_active == True).all()
+def list_reference_ports(
+    port_type: Optional[str] = None,
+    country: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    query = db.query(ReferencePort).filter(ReferencePort.is_active == True)
+    if port_type:
+        query = query.filter(ReferencePort.port_type.ilike(port_type.strip()))
+    if country:
+        query = query.filter(ReferencePort.country.ilike(country.strip()))
+    ports = query.all()
     if not ports:
         return [
-            {"id": 1, "port_name": "Paradip", "max_draft_m": 16.5, "max_dwt_mt": 155000, "has_lightering": False},
-            {"id": 2, "port_name": "Dhamra", "max_draft_m": 18.0, "max_dwt_mt": 180000, "has_lightering": False},
-            {"id": 3, "port_name": "Gangavaram", "max_draft_m": 21.0, "max_dwt_mt": 200000, "has_lightering": False},
-            {"id": 4, "port_name": "Haldia", "max_draft_m": 9.1, "max_dwt_mt": 50000, "has_lightering": True}
+            {
+                "id": 1,
+                "port_name": "Paradip",
+                "locode": "INPRT",
+                "max_draft_m": 16.5,
+                "max_dwt_mt": 155000,
+                "max_loa_m": 300.0,
+                "max_beam_m": 46.0,
+                "has_lightering": False,
+                "port_type": "DESTINATION",
+                "country": "India",
+                "loading_rate_tpd": 22000.0,
+                "typical_waiting_days": 2.8,
+                "current_vessels_in_queue": 8,
+            },
+            {
+                "id": 2,
+                "port_name": "Hay Point (DBCT)",
+                "locode": "AUHPT",
+                "max_draft_m": 19.5,
+                "max_dwt_mt": 220000,
+                "max_loa_m": 300.0,
+                "max_beam_m": 50.0,
+                "has_lightering": False,
+                "port_type": "ORIGIN",
+                "country": "Australia",
+                "loading_rate_tpd": 45000.0,
+                "typical_waiting_days": 3.4,
+                "current_vessels_in_queue": 14,
+            },
         ]
     return ports
+
 
 
 @router.put("/reference/ports/{port_id}")

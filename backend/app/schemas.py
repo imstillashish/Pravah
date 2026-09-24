@@ -116,3 +116,89 @@ class CargoRequestResponse(BaseModel):
     merged_into_id: Optional[int] = None
     created_at: Optional[str] = None
 
+
+class PortResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    port_name: str
+    locode: Optional[str] = None
+    max_loa_m: float
+    max_beam_m: float
+    max_draft_m: float
+    max_dwt_mt: int
+    has_lightering: bool = False
+    lightering_note: Optional[str] = None
+    port_type: Optional[str] = "DESTINATION"
+    country: Optional[str] = "India"
+    loading_rate_tpd: Optional[float] = 25000.0
+    typical_waiting_days: Optional[float] = 2.0
+    current_vessels_in_queue: Optional[int] = 5
+    source: Optional[str] = None
+    is_active: bool = True
+
+
+class MetricItem(BaseModel):
+    current: float
+    change_pct: float
+    unit: Optional[str] = None
+
+
+class BalticIndices(BaseModel):
+    bdi: MetricItem
+    bci: MetricItem
+    bpi: MetricItem
+    bsi: MetricItem
+
+
+class CommodityPrices(BaseModel):
+    coking_coal_fob_usd: MetricItem
+    iron_ore_cfr_usd: MetricItem
+    domestic_coal_parity_inr: MetricItem
+    hrc_steel_usd: MetricItem
+
+
+class MacroIndicators(BaseModel):
+    global_manufacturing_pmi: float
+    china_blast_furnace_utilization_pct: float
+    fleet_orderbook_pct: float
+    bunker_vlsfo_usd: float
+    usd_inr_rate: float
+
+
+class MarketIndicatorsResponse(BaseModel):
+    recorded_at: str
+    baltic_indices: BalticIndices
+    commodity_prices: CommodityPrices
+    macro_indicators: MacroIndicators
+
+
+class IdleEmploymentRequest(BaseModel):
+    origin_port: str = "Hay Point (DBCT)"
+    destination_port: str = "Paradip"
+    vessel_class: Optional[str] = "Capesize"
+    quantity_mt: Optional[float] = 150000.0
+    laycan_month: Optional[int] = 7
+
+
+class TurnaroundMetrics(BaseModel):
+    origin_waiting_days: float
+    destination_waiting_days: float
+    laytime_allowed_days: float
+    demurrage_exposure_usd: float
+    ballast_deadhead_days: float
+
+
+class AlternativeEmploymentOption(BaseModel):
+    id: str
+    title: str
+    route_type: str
+    net_benefit_usd: float
+    absorbed_idle_days: float
+    description: str
+
+
+class IdleEmploymentResponse(BaseModel):
+    turnaround: TurnaroundMetrics
+    alternative_employments: list[AlternativeEmploymentOption]
+

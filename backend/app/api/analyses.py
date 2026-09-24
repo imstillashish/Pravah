@@ -6,7 +6,17 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User, Analysis
 from app.api.auth import get_current_user
-from app.schemas import AnalysisCreate, AnalysisResponse
+from app.schemas import (
+    AnalysisCreate,
+    AnalysisResponse,
+    IdleEmploymentRequest,
+    IdleEmploymentResponse,
+)
+from app.engines.idle_employment_engine import (
+    compute_turnaround_and_demurrage,
+    generate_alternative_employments,
+)
+from app.engines.seasonal_engine import compute_seasonal_factor
 
 router = APIRouter(prefix="/api/analyses", tags=["analyses"])
 
@@ -143,7 +153,52 @@ def create_analysis(
     return analysis
 
 
+@router.post("/idle-employment", response_model=IdleEmploymentResponse)
+def get_idle_employment(payload: IdleEmploymentRequest, db: Session = Depends(get_db)):
+    """
+    Computes vessel turnaround times, demurrage risk exposure,
+    and returns 4 ranked alternative employment opportunities.
+    """
+    turnaround = compute_turnaround_and_demurrage(
+        origin_port=payload.origin_port,
+        destination_port=payload.destination_port,
+        vessel_class=payload.vessel_class or "Capesize",
+        quantity_mt=payload.quantity_mt or 150000.0,
+        laycan_month=payload.laycan_month or 7,
+        db=db,
+    )
+    alternatives = generate_alternative_employments(
+        origin_port=payload.origin_port,
+        destination_port=payload.destination_port,
+        vessel_class=payload.vessel_class or "Capesize",
+        quantity_mt=payload.quantity_mt or 150000.0,
+        turnaround_metrics=turnaround,
+    )
+    return {
+        "turnaround": turnaround,
+        "alternative_employments": alternatives,
+    }
+
+
+@router.get("/seasonal-factor")
+def get_seasonal_impact(
+    laycan_month: int = 7,
+    origin_port: str = "Hay Point (DBCT)",
+    destination_port: str = "Paradip",
+):
+    """
+    Returns the month-indexed seasonal demand-supply multiplier,
+    climatological risk level, and bilingual explainability narratives.
+    """
+    return compute_seasonal_factor(
+        laycan_month=laycan_month,
+        origin_port=origin_port,
+        destination_port=destination_port,
+    )
+
+
 @router.get("/disruption-alerts")
+
 def get_disruption_alerts(db: Session = Depends(get_db)):
     """
     Task 361: Returns all active DisruptionAlert records.
@@ -205,6 +260,27 @@ def get_analysis_detail(
 
     pred_rate: float = float(analysis.predicted_rate_pmt or 0.0)
     tonnage: float = float(analysis.parcel_tonnage or 0.0)
+    laycan_m: int = getattr(analysis, "laycan_month", 7) or 7
+
+    turnaround_data = compute_turnaround_and_demurrage(
+        origin_port=analysis.origin_port,
+        destination_port=analysis.destination_port,
+        vessel_class=analysis.recommended_vessel or "Capesize",
+        quantity_mt=tonnage,
+        laycan_month=laycan_m,
+    )
+    alt_employments = generate_alternative_employments(
+        origin_port=analysis.origin_port,
+        destination_port=analysis.destination_port,
+        vessel_class=analysis.recommended_vessel or "Capesize",
+        quantity_mt=tonnage,
+        turnaround_metrics=turnaround_data,
+    )
+    seasonal_data = compute_seasonal_factor(
+        laycan_month=laycan_m,
+        origin_port=analysis.origin_port,
+        destination_port=analysis.destination_port,
+    )
 
     return {
         "id": analysis.id,
@@ -336,6 +412,9 @@ def get_analysis_detail(
             "approval_notes": getattr(decision, "approval_notes", None) if decision else None,
             "approved_at": decision.approved_at.isoformat() if decision and hasattr(getattr(decision, "approved_at", None), "isoformat") else None,
         } if decision else None,
+        "seasonal_factor": seasonal_data,
+        "turnaround": turnaround_data,
+        "alternative_employments": alt_employments,
     }
 
 

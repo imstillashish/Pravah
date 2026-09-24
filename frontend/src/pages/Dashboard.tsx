@@ -8,6 +8,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { GlobalMetricsStrip } from "../components/GlobalMetricsStrip";
+import { MarketIntelligenceStrip } from "../components/MarketIntelligenceStrip";
 import { RecentAnalysesTable } from "../components/RecentAnalysesTable";
 import { NewAnalysisDrawer } from "../components/NewAnalysisDrawer";
 import { API_BASE } from "../api";
@@ -99,8 +100,9 @@ export const Dashboard: React.FC = () => {
 
       {/* Global freight metrics */}
       {isPlanner && (
-        <div className="mb-8">
+        <div className="mb-8 space-y-6">
           <GlobalMetricsStrip />
+          <MarketIntelligenceStrip />
         </div>
       )}
 

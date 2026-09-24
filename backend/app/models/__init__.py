@@ -4,6 +4,7 @@ from app.models.reference import (
     ReferenceVesselClass,
     ReferenceCargoType,
     ReferencePlant,
+    MarketIndicator,
 )
 from app.models.entities import (
     ContextObject,
@@ -31,6 +32,7 @@ __all__ = [
     "ReferenceVesselClass",
     "ReferenceCargoType",
     "ReferencePlant",
+    "MarketIndicator",
     "ContextObject",
     "EnrichmentCache",
     "ForecastResult",

@@ -47,6 +47,106 @@ DEFAULT_PORTS: Dict[str, Dict[str, Any]] = {
         "has_lightering": True,
         "lightering_note": "Lightering via Sagar Sandheads anchorages",
     },
+    "Hay Point (DBCT)": {
+        "id": 5,
+        "port_name": "Hay Point (DBCT)",
+        "max_loa_m": 300.0,
+        "max_beam_m": 50.0,
+        "max_draft_m": 19.5,
+        "max_dwt_mt": 220000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
+    "Gladstone": {
+        "id": 6,
+        "port_name": "Gladstone",
+        "max_loa_m": 300.0,
+        "max_beam_m": 50.0,
+        "max_draft_m": 17.5,
+        "max_dwt_mt": 180000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
+    "Newcastle": {
+        "id": 7,
+        "port_name": "Newcastle",
+        "max_loa_m": 300.0,
+        "max_beam_m": 50.0,
+        "max_draft_m": 15.2,
+        "max_dwt_mt": 160000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
+    "Abbot Point": {
+        "id": 8,
+        "port_name": "Abbot Point",
+        "max_loa_m": 300.0,
+        "max_beam_m": 50.0,
+        "max_draft_m": 18.5,
+        "max_dwt_mt": 200000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
+    "Hampton Roads (Norfolk)": {
+        "id": 9,
+        "port_name": "Hampton Roads (Norfolk)",
+        "max_loa_m": 290.0,
+        "max_beam_m": 45.0,
+        "max_draft_m": 15.2,
+        "max_dwt_mt": 150000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
+    "Baltimore": {
+        "id": 10,
+        "port_name": "Baltimore",
+        "max_loa_m": 275.0,
+        "max_beam_m": 43.0,
+        "max_draft_m": 14.5,
+        "max_dwt_mt": 120000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
+    "Maputo (Matola Coal)": {
+        "id": 11,
+        "port_name": "Maputo (Matola Coal)",
+        "max_loa_m": 230.0,
+        "max_beam_m": 37.0,
+        "max_draft_m": 13.0,
+        "max_dwt_mt": 85000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
+    "Beira": {
+        "id": 12,
+        "port_name": "Beira",
+        "max_loa_m": 200.0,
+        "max_beam_m": 32.0,
+        "max_draft_m": 10.5,
+        "max_dwt_mt": 55000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
+    "Samarinda": {
+        "id": 13,
+        "port_name": "Samarinda",
+        "max_loa_m": 230.0,
+        "max_beam_m": 36.0,
+        "max_draft_m": 12.0,
+        "max_dwt_mt": 75000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
+    "Balikpapan": {
+        "id": 14,
+        "port_name": "Balikpapan",
+        "max_loa_m": 250.0,
+        "max_beam_m": 40.0,
+        "max_draft_m": 13.5,
+        "max_dwt_mt": 85000,
+        "has_lightering": False,
+        "lightering_note": None,
+    },
 }
 
 DEFAULT_VESSELS: List[Dict[str, Any]] = [
@@ -140,6 +240,37 @@ def _resolve_port_data(analysis: Any, db: Optional[Session]) -> Dict[str, Any]:
     return DEFAULT_PORTS["Paradip"]
 
 
+def _resolve_origin_port_data(analysis: Any, db: Optional[Session]) -> Optional[Dict[str, Any]]:
+    """Resolves origin load port attributes from DB or verified defaults."""
+    orig_name = getattr(analysis, "origin_port", None)
+    if not orig_name:
+        return None
+
+    if db is not None:
+        try:
+            port_obj = db.query(ReferencePort).filter(ReferencePort.port_name == orig_name).first()
+            if not port_obj:
+                port_obj = db.query(ReferencePort).filter(ReferencePort.port_name.ilike(f"%{orig_name}%")).first()
+            if port_obj:
+                return {
+                    "id": port_obj.id,
+                    "port_name": port_obj.port_name,
+                    "max_loa_m": port_obj.max_loa_m,
+                    "max_beam_m": port_obj.max_beam_m,
+                    "max_draft_m": port_obj.max_draft_m,
+                    "max_dwt_mt": port_obj.max_dwt_mt,
+                    "has_lightering": getattr(port_obj, "has_lightering", False),
+                    "country": getattr(port_obj, "country", "Australia"),
+                }
+        except Exception:
+            pass
+
+    for name, p in DEFAULT_PORTS.items():
+        if orig_name.lower() in name.lower() or name.lower() in orig_name.lower():
+            return p
+    return None
+
+
 def _resolve_vessel_classes(db: Optional[Session]) -> List[Dict[str, Any]]:
     """Resolves the 4 vessel classes from DB or verified defaults."""
     if db is not None:
@@ -166,14 +297,11 @@ def _resolve_vessel_classes(db: Optional[Session]) -> List[Dict[str, Any]]:
 
 def run_feasibility_check(analysis: Any, db: Optional[Session] = None) -> List[FeasibilityResult]:
     """
-    Evaluates port & vessel feasibility for all 4 vessel classes against destination port constraints.
-
-    Task 165: Query all 4 vessel classes and destination port constraints.
-    Task 166: Evaluate draft_pass, loa_pass, beam_pass, dwt_pass, overall_feasible.
-    Task 167: Haldia lightering special case.
-    Task 168: Human-readable failure reason string.
+    Evaluates dual-port & vessel feasibility for all 4 vessel classes against origin load port
+    and destination discharge port constraints.
     """
-    port = _resolve_port_data(analysis, db)
+    dest_port = _resolve_port_data(analysis, db)
+    orig_port = _resolve_origin_port_data(analysis, db)
     vessel_classes = _resolve_vessel_classes(db)
 
     quantity_mt = float(
@@ -192,39 +320,56 @@ def run_feasibility_check(analysis: Any, db: Optional[Session] = None) -> List[F
         v_beam = float(vessel["typical_beam_m"])
         v_dwt_max = float(vessel["dwt_max"])
 
-        p_draft = float(port["max_draft_m"])
-        p_loa = float(port["max_loa_m"])
-        p_beam = float(port["max_beam_m"])
-        p_name = port["port_name"]
-        p_lightering = bool(port.get("has_lightering", False))
+        p_draft = float(dest_port["max_draft_m"])
+        p_loa = float(dest_port["max_loa_m"])
+        p_beam = float(dest_port["max_beam_m"])
+        p_name = dest_port["port_name"]
+        p_lightering = bool(dest_port.get("has_lightering", False))
 
-        # Task 166 checks
-        draft_pass = v_draft <= p_draft
-        loa_pass = v_loa <= p_loa
-        beam_pass = v_beam <= p_beam
+        # Destination Port Checks
+        dest_draft_pass = v_draft <= p_draft
+        dest_loa_pass = v_loa <= p_loa
+        dest_beam_pass = v_beam <= p_beam
         dwt_pass = v_dwt_max >= quantity_mt
 
-        all_four_pass = draft_pass and loa_pass and beam_pass and dwt_pass
-
-        # Task 167: Haldia special case
         requires_lightering = False
-        if not draft_pass and p_lightering and (p_name.lower() == "haldia" or p_lightering):
+        if not dest_draft_pass and p_lightering:
             requires_lightering = True
-            if loa_pass and beam_pass and dwt_pass:
-                overall_feasible = True
-            else:
-                overall_feasible = False
+            dest_feasible = dest_loa_pass and dest_beam_pass and dwt_pass
         else:
-            overall_feasible = all_four_pass
+            dest_feasible = dest_draft_pass and dest_loa_pass and dest_beam_pass and dwt_pass
 
-        # Task 168: Human-readable failure reasons
+        # Origin Port Checks
+        orig_draft_pass = True
+        orig_loa_pass = True
+        orig_beam_pass = True
+        if orig_port:
+            orig_p_draft = float(orig_port["max_draft_m"])
+            orig_p_loa = float(orig_port["max_loa_m"])
+            orig_p_beam = float(orig_port["max_beam_m"])
+            orig_draft_pass = v_draft <= orig_p_draft
+            orig_loa_pass = v_loa <= orig_p_loa
+            orig_beam_pass = v_beam <= orig_p_beam
+
+        orig_feasible = orig_draft_pass and orig_loa_pass and orig_beam_pass
+        overall_feasible = dest_feasible and orig_feasible
+
+        # Human-readable failure and routing notes
         reasons = []
-        if not draft_pass and not requires_lightering:
-            reasons.append(f"Draft {v_draft:.1f}m exceeds {p_name} max draft {p_draft:.1f}m")
-        if not loa_pass:
-            reasons.append(f"LOA {v_loa:.1f}m exceeds {p_name} max LOA {p_loa:.1f}m")
-        if not beam_pass:
-            reasons.append(f"Beam {v_beam:.1f}m exceeds {p_name} max beam {p_beam:.1f}m")
+        if orig_port:
+            if not orig_draft_pass:
+                reasons.append(f"Draft {v_draft:.1f}m exceeds origin {orig_port['port_name']} max draft {orig_port['max_draft_m']:.1f}m")
+            if not orig_loa_pass:
+                reasons.append(f"LOA {v_loa:.1f}m exceeds origin {orig_port['port_name']} max LOA {orig_port['max_loa_m']:.1f}m")
+            if not orig_beam_pass:
+                reasons.append(f"Beam {v_beam:.1f}m exceeds origin {orig_port['port_name']} max beam {orig_port['max_beam_m']:.1f}m")
+
+        if not dest_draft_pass and not requires_lightering:
+            reasons.append(f"Draft {v_draft:.1f}m exceeds destination {p_name} max draft {p_draft:.1f}m")
+        if not dest_loa_pass:
+            reasons.append(f"LOA {v_loa:.1f}m exceeds destination {p_name} max LOA {p_loa:.1f}m")
+        if not dest_beam_pass:
+            reasons.append(f"Beam {v_beam:.1f}m exceeds destination {p_name} max beam {p_beam:.1f}m")
         if not dwt_pass:
             reasons.append(f"DWT {v_dwt_max:,.0f} MT < {quantity_mt:,.0f} MT needed")
 
@@ -236,11 +381,11 @@ def run_feasibility_check(analysis: Any, db: Optional[Session] = None) -> List[F
         result = FeasibilityResult(
             analysis_id=analysis_id,
             vessel_class=v_class,
-            port_id=port["id"],
+            port_id=dest_port["id"],
             port_name=p_name,
-            draft_pass=draft_pass,
-            loa_pass=loa_pass,
-            beam_pass=beam_pass,
+            draft_pass=dest_draft_pass and orig_draft_pass,
+            loa_pass=dest_loa_pass and orig_loa_pass,
+            beam_pass=dest_beam_pass and orig_beam_pass,
             dwt_pass=dwt_pass,
             overall_feasible=overall_feasible,
             requires_lightering=requires_lightering,
@@ -249,3 +394,4 @@ def run_feasibility_check(analysis: Any, db: Optional[Session] = None) -> List[F
         results.append(result)
 
     return results
+

@@ -11,6 +11,7 @@ from app.api.quotes import router as quotes_router
 from app.api.map import router as map_router
 from app.api.bookings import router as bookings_router
 from app.api.demand import router as demand_router
+from app.api.market import router as market_router
 import app.models  # ensure all models are registered in Base.metadata
 
 Base.metadata.create_all(bind=engine)
@@ -51,6 +52,8 @@ app.include_router(bookings_router)
 app.include_router(bookings_router, prefix="/api")
 app.include_router(demand_router)
 app.include_router(demand_router, prefix="/api")
+app.include_router(market_router)
+app.include_router(market_router, prefix="/api")
 
 @app.get("/disruption-alerts")
 def get_root_disruption_alerts():

@@ -15,12 +15,40 @@ export interface NewAnalysisDrawerProps {
 }
 
 const ORIGIN_DATA: Record<string, string[]> = {
-  Australia: ["Hay Point", "Newcastle", "Gladstone"],
+  Australia: ["Hay Point", "Newcastle", "Gladstone", "Abbot Point"],
   US: ["Hampton Roads", "Baltimore"],
   Mozambique: ["Maputo", "Beira"],
   Indonesia: ["Balikpapan", "Samarinda"],
   Russia: ["Vostochny", "Ust-Luga"],
 };
+
+const ORIGIN_PORT_SPECS: Record<string, { draft: number; dwt: number; queue: number; waitDays: number }> = {
+  "Hay Point": { draft: 19.5, dwt: 220000, queue: 14, waitDays: 3.4 },
+  "Newcastle": { draft: 15.2, dwt: 160000, queue: 16, waitDays: 3.8 },
+  "Gladstone": { draft: 17.5, dwt: 180000, queue: 8, waitDays: 2.2 },
+  "Abbot Point": { draft: 18.5, dwt: 200000, queue: 5, waitDays: 1.6 },
+  "Hampton Roads": { draft: 15.2, dwt: 150000, queue: 6, waitDays: 1.8 },
+  "Baltimore": { draft: 14.5, dwt: 120000, queue: 4, waitDays: 1.4 },
+  "Maputo": { draft: 13.0, dwt: 85000, queue: 7, waitDays: 4.1 },
+  "Beira": { draft: 10.5, dwt: 55000, queue: 5, waitDays: 3.6 },
+  "Balikpapan": { draft: 13.5, dwt: 85000, queue: 6, waitDays: 2.1 },
+  "Samarinda": { draft: 12.0, dwt: 75000, queue: 10, waitDays: 2.9 },
+};
+
+const MONTH_NAMES = [
+  { value: 1, label: "January (Wet/Cyclone Season)" },
+  { value: 2, label: "February (Cyclone Peak)" },
+  { value: 3, label: "March (Post-Wet Normalization)" },
+  { value: 4, label: "April (Pre-Monsoon Stocking)" },
+  { value: 5, label: "May (Pre-Monsoon Peak Import)" },
+  { value: 6, label: "June (SW Monsoon Onset)" },
+  { value: 7, label: "July (Active SW Monsoon)" },
+  { value: 8, label: "August (Monsoon Sea Swell)" },
+  { value: 9, label: "September (Late Monsoon)" },
+  { value: 10, label: "October (Post-Monsoon Peak)" },
+  { value: 11, label: "November (Winter Restocking)" },
+  { value: 12, label: "December (Winter Demand Surge)" },
+];
 
 const DISCHARGE_TERMINALS = [
   {
@@ -91,10 +119,52 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
   const [originCountry, setOriginCountry] = useState<string>("Australia");
   const [originPort, setOriginPort] = useState<string>("Hay Point");
   const [destinationPort, setDestinationPort] = useState<string>("Paradip");
+  const [laycanMonth, setLaycanMonth] = useState<number>(7);
   const [commodity, setCommodity] = useState<string>("Coking Coal");
   const [parcelTonnage, setParcelTonnage] = useState<number>(75000);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const getSeasonalProfile = (month: number, destPort: string) => {
+    if ([6, 7, 8].includes(month)) {
+      return {
+        name: "South-West Monsoon (Bay of Bengal)",
+        factor: destPort.toLowerCase().includes("haldia") ? "1.31x" : "1.26x",
+        alert: "⚠️ Rough sea swell reduces discharge rate by ~28%; offshore lightering at Sandheads suspended.",
+        badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
+      };
+    }
+    if ([1, 2].includes(month)) {
+      return {
+        name: "Queensland Wet & Cyclone Window",
+        factor: "1.22x",
+        alert: "⚠️ Potential loading berth/rail washouts at DBCT/Gladstone; elevated Capesize charter demand.",
+        badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
+      };
+    }
+    if ([11, 12].includes(month)) {
+      return {
+        name: "Asian Winter Restocking Surge",
+        factor: "1.18x",
+        alert: "⚡ Blast furnace coal replenishment across East Asia; tight Capesize vessel supply.",
+        badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
+      };
+    }
+    if ([4, 5].includes(month)) {
+      return {
+        name: "Pre-Monsoon Strategic Stocking",
+        factor: "1.12x",
+        alert: "📦 Accelerated procurement by Indian mills to build 30-day stockyard buffer.",
+        badgeColor: "bg-emerald-100 text-emerald-900 border-emerald-300",
+      };
+    }
+    return {
+      name: "Normal Navigation Climatology",
+      factor: "1.05x",
+      alert: "✅ Favorable weather window with high handling productivity and low queue risk.",
+      badgeColor: "bg-linen-mist text-forest-ink border-pebble",
+    };
+  };
 
   const titleId = useId();
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -341,6 +411,16 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                         ))}
                       </select>
                     </div>
+
+                    {ORIGIN_PORT_SPECS[originPort] && (
+                      <div className="col-span-2 flex flex-wrap items-center justify-between gap-1 rounded-lg border border-pebble/70 bg-fog/30 px-3 py-1.5 font-mono text-[11px] text-slate">
+                        <span>Max Draft: <strong className="text-charcoal">{ORIGIN_PORT_SPECS[originPort].draft}m</strong></span>
+                        <span>·</span>
+                        <span>Max DWT: <strong className="text-charcoal">{ORIGIN_PORT_SPECS[originPort].dwt.toLocaleString()} MT</strong></span>
+                        <span>·</span>
+                        <span>Queue: <strong className="text-forest-ink">{ORIGIN_PORT_SPECS[originPort].queue} ships (~{ORIGIN_PORT_SPECS[originPort].waitDays}d)</strong></span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -361,6 +441,35 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                       </option>
                     ))}
                   </select>
+                </div>
+
+                {/* Laycan Window & Seasonal Demand-Supply Factor */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="laycan-month" className={GROUP_LABEL_CLASS}>
+                      Laycan Window (Seasonal Demand-Supply Factor)
+                    </label>
+                    <span className="font-mono text-xs font-semibold text-forest-ink">
+                      Multiplier: {getSeasonalProfile(laycanMonth, destinationPort).factor}
+                    </span>
+                  </div>
+                  <select
+                    id="laycan-month"
+                    value={laycanMonth}
+                    onChange={(e) => setLaycanMonth(Number(e.target.value))}
+                    className={INPUT_CLASS}
+                  >
+                    {MONTH_NAMES.map((m) => (
+                      <option key={m.value} value={m.value}>
+                        {m.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <div className={cx("rounded-lg border p-2.5 text-xs transition-colors", getSeasonalProfile(laycanMonth, destinationPort).badgeColor)}>
+                    <div className="font-semibold">{getSeasonalProfile(laycanMonth, destinationPort).name}</div>
+                    <div className="mt-0.5 text-[11px] opacity-90">{getSeasonalProfile(laycanMonth, destinationPort).alert}</div>
+                  </div>
                 </div>
 
                 {/* Commodity */}
