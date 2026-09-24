@@ -7,7 +7,7 @@ from app.models import User, ReferencePort, AuditLog
 from app.api.auth import get_current_user
 from app.security import get_password_hash
 
-router = APIRouter(prefix="/api/admin", tags=["admin"])
+router = APIRouter(prefix="/admin", tags=["admin"])
 
 class UserCreateAdmin(BaseModel):
     email: EmailStr

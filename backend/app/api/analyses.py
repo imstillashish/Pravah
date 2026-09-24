@@ -1,5 +1,5 @@
 from datetime import datetime, timezone, timedelta
-from typing import List
+from typing import List, Optional, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -184,7 +184,7 @@ def get_analysis_detail(
         DecisionRecord,
     )
 
-    analysis = db.query(Analysis).filter(Analysis.id == analysis_id).first()
+    analysis: Any = db.query(Analysis).filter(Analysis.id == analysis_id).first()
     if not analysis:
         # Fallback to first available analysis for demonstration
         analysis = db.query(Analysis).first()
@@ -202,6 +202,9 @@ def get_analysis_detail(
     recommendations = db.query(Recommendation).filter(Recommendation.analysis_id == actual_id).order_by(Recommendation.rank.asc()).all()
     past_regrets = db.query(RegretScore).order_by(RegretScore.computed_at.desc()).limit(5).all()
     decision = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == actual_id).first()
+
+    pred_rate: float = float(analysis.predicted_rate_pmt or 0.0)
+    tonnage: float = float(analysis.parcel_tonnage or 0.0)
 
     return {
         "id": analysis.id,
@@ -227,9 +230,9 @@ def get_analysis_detail(
             "note": "approximate great-circle distance",
         },
         "forecast": forecast.to_dict() if forecast else {
-            "p10_usd_per_mt": round(analysis.predicted_rate_pmt * 0.92, 2),
-            "p50_usd_per_mt": analysis.predicted_rate_pmt,
-            "p90_usd_per_mt": round(analysis.predicted_rate_pmt * 1.15, 2),
+            "p10_usd_per_mt": round(pred_rate * 0.92, 2),
+            "p50_usd_per_mt": pred_rate,
+            "p90_usd_per_mt": round(pred_rate * 1.15, 2),
             "arima_baseline_usd_per_mt": analysis.benchmark_spot_pmt,
             "confidence_label": "HIGH",
             "model_used": "LightGBM_Quantile_v1",
@@ -281,12 +284,12 @@ def get_analysis_detail(
             },
         ],
         "landed_cost": landed_cost.to_dict() if landed_cost else {
-            "freight_rate_usd_per_mt": analysis.predicted_rate_pmt,
+            "freight_rate_usd_per_mt": pred_rate,
             "baf_surcharge_usd_per_mt": 1.20,
             "usd_inr_rate": 83.5,
-            "total_usd_per_mt": round(analysis.predicted_rate_pmt + 1.20, 2),
-            "total_inr_per_mt": round((analysis.predicted_rate_pmt + 1.20) * 83.5, 2),
-            "total_inr": round((analysis.predicted_rate_pmt + 1.20) * 83.5 * analysis.parcel_tonnage, 2),
+            "total_usd_per_mt": round(pred_rate + 1.20, 2),
+            "total_inr_per_mt": round((pred_rate + 1.20) * 83.5, 2),
+            "total_inr": round((pred_rate + 1.20) * 83.5 * tonnage, 2),
         },
         "stockout_alert": stockout.to_dict() if stockout else {
             "days_to_stockout": 15.0,
@@ -351,7 +354,7 @@ def record_decision(
     if not analysis:
         raise HTTPException(status_code=404, detail="Analysis not found")
 
-    decision = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis_id).first()
+    decision: Any = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis_id).first()
     if not decision:
         decision = DecisionRecord(analysis_id=analysis_id)
         db.add(decision)
@@ -384,7 +387,7 @@ def record_decision(
 @router.post("/{analysis_id}/decision/approve")
 def approve_decision(
     analysis_id: int,
-    payload: dict = None,
+    payload: Optional[dict] = None,
     db: Session = Depends(get_db)
 ):
     """
@@ -392,7 +395,7 @@ def approve_decision(
     """
     from app.models.entities import DecisionRecord, AuditLog
 
-    decision = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis_id).first()
+    decision: Any = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis_id).first()
     if not decision:
         decision = DecisionRecord(analysis_id=analysis_id, chosen_vessel_class="Panamax")
         db.add(decision)
@@ -427,7 +430,7 @@ def reject_decision(
     if not reason:
         raise HTTPException(status_code=400, detail="Rejection reason is required")
 
-    decision = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis_id).first()
+    decision: Any = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis_id).first()
     if not decision:
         decision = DecisionRecord(analysis_id=analysis_id, chosen_vessel_class="Panamax")
         db.add(decision)
