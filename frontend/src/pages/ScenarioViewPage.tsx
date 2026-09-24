@@ -144,7 +144,7 @@ export const ScenarioViewPage: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Controls Column (5 Variable Sliders / Selectors) */}
-        <div className="rounded-card border border-pebble bg-paper p-6 space-y-5 lg:col-span-5">
+        <div className="rounded-none border border-pebble bg-paper p-6 space-y-5 lg:col-span-5">
           <div className="flex items-center justify-between border-b border-pebble pb-3">
             <h3 className="font-bold text-sm text-obsidian flex items-center gap-2">
               <Sliders className="size-4 text-forest-ink" /> Simulation Variables
@@ -209,7 +209,7 @@ export const ScenarioViewPage: React.FC = () => {
             <select
               value={vesselOverride}
               onChange={(e) => setVesselOverride(e.target.value)}
-              className="mt-1.5 w-full rounded-card border border-pebble bg-paper p-2.5 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
+              className="mt-1.5 w-full rounded-none border border-pebble bg-paper p-2.5 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
             >
               <option value="Handysize">Handysize (25k - 39k DWT)</option>
               <option value="Supramax">Supramax (40k - 59k DWT)</option>
@@ -226,7 +226,7 @@ export const ScenarioViewPage: React.FC = () => {
             <select
               value={portOverride}
               onChange={(e) => setPortOverride(e.target.value)}
-              className="mt-1.5 w-full rounded-card border border-pebble bg-paper p-2.5 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
+              className="mt-1.5 w-full rounded-none border border-pebble bg-paper p-2.5 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
             >
               <option value="Paradip">Paradip Port (16.5m draft) — Baseline</option>
               <option value="Dhamra">Dhamra Port (18.0m draft)</option>
@@ -278,7 +278,7 @@ export const ScenarioViewPage: React.FC = () => {
         {/* Comparison Output Column */}
         <div className="space-y-6 lg:col-span-7">
           {/* Side-by-side comparison card */}
-          <div className="rounded-card border border-pebble bg-paper p-6 space-y-5">
+          <div className="rounded-none border border-pebble bg-paper p-6 space-y-5">
             <div className="flex items-center justify-between border-b border-pebble pb-3">
               <h3 className="font-bold text-base text-charcoal">
                 Side-by-Side Scenario Variance Analysis
@@ -292,7 +292,7 @@ export const ScenarioViewPage: React.FC = () => {
 
             {/* Feasibility Alert if restricted */}
             {!activeScenario.overall_feasible && (
-              <div className="flex items-start gap-2.5 rounded-card border border-alarm-red/30 bg-alarm-red/10 p-3 text-xs text-alarm-red">
+              <div className="flex items-start gap-2.5 rounded-none border border-alarm-red/30 bg-alarm-red/10 p-3 text-xs text-alarm-red">
                 <AlertCircle className="size-4 shrink-0 text-alarm-red mt-0.5" />
                 <div>
                   <strong className="font-bold">Physical Port Constraint Violation:</strong>

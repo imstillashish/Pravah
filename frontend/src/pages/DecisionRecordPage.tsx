@@ -202,7 +202,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
 
       {/* SECTION 1: Final Decision Summary (Task 380) */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className="rounded-card border border-pebble bg-paper p-6 space-y-4">
+        <div className="rounded-none border border-pebble bg-paper p-6 space-y-4">
           <h3 className="font-bold text-sm text-obsidian flex items-center gap-2">
             <Ship className="size-4 text-forest-ink" /> Final Decision Summary
           </h3>
@@ -230,7 +230,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
             </div>
 
             {isOverride && data.decision?.override_reason && (
-              <div className="rounded-card bg-amber-wash border border-amber-300 p-2.5 text-amber-900">
+              <div className="rounded-none bg-amber-wash border border-amber-300 p-2.5 text-amber-900">
                 <span className="font-bold">Override Justification:</span>
                 <p className="mt-0.5 italic">"{data.decision.override_reason}"</p>
               </div>
@@ -246,12 +246,12 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
         </div>
 
         {/* SECTION 2: Approval Status (Task 380) */}
-        <div className="rounded-card border border-pebble bg-paper p-6 space-y-4">
+        <div className="rounded-none border border-pebble bg-paper p-6 space-y-4">
           <h3 className="font-bold text-sm text-obsidian flex items-center gap-2">
             <FileCheck2 className="size-4 text-forest-ink" /> Plant Management Approval Status
           </h3>
 
-          <div className="flex items-center gap-3 rounded-card border border-pebble p-4 bg-fog">
+          <div className="flex items-center gap-3 rounded-none border border-pebble p-4 bg-fog">
             {managerApproved === true ? (
               <CheckCircle2 className="size-8 text-forest-ink shrink-0" />
             ) : managerApproved === false ? (

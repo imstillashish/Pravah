@@ -8,7 +8,6 @@ import {
   Loader2,
   ChevronDown,
 } from "lucide-react";
-import { AstitvaLogo } from "./AstitvaLogo";
 
 /**
  * Top nav band (48px, Paper + Pebble rule below) — Wise shell.
@@ -34,11 +33,8 @@ export const TopBar: React.FC = () => {
   return (
     <header className="sticky top-0 z-30 border-b border-pebble bg-paper/95 backdrop-blur">
       <div className="flex h-12 items-center gap-3 px-3 md:pl-[72px] md:pr-4">
-        {/* Brand */}
-        <AstitvaLogo size={26} variant="full" className="mr-1" />
-
         {/* Search — Wise pill search on Fog fill */}
-        <div className="ml-2 flex h-8 max-w-xs flex-1 items-center gap-2 rounded-full border border-transparent bg-fog px-3.5 transition-colors duration-150 focus-within:border-forest-ink focus-within:bg-paper">
+        <div className="flex h-8 max-w-xs flex-1 items-center gap-2 rounded-full border border-transparent bg-fog px-3.5 transition-colors duration-150 focus-within:border-forest-ink focus-within:bg-paper">
           <Search className="size-4 text-slate" aria-hidden="true" />
           <input
             type="search"
