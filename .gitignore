@@ -33,3 +33,10 @@ MICROSCOPIC_TASK_BREAKDOWN_PROMPT.md
 Thumbs.db
 .vscode/
 .idea/
+
+# Local-only working artifacts & notes (kept strictly local)
+SIH26006/
+UX_JUDGE_AUDIT_REPORT.md
+docs/screenshots/
+local_user_files_backup/
+*.audit.md
