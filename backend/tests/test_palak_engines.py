@@ -4,6 +4,7 @@ Covers Phase 1C (Tasks 150–204).
 """
 import os
 import sys
+from typing import Any
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 import pytest
@@ -148,7 +149,7 @@ def test_tasks_169_176_recommendation_engine():
 
     recs = run_recommendation(analysis, MockForecast(), feas_results)
     assert len(recs) > 0
-    top = recs[0]
+    top: Any = recs[0]
     # Verify locked weights: 0.5 * cost + 0.3 * confidence + 0.2 * coverage
     expected_score = 0.5 * top.cost_score + 0.3 * top.confidence_score + 0.2 * top.coverage_fit_score
     assert abs(top.total_score - expected_score) < 1e-4
@@ -179,7 +180,7 @@ def test_tasks_184_186_landed_cost():
     class MockForecast:
         p50_usd_per_mt = 22.3
 
-    cost = calculate_landed_cost(
+    cost: Any = calculate_landed_cost(
         analysis,
         MockForecast(),
         enrichment_data={"bunker_price_usd_per_mt": 24.0, "usd_inr_rate": 83.5}

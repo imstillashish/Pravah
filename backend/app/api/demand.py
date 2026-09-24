@@ -33,7 +33,7 @@ def get_demand_requests(status_filter: Optional[str] = "OPEN", db: Session = Dep
             "plant_id": r.plant_id,
             "plant_name": plant.plant_name if plant else (f"Plant #{r.plant_id}" if r.plant_id else "Unassigned"),
             "cargo_type_id": r.cargo_type_id,
-            "cargo_type": cargo.cargo_type_name if cargo else "Coking Coal",
+            "cargo_type": getattr(cargo, "cargo_name", "Coking Coal") if cargo else "Coking Coal",
             "quantity_mt": r.quantity_mt,
             "destination_port_id": r.destination_port_id,
             "destination_port": port.port_name if port else (f"Port #{r.destination_port_id}" if r.destination_port_id else "Paradip"),

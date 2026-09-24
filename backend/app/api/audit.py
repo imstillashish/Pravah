@@ -5,7 +5,7 @@ from app.database import get_db
 from app.models import AuditLog, User
 from app.api.auth import get_current_user
 
-router = APIRouter(prefix="/api/audit-logs", tags=["audit"])
+router = APIRouter(prefix="/audit-logs", tags=["audit"])
 
 @router.get("")
 def get_audit_logs(
