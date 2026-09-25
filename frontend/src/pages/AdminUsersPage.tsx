@@ -71,7 +71,7 @@ export const AdminUsersPage: React.FC = () => {
       setNewFullName("");
       setNewPassword("");
       setTimeout(() => setFeedback(null), 3000);
-    } catch (err: unknown) {
+    } catch {
       // Fallback mock addition for demo
       const newUser: UserRow = {
         id: users.length + 1,

@@ -24,17 +24,17 @@ import { Agentation } from "agentation";
 function MainApp() {
   const { user, isLoading } = useAuth();
   const [currentView, setCurrentView] = useState<string>(
-    window.location.hash.replace("#", "") || "dashboard"
+    window.location.hash.replace("#", "") || (user ? "dashboard" : "landing")
   );
 
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.replace("#", "");
-      setCurrentView(hash || "dashboard");
+      setCurrentView(hash || (user ? "dashboard" : "landing"));
     };
     window.addEventListener("hashchange", handleHash);
     return () => window.removeEventListener("hashchange", handleHash);
-  }, []);
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -49,7 +49,7 @@ function MainApp() {
 
   // Public / Unauthenticated Views (Pages 1, 2, 3)
   if (!user) {
-    if (currentView === "landing") {
+    if (currentView === "landing" || currentView === "" || currentView === "dashboard") {
       return (
         <LandingPage
           onNavigateToLogin={() => {
@@ -168,8 +168,8 @@ function MainApp() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <IconRail />
-      <TopBar />
+      <IconRail currentView={currentView} />
+      <TopBar currentView={currentView} />
       <div className="flex">
         <div className="min-w-0 flex-1 md:pl-14">
           {renderContent()}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useId, useRef, useCallback } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { X, Ship, CheckCircle, Loader2 } from "lucide-react";
+import { X, Ship, CheckCircle, Loader2, AlertTriangle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
 import { AnimatedSvgChart } from "./AnimatedSvgChart";
@@ -15,11 +15,96 @@ export interface NewAnalysisDrawerProps {
 }
 
 const ORIGIN_DATA: Record<string, string[]> = {
-  Australia: ["Hay Point", "Newcastle", "Gladstone"],
-  US: ["Hampton Roads", "Baltimore"],
-  Mozambique: ["Maputo", "Beira"],
-  Indonesia: ["Balikpapan", "Samarinda"],
-  Russia: ["Vostochny", "Ust-Luga"],
+  Australia: [
+    "Hay Point",
+    "Newcastle",
+    "Gladstone",
+    "Port Hedland",
+    "Dampier",
+    "Port Kembla",
+    "Abbot Point",
+  ],
+  "United States (US)": [
+    "Hampton Roads",
+    "Baltimore",
+    "Mobile",
+    "New Orleans",
+    "Houston",
+  ],
+  Indonesia: [
+    "Balikpapan",
+    "Samarinda",
+    "Banjarmasin",
+    "Muara Pantai",
+    "Tanjung Bara",
+    "Bunyu Island",
+  ],
+  Russia: [
+    "Vostochny",
+    "Ust-Luga",
+    "Vanino",
+    "Murmansk",
+    "Novorossiysk",
+    "Taman",
+  ],
+  "South Africa": [
+    "Richards Bay",
+    "Durban",
+    "Saldanha Bay",
+    "Port Elizabeth",
+  ],
+  Mozambique: [
+    "Maputo",
+    "Beira",
+    "Nacala",
+  ],
+  Canada: [
+    "Vancouver",
+    "Prince Rupert",
+    "Neptune Bulk",
+  ],
+  Brazil: [
+    "Ponta da Madeira",
+    "Tubarão",
+    "Sepetiba / Itaguaí",
+    "Santos",
+  ],
+  Colombia: [
+    "Puerto Bolívar",
+    "Puerto Drummond",
+    "Santa Marta",
+  ],
+  China: [
+    "Tianjin",
+    "Qingdao",
+    "Qinhuangdao",
+    "Shanghai",
+    "Ningbo-Zhoushan",
+  ],
+  "Oman & UAE": [
+    "Salalah",
+    "Sohar",
+    "Mina Saqr",
+    "Fujairah",
+  ],
+  "India (Coastal)": [
+    "Paradip",
+    "Vizag",
+    "Haldia",
+    "Dhamra",
+    "Gangavaram",
+    "Mormugao",
+    "Ennore",
+  ],
+  "Singapore & Malaysia": [
+    "Singapore",
+    "Port Klang",
+    "Tanjung Pelepas",
+  ],
+  Vietnam: [
+    "Cam Pha",
+    "Hon Gai",
+  ],
 };
 
 const DISCHARGE_TERMINALS = [
@@ -176,11 +261,18 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
 
   const recommendedVessel = getRecommendedVessel(parcelTonnage, destinationPort);
   const isHaldiaAlert = destinationPort.toLowerCase().includes("haldia") && parcelTonnage > 60000;
+  const isSamePortError = originPort.trim().toLowerCase() === destinationPort.trim().toLowerCase();
 
   const handleSubmit = useCallback(
     async (status: "draft" | "finalized") => {
       if (!token) {
         setSubmitError("You must be logged in to create an analysis.");
+        return;
+      }
+      if (isSamePortError) {
+        setSubmitError(
+          `Invalid route corridor: Origin loading port (${originPort}) and discharge terminal (${destinationPort}) cannot be identical.`,
+        );
         return;
       }
       if (!parcelTonnage || parcelTonnage <= 0) {
@@ -224,6 +316,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
     },
     [
       token,
+      isSamePortError,
       parcelTonnage,
       originCountry,
       originPort,
@@ -353,7 +446,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                     id="destination-port"
                     value={destinationPort}
                     onChange={(e) => setDestinationPort(e.target.value)}
-                    className={INPUT_CLASS}
+                    className={`${INPUT_CLASS} ${isSamePortError ? "border-alarm-red focus:border-alarm-red" : ""}`}
                   >
                     {DISCHARGE_TERMINALS.map((terminal) => (
                       <option key={terminal.value} value={terminal.value}>
@@ -361,6 +454,25 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                       </option>
                     ))}
                   </select>
+
+                  {isSamePortError && (
+                    <div
+                      role="alert"
+                      className="mt-2 flex items-start gap-2.5 rounded-card border border-alarm-red/40 bg-alarm-wash p-3 text-xs text-alarm-red"
+                    >
+                      <AlertTriangle className="size-4 shrink-0 mt-0.5 text-alarm-red" />
+                      <div>
+                        <p className="font-semibold text-alarm-red">Invalid Route Corridor</p>
+                        <p className="mt-0.5 text-[11px] leading-relaxed text-charcoal">
+                          Origin loading port and discharge terminal cannot be the same (
+                          <strong>
+                            {originPort} → {destinationPort}
+                          </strong>
+                          ). A valid bulk charter voyage requires distinct loading and discharge locations.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Commodity */}
@@ -511,9 +623,10 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
               {/* Footer actions */}
               <div className="flex flex-col items-center justify-end gap-3 border-t border-pebble bg-paper px-6 py-4 sm:flex-row">
                 <SecondaryButton
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isSamePortError}
                   onClick={() => handleSubmit("draft")}
-                  className="w-full sm:w-auto"
+                  className={`w-full sm:w-auto ${isSamePortError ? "opacity-50 cursor-not-allowed" : ""}`}
+                  title={isSamePortError ? "Origin and destination ports cannot be the same" : undefined}
                 >
                   {isSubmitting ? (
                     <span className="inline-flex items-center gap-1.5">
@@ -526,9 +639,10 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                 </SecondaryButton>
 
                 <PrimaryButton
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isSamePortError}
                   onClick={() => handleSubmit("finalized")}
-                  className="w-full sm:w-auto"
+                  className={`w-full sm:w-auto ${isSamePortError ? "opacity-50 cursor-not-allowed" : ""}`}
+                  title={isSamePortError ? "Origin and destination ports cannot be the same" : undefined}
                 >
                   {isSubmitting ? (
                     <span className="inline-flex items-center gap-1.5">

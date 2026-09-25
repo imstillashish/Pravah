@@ -38,7 +38,6 @@ app.include_router(auth_router, prefix="/api/auth")
 app.include_router(auth_router, prefix="/auth")
 app.include_router(metrics_router)
 app.include_router(analyses_router)
-app.include_router(analyses_router, prefix="/api")
 app.include_router(admin_router)
 app.include_router(admin_router, prefix="/api")
 app.include_router(audit_router)
@@ -73,6 +72,61 @@ def get_root_disruption_alerts():
     finally:
         db.close()
 
+@app.get("/analyses")
+def get_root_analyses():
+    from app.database import SessionLocal
+    from app.models import Analysis
+    db = SessionLocal()
+    try:
+        return db.query(Analysis).order_by(Analysis.created_at.desc()).all()
+    finally:
+        db.close()
+
+
+@app.get("/metrics/global")
+def get_root_metrics_global():
+    from app.api.metrics import get_global_metrics
+    return get_global_metrics()
+
+
+@app.get("/analyses/recent")
+def get_root_analyses_recent():
+    from app.database import SessionLocal
+    from app.api.analyses import get_recent_analyses
+    from app.models import User
+    db = SessionLocal()
+    try:
+        user = db.query(User).first()
+        if not user:
+            return []
+        return get_recent_analyses(current_user=user, db=db)
+    finally:
+        db.close()
+
+
+@app.get("/analyses/disruption-alerts")
+def get_root_analyses_disruption_alerts():
+    from app.database import SessionLocal
+    from app.api.analyses import get_disruption_alerts
+    db = SessionLocal()
+    try:
+        return get_disruption_alerts(db=db)
+    finally:
+        db.close()
+
+
+@app.get("/admin/reference")
+@app.get("/admin/reference/ports")
+def get_root_admin_reference():
+    from app.database import SessionLocal
+    from app.api.admin import list_reference_ports
+    db = SessionLocal()
+    try:
+        return list_reference_ports(db=db)
+    finally:
+        db.close()
+
+
 @app.get("/analyses/{analysis_id}")
 def get_root_analysis_detail(analysis_id: int):
     from app.database import SessionLocal
@@ -80,6 +134,17 @@ def get_root_analysis_detail(analysis_id: int):
     db = SessionLocal()
     try:
         return get_analysis_detail(analysis_id, db)
+    finally:
+        db.close()
+
+
+@app.get("/analyses/{analysis_id}/export")
+def get_root_analysis_export(analysis_id: int):
+    from app.database import SessionLocal
+    from app.api.analyses import export_decision_record
+    db = SessionLocal()
+    try:
+        return export_decision_record(analysis_id, db)
     finally:
         db.close()
 
@@ -93,6 +158,29 @@ def post_root_analysis_decision(analysis_id: int, payload: dict):
         return record_decision(analysis_id, payload, db)
     finally:
         db.close()
+
+
+@app.post("/analyses/{analysis_id}/decision/approve")
+def post_root_analysis_decision_approve(analysis_id: int, payload: dict):
+    from app.database import SessionLocal
+    from app.api.analyses import approve_decision
+    db = SessionLocal()
+    try:
+        return approve_decision(analysis_id, payload, db)
+    finally:
+        db.close()
+
+
+@app.post("/analyses/{analysis_id}/decision/reject")
+def post_root_analysis_decision_reject(analysis_id: int, payload: dict):
+    from app.database import SessionLocal
+    from app.api.analyses import reject_decision
+    db = SessionLocal()
+    try:
+        return reject_decision(analysis_id, payload, db)
+    finally:
+        db.close()
+
 
 
 @app.get("/health")

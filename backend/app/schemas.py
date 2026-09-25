@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, model_validator
 from typing import Optional
 
 class UserSignup(BaseModel):
@@ -54,6 +54,15 @@ class AnalysisCreate(BaseModel):
     benchmark_spot_pmt: Optional[float] = None
     predicted_rate_pmt: Optional[float] = None
     status: Optional[str] = "draft"
+
+    @model_validator(mode="after")
+    def validate_ports(self):
+        if self.origin_port and self.destination_port:
+            if self.origin_port.strip().lower() == self.destination_port.strip().lower():
+                raise ValueError(
+                    f"Origin port '{self.origin_port}' and destination terminal '{self.destination_port}' cannot be the same. A valid charter voyage requires distinct loading and discharge locations."
+                )
+        return self
 
 class AnalysisResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)

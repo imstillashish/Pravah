@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { apiClient } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE } from "../api";
 import {
   FileCheck2,
   CheckCircle2,
@@ -49,7 +50,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
   const [rejectReason, setRejectReason] = useState<string>("");
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  const fetchAnalysis = async () => {
+  const fetchAnalysis = useCallback(async () => {
     try {
       setIsLoading(true);
       const res = await apiClient<DecisionDetail>(`/analyses/${analysisId}`);
@@ -59,11 +60,11 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [analysisId]);
 
   useEffect(() => {
     fetchAnalysis();
-  }, [analysisId]);
+  }, [fetchAnalysis]);
 
   const handleApprove = async () => {
     if (!data) return;
@@ -123,7 +124,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
   const handleDownload = async () => {
     if (!data) return;
     try {
-      const response = await fetch(`/analyses/${data.id}/export`);
+      const response = await fetch(`${API_BASE}/analyses/${data.id}/export`);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");

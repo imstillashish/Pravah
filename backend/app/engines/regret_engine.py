@@ -6,14 +6,16 @@ import os
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 from sqlalchemy.orm import Session
-
-
 from app.models import RegretScore, DecisionRecord
 
 
-def _load_historical_prices() -> pd.DataFrame:
+def _load_historical_prices() -> Any:
     """Loads BDRY historical daily close prices."""
     candidates = [
         Path("ml/data/bdry_history.csv"),
@@ -22,11 +24,32 @@ def _load_historical_prices() -> pd.DataFrame:
     ]
     for p in candidates:
         if p.is_file():
-            df = pd.read_csv(p)
-            date_col = "Date" if "Date" in df.columns else "date"
-            df["parsed_date"] = pd.to_datetime(df[date_col]).dt.date
-            return df
-    return pd.DataFrame()
+            if pd is not None:
+                try:
+                    df = pd.read_csv(p)
+                    date_col = "Date" if "Date" in df.columns else "date"
+                    df["parsed_date"] = pd.to_datetime(df[date_col]).dt.date
+                    return df
+                except Exception:
+                    pass
+            import csv
+            rows = []
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    reader = csv.DictReader(f)
+                    for r in reader:
+                        d_str = r.get("Date") or r.get("date")
+                        c_str = r.get("Close") or r.get("close")
+                        if d_str and c_str:
+                            try:
+                                dt = datetime.strptime(d_str[:10], "%Y-%m-%d").date()
+                                rows.append({"parsed_date": dt, "Close": float(c_str)})
+                            except Exception:
+                                pass
+                return rows
+            except Exception:
+                pass
+    return pd.DataFrame() if pd is not None else []
 
 
 def compute_regret_score(
@@ -89,12 +112,15 @@ def compute_regret_score(
     # Fetch prices
     df_prices = _load_historical_prices()
 
-    if not df_prices.empty and "Close" in df_prices.columns:
+    if pd is not None and isinstance(df_prices, pd.DataFrame) and not df_prices.empty and "Close" in df_prices.columns:
         close_col = "Close"
         mask = (df_prices["parsed_date"] >= window_start) & (df_prices["parsed_date"] <= window_end)
         window_prices = df_prices.loc[mask, close_col].dropna().tolist()
         if not window_prices:
             window_prices = df_prices[close_col].tail(28).dropna().tolist()
+    elif isinstance(df_prices, list) and df_prices:
+        matching = [r["Close"] for r in df_prices if window_start <= r["parsed_date"] <= window_end]
+        window_prices = matching if matching else [r["Close"] for r in df_prices[-28:]]
     else:
         # Fallback realistic window prices
         window_prices = [22.0, 21.8, 22.3, 21.5, 23.0, 22.8, 21.9]

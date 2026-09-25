@@ -83,7 +83,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
       {/* Forest Ink hero panel — the brand's display voice (desktop only) */}
       <aside className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-[28px] bg-forest-ink p-12 lg:flex">
         <div className="relative z-10">
-          <AstitvaLogo size={32} variant="inverse" subtitle={true} />
+          <a
+            href="#landing"
+            className="inline-flex cursor-pointer transition-opacity hover:opacity-85"
+            title="Return to Public Overview"
+          >
+            <AstitvaLogo size={32} variant="inverse" subtitle={true} />
+          </a>
         </div>
 
         {/* 3D Maritime Route Globe */}
@@ -118,11 +124,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
       <main className="flex flex-col justify-center px-4 py-10 sm:px-8">
         {/* Mobile banner — condensed hero */}
         <div className="mb-6 rounded-[28px] bg-forest-ink p-6 lg:hidden">
-          <div className="mb-3 flex items-center gap-2">
-            <span className="flex size-6 items-center justify-center rounded-full bg-lime-voltage text-forest-ink">
-              <Compass className="size-4" aria-hidden="true" />
-            </span>
-            <span className="text-sm font-medium text-paper">Intelligent Freight Portal</span>
+          <div className="mb-3 flex items-center justify-between">
+            <a href="#landing" className="flex items-center gap-2">
+              <span className="flex size-6 items-center justify-center rounded-full bg-lime-voltage text-forest-ink">
+                <Compass className="size-4" aria-hidden="true" />
+              </span>
+              <span className="text-sm font-medium text-paper">Intelligent Freight Portal</span>
+            </a>
+            <a href="#landing" className="font-mono text-xs font-semibold text-lime-voltage hover:underline">
+              Overview →
+            </a>
           </div>
           <h1 className="text-2xl font-black leading-tight tracking-[-0.02em] text-lime-voltage">
             Know your rate before you book.

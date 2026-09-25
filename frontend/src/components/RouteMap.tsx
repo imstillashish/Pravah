@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigation, Anchor, Compass, ShieldCheck, AlertCircle } from "lucide-react";
 
 interface PortInfo {
@@ -76,7 +76,34 @@ export const RouteMap: React.FC<RouteMapProps> = ({
   shipProgress,
   shipPositionText,
 }) => {
-  const [selectedPort, setSelectedPort] = useState<PortInfo>(VERIFIED_PORTS[0]);
+  const cleanOrigin = originName.replace(/\s*\([^)]*\)/g, "").trim();
+  const cleanDest = destinationName.replace(/\s*\([^)]*\)/g, "").trim();
+  const isCircularRoute = cleanOrigin.toLowerCase() === cleanDest.toLowerCase();
+
+  const [selectedPort, setSelectedPort] = useState<PortInfo>(() => {
+    const match = VERIFIED_PORTS.find(
+      (p) =>
+        destinationName.toLowerCase().includes(p.name.toLowerCase()) ||
+        destinationName.toLowerCase().includes(p.id.toLowerCase()) ||
+        p.name.toLowerCase().includes(cleanDest.toLowerCase()) ||
+        cleanDest.toLowerCase().includes(p.name.toLowerCase()),
+    );
+    return match || VERIFIED_PORTS[0];
+  });
+
+  useEffect(() => {
+    const match = VERIFIED_PORTS.find(
+      (p) =>
+        destinationName.toLowerCase().includes(p.name.toLowerCase()) ||
+        destinationName.toLowerCase().includes(p.id.toLowerCase()) ||
+        p.name.toLowerCase().includes(cleanDest.toLowerCase()) ||
+        cleanDest.toLowerCase().includes(p.name.toLowerCase()),
+    );
+    if (match) {
+      setSelectedPort(match);
+    }
+  }, [destinationName, cleanDest]);
+
   const [zoomLevel, setZoomLevel] = useState<"corridor" | "bay">("corridor");
 
   const t = typeof shipProgress === "number" ? Math.max(0, Math.min(1, shipProgress)) : 0.52;
@@ -195,31 +222,46 @@ export const RouteMap: React.FC<RouteMapProps> = ({
                 </text>
               </g>
 
-              {/* Origin Marker (Newcastle, AU) */}
+              {/* Origin Marker */}
               <g transform="translate(720, 230)" className="cursor-pointer">
                 <circle r="8" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
                 <circle r="16" fill="rgba(245, 158, 11, 0.2)" className="animate-pulse" />
                 <text x="14" y="4" fill="#fbbf24" fontSize="11" fontWeight="bold">
-                  ORIGIN: Newcastle (AU)
+                  ORIGIN: {cleanOrigin}
                 </text>
                 <text x="14" y="16" fill="#94a3b8" fontSize="9">
-                  -32.9° S, 151.8° E
+                  Loading Port Terminal
                 </text>
               </g>
 
-              {/* Destination Marker (Paradip, IN) */}
+              {/* Destination Marker */}
               <g
                 transform="translate(205, 130)"
                 className="cursor-pointer"
-                onClick={() => setSelectedPort(VERIFIED_PORTS[0])}
+                onClick={() => setSelectedPort(selectedPort)}
               >
-                <circle r="9" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
-                <circle r="18" fill="rgba(16, 185, 129, 0.25)" className="animate-ping" />
-                <text x="-120" y="-8" fill="#34d399" fontSize="12" fontWeight="bold">
-                  DESTINATION: Paradip (IN)
+                <circle
+                  r={9}
+                  fill={isCircularRoute ? "#ef4444" : "#10b981"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                />
+                <circle
+                  r={18}
+                  fill={isCircularRoute ? "rgba(239, 68, 68, 0.25)" : "rgba(16, 185, 129, 0.25)"}
+                  className="animate-ping"
+                />
+                <text
+                  x="-120"
+                  y="-8"
+                  fill={isCircularRoute ? "#f87171" : "#34d399"}
+                  fontSize="12"
+                  fontWeight="bold"
+                >
+                  DESTINATION: {cleanDest}
                 </text>
                 <text x="-120" y="5" fill="#94a3b8" fontSize="9">
-                  Draft Limit: 16.5m
+                  Draft Limit: {selectedPort.maxDraft}m
                 </text>
               </g>
             </g>
@@ -309,12 +351,21 @@ export const RouteMap: React.FC<RouteMapProps> = ({
         {/* Distance Badge Overlay */}
         <div className="absolute top-3 left-3 flex flex-col gap-1 rounded-card border border-pebble/30 bg-forest-ink/90 p-2.5 backdrop-blur-md">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-paper">
-            <Compass className="size-3.5 text-lime-voltage" />
-            <span>{distanceNm.toLocaleString()} Nautical Miles</span>
+            <Compass className={`size-3.5 ${isCircularRoute ? "text-amber-400" : "text-lime-voltage"}`} />
+            <span>
+              {isCircularRoute
+                ? "0.0 Nautical Miles (Invalid Corridor)"
+                : `${distanceNm.toLocaleString()} Nautical Miles`}
+            </span>
           </div>
           <span className="text-[10px] text-fog">
-            Route: {originName.split(" ")[0]} → {destinationName.split(" ")[0]}
+            Route: {cleanOrigin} → {cleanDest}
           </span>
+          {isCircularRoute && (
+            <span className="rounded bg-alarm-red/20 px-1.5 py-0.5 text-[9px] font-semibold text-alarm-red">
+              ⚠️ Identical Origin &amp; Destination Terminal
+            </span>
+          )}
         </div>
 
         {/* Quick Legend Overlay */}

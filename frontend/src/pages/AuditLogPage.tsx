@@ -18,7 +18,7 @@ interface AuditEntry {
 }
 
 export const AuditLogPage: React.FC = () => {
-  const [logs, setLogs] = useState<AuditEntry[]>([
+  const [logs, setLogs] = useState<AuditEntry[]>(() => [
     {
       id: 1,
       user_email: "demo@sail.gov.in",
