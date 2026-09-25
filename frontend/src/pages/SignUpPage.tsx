@@ -91,9 +91,15 @@ export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
   return (
     <div className="grid min-h-screen lg:grid-cols-[45fr_55fr]">
       {/* Forest Ink hero panel — matched directly from AuthPage */}
-      <aside className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-xl bg-forest-ink p-12 lg:flex">
+      <aside className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-[28px] bg-forest-ink p-12 lg:flex">
         <div className="relative z-10">
-          <AstitvaLogo size={32} variant="inverse" subtitle={true} />
+          <a
+            href="#landing"
+            className="inline-flex cursor-pointer transition-opacity hover:opacity-85"
+            title="Return to Public Overview"
+          >
+            <AstitvaLogo size={32} variant="inverse" subtitle={true} />
+          </a>
         </div>
 
         {/* 3D Maritime Route Globe */}
@@ -130,12 +136,17 @@ export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
       {/* Form side — Paper canvas, card centered */}
       <main className="flex flex-col justify-center px-4 py-10 sm:px-8">
         {/* Mobile banner — condensed hero */}
-        <div className="mb-6 rounded-xl bg-forest-ink p-6 lg:hidden">
-          <div className="mb-3 flex items-center gap-2">
-            <span className="flex size-6 items-center justify-center rounded-full bg-lime-voltage text-forest-ink">
-              <Compass className="size-4" aria-hidden="true" />
-            </span>
-            <span className="text-sm font-medium text-paper">Intelligent Freight Portal</span>
+        <div className="mb-6 rounded-[28px] bg-forest-ink p-6 lg:hidden">
+          <div className="mb-3 flex items-center justify-between">
+            <a href="#landing" className="flex items-center gap-2">
+              <span className="flex size-6 items-center justify-center rounded-full bg-lime-voltage text-forest-ink">
+                <Compass className="size-4" aria-hidden="true" />
+              </span>
+              <span className="text-sm font-medium text-paper">Intelligent Freight Portal</span>
+            </a>
+            <a href="#landing" className="font-mono text-xs font-semibold text-lime-voltage hover:underline">
+              Overview →
+            </a>
           </div>
           <h1 className="text-2xl font-black leading-tight tracking-[-0.02em] text-lime-voltage">
             Intelligent freight chartering.
@@ -161,10 +172,10 @@ export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
           )}
 
           {successMsg ? (
-            <div className="mt-6 rounded-card border border-emerald-300 bg-emerald-50 p-6 text-center">
-              <CheckCircle2 className="mx-auto mb-2.5 size-10 text-emerald-600" />
-              <h3 className="text-base font-semibold text-emerald-950">Registration Submitted</h3>
-              <p className="mt-1.5 text-sm text-emerald-800 leading-relaxed">{successMsg}</p>
+            <div className="mt-6 rounded-card border border-pebble bg-linen-mist p-6 text-center">
+              <CheckCircle2 className="mx-auto mb-2.5 size-10 text-forest-ink" />
+              <h3 className="text-base font-semibold text-forest-ink">Registration Submitted</h3>
+              <p className="mt-1.5 text-sm text-forest-ink leading-relaxed">{successMsg}</p>
               <div className="mt-6">
                 <PrimaryButton
                   type="button"

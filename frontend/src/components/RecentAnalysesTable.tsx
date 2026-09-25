@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { RefreshCw, Layers, ArrowUp } from "lucide-react";
+import { RefreshCw, Layers, ArrowUp, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
 import { Card, Pill, SecondaryButton, SectionHeader, LoadingSkeleton, EmptyState } from "./ui";
@@ -118,7 +118,7 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
     <section aria-labelledby="recent-analyses-heading">
       <SectionHeader title="Recent Procurement & Freight Forecasts" />
       <p className="mt-1 text-sm text-charcoal">
-        Historical voyage simulations, vessel parcel allocations, and realized cost savings.
+        Historical voyage simulations, vessel parcel allocations, and realized cost savings. Click any row to review full decision details.
       </p>
 
       <Card className="mt-4 overflow-hidden rounded-card border border-pebble bg-paper p-0">
@@ -145,7 +145,7 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
           tabIndex={0}
           className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-forest-ink"
         >
-          <table className="w-full min-w-[720px] border-collapse text-left">
+          <table className="w-full min-w-[760px] border-collapse text-left">
             <thead>
               <tr className="border-b border-pebble bg-fog font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
                 <th scope="col" className="py-2.5 pl-4 pr-3 font-semibold">Trade Route</th>
@@ -154,7 +154,8 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                 <th scope="col" className="px-3 py-2.5 font-semibold">Forecast vs. Spot</th>
                 <th scope="col" className="px-3 py-2.5 font-semibold">Savings</th>
                 <th scope="col" className="px-3 py-2.5 font-semibold">Status</th>
-                <th scope="col" className="py-2.5 pl-3 pr-4 text-right font-semibold">Run Time</th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">Run Time</th>
+                <th scope="col" className="py-2.5 pl-3 pr-4 text-right font-semibold">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-pebble bg-paper text-sm">
@@ -176,12 +177,13 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                     </td>
                     <td className="px-3 py-3.5"><LoadingSkeleton className="h-5 w-24" /></td>
                     <td className="px-3 py-3.5"><LoadingSkeleton className="h-6 w-16 rounded-full" /></td>
-                    <td className="py-3.5 pl-3 pr-4"><LoadingSkeleton className="ml-auto h-4 w-20" /></td>
+                    <td className="px-3 py-3.5"><LoadingSkeleton className="h-4 w-20" /></td>
+                    <td className="py-3.5 pl-3 pr-4"><LoadingSkeleton className="ml-auto h-6 w-16 rounded-full" /></td>
                   </tr>
                 ))
               ) : analyses.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-8">
+                  <td colSpan={8} className="p-8">
                     <EmptyState
                       icon={<Layers className="size-8" aria-hidden="true" />}
                       title="No recent analyses recorded"
@@ -191,7 +193,13 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                 </tr>
               ) : (
                 analyses.map((item) => (
-                  <tr key={item.id} className="transition-colors duration-150 hover:bg-fog/60">
+                  <tr
+                    key={item.id}
+                    onClick={() => {
+                      window.location.hash = `#analysis-${item.id}`;
+                    }}
+                    className="group cursor-pointer transition-colors duration-150 hover:bg-fog/60"
+                  >
                     {/* Trade route */}
                     <td className="py-3.5 pl-4 pr-3">
                       <div className="flex items-center gap-1.5 font-semibold text-forest-ink">
@@ -240,8 +248,16 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                     <td className="px-3 py-3.5">{renderStatusBadge(item.status)}</td>
 
                     {/* Time */}
-                    <td className="py-3.5 pl-3 pr-4 text-right font-mono text-xs tabular-nums text-slate">
+                    <td className="px-3 py-3.5 font-mono text-xs tabular-nums text-slate">
                       {formatDate(item.created_at)}
+                    </td>
+
+                    {/* Action */}
+                    <td className="py-3.5 pl-3 pr-4 text-right">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-forest-ink/10 px-2.5 py-1 text-xs font-semibold text-forest-ink group-hover:bg-forest-ink group-hover:text-paper transition-all">
+                        <span>Open</span>
+                        <ArrowRight className="size-3" />
+                      </span>
                     </td>
                   </tr>
                 ))

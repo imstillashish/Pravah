@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { apiClient } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE } from "../api";
 import {
   FileCheck2,
   CheckCircle2,
@@ -49,7 +50,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
   const [rejectReason, setRejectReason] = useState<string>("");
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  const fetchAnalysis = async () => {
+  const fetchAnalysis = useCallback(async () => {
     try {
       setIsLoading(true);
       const res = await apiClient<DecisionDetail>(`/analyses/${analysisId}`);
@@ -59,11 +60,11 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [analysisId]);
 
   useEffect(() => {
     fetchAnalysis();
-  }, [analysisId]);
+  }, [fetchAnalysis]);
 
   const handleApprove = async () => {
     if (!data) return;
@@ -123,7 +124,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
   const handleDownload = async () => {
     if (!data) return;
     try {
-      const response = await fetch(`/analyses/${data.id}/export`);
+      const response = await fetch(`${API_BASE}/analyses/${data.id}/export`);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -149,8 +150,8 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
 
   if (!data) {
     return (
-      <div className="m-6 rounded-xl border border-pebble bg-paper p-6 text-charcoal">
-        <h3 className="font-bold">Decision record not found</h3>
+      <div className="m-6 rounded-card border border-pebble bg-paper p-6 text-charcoal">
+        <h3 className="font-bold text-obsidian">Decision record not found</h3>
       </div>
     );
   }
@@ -187,23 +188,23 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
         <button
           type="button"
           onClick={handleDownload}
-          className="flex items-center gap-2 rounded-xl border border-pebble bg-paper px-4 py-2 text-xs font-semibold text-charcoal shadow-sm hover:bg-fog transition-all active:scale-95"
+          className="flex items-center gap-2 rounded-full border border-forest-ink bg-paper px-4 py-2 text-xs font-medium text-forest-ink hover:bg-fog transition-colors"
         >
           <Download className="size-4" /> Download Final Record (.TXT)
         </button>
       </div>
 
       {feedback && (
-        <div className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-xs font-medium text-emerald-900">
-          <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
+        <div className="flex items-center gap-2 rounded-card border border-forest-ink/20 bg-linen-mist p-3 text-xs font-medium text-forest-ink">
+          <CheckCircle2 className="size-4 text-forest-ink shrink-0" />
           <span>{feedback}</span>
         </div>
       )}
 
       {/* SECTION 1: Final Decision Summary (Task 380) */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-4">
-          <h3 className="font-bold text-sm text-charcoal flex items-center gap-2">
+        <div className="rounded-none border border-pebble bg-paper p-6 space-y-4">
+          <h3 className="font-bold text-sm text-obsidian flex items-center gap-2">
             <Ship className="size-4 text-forest-ink" /> Final Decision Summary
           </h3>
 
@@ -221,8 +222,8 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
             <div className="flex justify-between border-b border-pebble pb-2">
               <span className="text-slate">Override Status:</span>
               <span
-                className={`rounded px-2 py-0.5 text-[10px] font-semibold uppercase ${
-                  isOverride ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"
+                className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase ${
+                  isOverride ? "bg-amber-wash text-amber-warning" : "bg-linen-mist text-forest-ink"
                 }`}
               >
                 {isOverride ? "Manual Override Applied" : "Accepted Recommendation"}
@@ -230,7 +231,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
             </div>
 
             {isOverride && data.decision?.override_reason && (
-              <div className="rounded-lg bg-amber-50/70 border border-amber-200 p-2.5 text-amber-900">
+              <div className="rounded-none bg-amber-wash border border-amber-300 p-2.5 text-amber-900">
                 <span className="font-bold">Override Justification:</span>
                 <p className="mt-0.5 italic">"{data.decision.override_reason}"</p>
               </div>
@@ -246,28 +247,28 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
         </div>
 
         {/* SECTION 2: Approval Status (Task 380) */}
-        <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-4">
-          <h3 className="font-bold text-sm text-charcoal flex items-center gap-2">
+        <div className="rounded-none border border-pebble bg-paper p-6 space-y-4">
+          <h3 className="font-bold text-sm text-obsidian flex items-center gap-2">
             <FileCheck2 className="size-4 text-forest-ink" /> Plant Management Approval Status
           </h3>
 
-          <div className="flex items-center gap-3 rounded-xl border p-4 bg-fog/20">
+          <div className="flex items-center gap-3 rounded-none border border-pebble p-4 bg-fog">
             {managerApproved === true ? (
-              <CheckCircle2 className="size-8 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="size-8 text-forest-ink shrink-0" />
             ) : managerApproved === false ? (
-              <XCircle className="size-8 text-red-600 shrink-0" />
+              <XCircle className="size-8 text-alarm-red shrink-0" />
             ) : (
-              <Clock className="size-8 text-amber-500 shrink-0" />
+              <Clock className="size-8 text-amber-warning shrink-0" />
             )}
 
             <div>
               <span
-                className={`rounded px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
+                className={`rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
                   managerApproved === true
-                    ? "bg-emerald-100 text-emerald-800"
+                    ? "bg-linen-mist text-forest-ink"
                     : managerApproved === false
-                    ? "bg-red-100 text-red-800"
-                    : "bg-amber-100 text-amber-800"
+                    ? "bg-alarm-wash text-alarm-red"
+                    : "bg-amber-wash text-amber-warning"
                 }`}
               >
                 {managerApproved === true
@@ -295,7 +296,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
                     type="button"
                     disabled={isSubmitting}
                     onClick={handleApprove}
-                    className="flex-1 rounded-xl bg-emerald-600 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50"
+                    className="flex-1 rounded-full bg-lime-voltage py-2.5 text-xs font-medium text-forest-ink hover:brightness-95 active:scale-95 transition-all disabled:opacity-50"
                   >
                     Approve Fixture
                   </button>
@@ -303,13 +304,13 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
                     type="button"
                     disabled={isSubmitting}
                     onClick={() => setShowRejectModal(true)}
-                    className="flex-1 rounded-xl bg-red-600 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-red-700 disabled:opacity-50"
+                    className="flex-1 rounded-full border border-alarm-red bg-paper py-2.5 text-xs font-medium text-alarm-red hover:bg-alarm-red/10 active:scale-95 transition-all disabled:opacity-50"
                   >
                     Reject with Reason
                   </button>
                 </div>
               ) : (
-                <div className="rounded-lg bg-linen-mist/40 p-2.5 text-center text-xs text-slate">
+                <div className="rounded-card bg-linen-mist/40 p-2.5 text-center text-xs text-slate">
                   Decision finalized. Buttons disabled per governance policy.
                 </div>
               )}
@@ -323,7 +324,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleInitiateBooking}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-forest-ink py-2.5 text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 active:scale-95 disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-forest-ink py-2.5 text-xs font-medium text-paper hover:bg-forest-ink/90 active:scale-95 disabled:opacity-50"
               >
                 <Send className="size-3.5" /> Initiate Charter Booking Fixture
               </button>
@@ -334,10 +335,10 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
 
       {/* Reject Modal */}
       {showRejectModal && (
-        <div className="rounded-xl border border-red-300 bg-red-50/50 p-5 space-y-3">
+        <div className="rounded-card border border-alarm-red/40 bg-fog p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-red-900 flex items-center gap-1.5">
-              <ShieldAlert className="size-4 text-red-600" /> Mandatory Rejection Justification
+            <h4 className="text-xs font-bold text-alarm-red flex items-center gap-1.5">
+              <ShieldAlert className="size-4 text-alarm-red" /> Mandatory Rejection Justification
             </h4>
             <button
               type="button"
@@ -354,20 +355,20 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
               placeholder="State explicit operational justification (e.g. Paradip conveyor maintenance scheduled in target laycan window)..."
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
-              className="w-full rounded-lg border border-red-200 bg-paper p-2.5 text-xs text-charcoal focus:border-red-500 focus:outline-none"
+              className="w-full rounded-card border border-pebble bg-paper p-2.5 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
             />
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setShowRejectModal(false)}
-                className="rounded-lg border border-pebble bg-paper px-3 py-1.5 text-xs text-slate"
+                className="rounded-full border border-pebble bg-paper px-3.5 py-1.5 text-xs font-medium text-charcoal hover:bg-fog"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || !rejectReason.trim()}
-                className="rounded-lg bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-full bg-alarm-red px-4 py-1.5 text-xs font-medium text-paper hover:brightness-95 active:scale-95 disabled:opacity-50"
               >
                 Confirm Rejection
               </button>
