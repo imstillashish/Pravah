@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import User, Analysis
-from app.api.auth import get_current_user
+from app.api.auth import get_current_user, get_current_user_or_demo
 from app.schemas import (
     AnalysisCreate,
     AnalysisResponse,
@@ -124,7 +124,7 @@ def get_recent_analyses(
 @router.post("", response_model=AnalysisResponse)
 def create_analysis(
     payload: AnalysisCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_or_demo),
     db: Session = Depends(get_db)
 ):
     if payload.origin_port.strip().lower() == payload.destination_port.strip().lower():

@@ -117,4 +117,46 @@
       opacity: 1;
     }
   }
+
+  /* Interactive Voyage Stepper: subtle 2.5s nautical sailing drift & bob animation */
+  @keyframes ship-drift {
+    0%, 100% {
+      transform: translateX(-3px) translateY(0px) rotate(0deg);
+    }
+    25% {
+      transform: translateX(-0.5px) translateY(-1.5px) rotate(-1.5deg);
+    }
+    50% {
+      transform: translateX(3px) translateY(0px) rotate(0.5deg);
+    }
+    75% {
+      transform: translateX(0px) translateY(1.2px) rotate(1.2deg);
+    }
+  }
+
+  .animate-ship-drift {
+    animation: ship-drift 2.5s ease-in-out infinite;
+    transform-origin: center bottom;
+  }
+
+  /* Physical sailing vessel: gentle oceanic rocking (±2deg) and subtle vertical bobbing */
+  @keyframes ship-sail-bob {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-2px) rotate(-1.8deg);
+    }
+    50% {
+      transform: translateY(0.5px) rotate(0.8deg);
+    }
+    75% {
+      transform: translateY(-1.2px) rotate(1.8deg);
+    }
+  }
+
+  .animate-ship-sail-bob {
+    animation: ship-sail-bob 2.6s ease-in-out infinite;
+    transform-origin: center bottom;
+  }
 }

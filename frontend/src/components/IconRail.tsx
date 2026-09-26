@@ -18,8 +18,8 @@ import { AstitvaLogo } from "./AstitvaLogo";
  */
 const RAIL_ITEMS = [
   { icon: LayoutGrid, label: "Overview", hash: "#dashboard" },
+  { icon: BarChart3, label: "Analysis", hash: "#results" },
   { icon: Ship, label: "Live Fleet Map", hash: "#live-map" },
-  { icon: BarChart3, label: "Analysis Results", hash: "#results" },
   { icon: BookOpen, label: "Historical Records", hash: "#history" },
 ];
 
@@ -34,7 +34,7 @@ export const IconRail: React.FC<IconRailProps> = ({ currentView = "dashboard" })
   const isHashActive = (hash: string) => {
     const key = hash.replace("#", "");
     if (key === "dashboard") return currentView === "dashboard" || currentView === "";
-    if (key === "results") return currentView === "results" || currentView.startsWith("analysis");
+    if (key === "results") return currentView === "results" || currentView === "analysis" || currentView.startsWith("analysis") || currentView === "new-analysis";
     if (key === "live-map") return currentView === "live-map" || currentView === "map";
     if (key === "history") return currentView === "history";
     return currentView === key;

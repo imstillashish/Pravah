@@ -23,6 +23,7 @@ import {
   Waves,
   Languages,
   Gauge,
+  Plus,
 } from "lucide-react";
 
 interface FeasibilityRow {
@@ -281,31 +282,46 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
           </h1>
         </div>
 
-        {/* Section 10: Emergency Procurement Mode Toggle */}
-        <div className="flex items-center gap-3 rounded-xl border border-pebble bg-linen-mist/40 p-2.5 shadow-xs">
-          <div className="flex flex-col">
-            <span className="text-xs font-bold text-forest-ink flex items-center gap-1.5">
-              <Flame className="size-3.5 text-amber-warning" aria-hidden="true" />
-              Emergency Mode
-            </span>
-            <span className="text-[10px] text-charcoal">Force immediate fixture</span>
-          </div>
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Action button to launch New Analysis wizard */}
           <button
             type="button"
-            role="switch"
-            aria-checked={emergencyMode}
-            aria-label="Toggle Emergency Procurement Mode"
-            onClick={() => setEmergencyMode(!emergencyMode)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-signal-blue focus-visible:outline-none ${
-              emergencyMode ? "bg-amber-warning" : "bg-pebble"
-            }`}
+            onClick={() => {
+              window.location.hash = "#new-analysis";
+            }}
+            className="flex items-center gap-1.5 rounded-full bg-forest-ink px-3.5 py-2 text-xs font-semibold text-paper shadow-xs transition-all hover:bg-forest-ink/90 active:scale-95 cursor-pointer"
+            title="Configure and compute new voyage analysis"
           >
-            <span
-              className={`inline-block size-4 transform rounded-full bg-paper shadow-xs transition-transform ${
-                emergencyMode ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
+            <Plus className="size-3.5 text-lime-voltage" aria-hidden="true" />
+            <span>New Analysis</span>
           </button>
+
+          {/* Section 10: Emergency Procurement Mode Toggle */}
+          <div className="flex items-center gap-3 rounded-card border border-pebble bg-linen-mist/40 p-2.5 shadow-xs">
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-forest-ink flex items-center gap-1.5">
+                <Flame className="size-3.5 text-amber-warning" aria-hidden="true" />
+                Emergency Mode
+              </span>
+              <span className="text-[10px] text-charcoal">Force immediate fixture</span>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={emergencyMode}
+              aria-label="Toggle Emergency Procurement Mode"
+              onClick={() => setEmergencyMode(!emergencyMode)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-signal-blue focus-visible:outline-none ${
+                emergencyMode ? "bg-amber-warning" : "bg-pebble"
+              }`}
+            >
+              <span
+                className={`inline-block size-4 transform rounded-full bg-paper shadow-xs transition-transform ${
+                  emergencyMode ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
         </div>
       </div>
 
