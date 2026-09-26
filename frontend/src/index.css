@@ -1,59 +1,69 @@
 @import "tailwindcss";
 
 /*
- * Oceanic Navy & Electric Cyan visual world — Astitva High-Tech Maritime Theme.
- * High authority oceanic darks (#07192f) paired with high-visibility electric cyan (#38bdf8 / #00e5ff)
- * and crisp ice-mist highlight washes (#e0f2fe).
- * Strict WCAG AA contrast compliant (≥ 4.5:1).
+ * Wise — Style Reference (DESIGN.md)
+ * Deep moss (#163300) with lime voltage (#9fe870).
+ * Components are pill-shaped by default (9999px), with 10px radii reserved for cards and inputs.
+ * Flat by design: no gradients, no drop shadows beyond hairline borders.
  */
 @theme {
-  /* Oceanic Navy & Electric Cyan Palette */
-  --color-forest-ink: #07192f;        /* Deep Abyss Navy (Dominant dark / primary ink) */
-  --color-lime-voltage: #38bdf8;      /* Electric Cyan Accent (Primary action highlight) */
-  --color-spruce: #0c4a6e;            /* Deep Marine Ocean (Secondary dark surface) */
-  --color-linen-mist: #e0f2fe;        /* Ice Mist (Soft cyan-tinted wash for active pills) */
-  --color-signal-blue: #0284c7;       /* Maritime Blue Accent */
-  --color-emerald-profit: #047857;    /* Emerald 700 — High-contrast profit & cost savings green (AA: 5.2:1) */
-  --color-emerald-wash: #ecfdf5;      /* Emerald 50 — Soft green highlight tint */
-  --color-alarm-red: #be123c;         /* Rose 700 / Hazard Alert Red (AA: 5.74:1 on fog, 6.29:1 on paper) */
-  --color-alarm-wash: #fff1f2;        /* Rose 50 — Soft red highlight tint */
-  --color-amber-warning: #b45309;     /* Amber 700 — High-contrast alert & caution gold (AA: 4.8:1) */
-  --color-amber-wash: #fffbeb;        /* Amber 50 — Soft amber tint */
-  --color-charcoal: #334155;          /* Slate 700 body copy text */
-  --color-obsidian: #030712;          /* Ultra dark headings */
-  --color-pebble: #cbd5e1;            /* Slate 300 subtle border / divider hairline */
-  --color-slate: #64748b;             /* Slate 500 secondary labels */
-  --color-fog: #f1f5f9;               /* Slate 100 soft card surface */
-  --color-paper: #ffffff;             /* Crisp pure white canvas */
+  /* Colors from DESIGN.md */
+  --color-forest-ink: #163300;        /* Dominant brand dark — nav text, dark backgrounds, primary copy */
+  --color-lime-voltage: #9fe870;      /* Lime Voltage — Primary action element & active punctuation */
+  --color-spruce: #054d28;            /* Secondary dark green for card surfaces, iconography */
+  --color-linen-mist: #e2f6d5;        /* Pale green wash for soft highlight surfaces, tinted cards */
+  --color-signal-blue: #0b4c72;       /* Blue supporting accent */
+  --color-alarm-red: #cb272f;         /* Red supporting accent */
+  --color-alarm-wash: #fdf2f2;        /* Soft red highlight tint */
+  --color-amber-warning: #b45309;     /* Amber 700 — High-contrast alert & caution gold */
+  --color-amber-wash: #fffbeb;        /* Soft amber tint */
+  --color-emerald-profit: #054d28;    /* High-contrast savings green aligned with Spruce */
+  --color-emerald-wash: #e2f6d5;      /* Aligned with Linen Mist wash */
+  --color-charcoal: #454745;          /* Primary text, body copy */
+  --color-obsidian: #0e0f0c;          /* Display headlines, high-contrast headings */
+  --color-pebble: #868685;            /* Muted secondary text, placeholder copy, hairline borders */
+  --color-slate: #6a6c6a;             /* Supporting body text, helper labels */
+  --color-fog: #e8ebe6;               /* Card surfaces, section dividers, subtle panel backgrounds */
+  --color-paper: #ffffff;             /* Page canvas, inverted card surfaces */
 
-  /* Fonts — Inter UI, IBM Plex Mono numerals */
+  /* Fonts */
+  --font-inter: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-wise-sans: "Wise Sans", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Radii — pill geometry */
+  /* Radii — pill geometry & card standard (DESIGN.md) */
   --radius-*: initial;
-  --radius-pill: 9999px;
   --radius-card: 10px;
-  --radius-xl: 28px;
+  --radius-inputs: 10px;
+  --radius-buttons: 9999px;
+  --radius-tags: 9999px;
+  --radius-navsegments: 9999px;
+  --radius-pill: 9999px;
   --radius-full: 9999px;
+  --radius-largecards: 28px;
+  --radius-xl: 28px;
+  --radius-2xl: 28px;
+  --radius-imagemasks: 1000px;
   --radius-sm: 4px;
   --radius-md: 10px;
   --radius-lg: 10px;
 
-  /* Shadows — elevated/floating surfaces ONLY */
-  --shadow-lg: 0px 6px 20px 0px rgba(7, 25, 47, 0.08);
-  --shadow-xl: 0px 10px 32px 0px rgba(7, 25, 47, 0.16),
-    0px 40px 40px 0px rgba(7, 25, 47, 0.05);
+  /* Shadows (DESIGN.md) */
+  --shadow-subtle: rgba(14, 15, 12, 0.12) 0px 0px 0px 1px;
+  --shadow-subtle-2: rgb(134, 134, 133) 0px 0px 0px 1px inset;
+  --shadow-xl: rgba(0, 0, 0, 0.15) 0px 10px 32px 0px, rgba(0, 0, 0, 0.04) 0px 40px 40px 0px;
+  --shadow-lg: rgba(0, 0, 0, 0.08) 0px 6px 20px 0px;
 }
 
 @layer base {
   ::selection {
-    background-color: #bae6fd;
-    color: #07192f;
+    background-color: #e2f6d5;
+    color: #163300;
   }
 
   *:focus-visible {
-    outline: 2px solid #0284c7;
+    outline: 2px solid #163300;
     outline-offset: 2px;
   }
 
@@ -106,5 +116,47 @@
     to {
       opacity: 1;
     }
+  }
+
+  /* Interactive Voyage Stepper: subtle 2.5s nautical sailing drift & bob animation */
+  @keyframes ship-drift {
+    0%, 100% {
+      transform: translateX(-3px) translateY(0px) rotate(0deg);
+    }
+    25% {
+      transform: translateX(-0.5px) translateY(-1.5px) rotate(-1.5deg);
+    }
+    50% {
+      transform: translateX(3px) translateY(0px) rotate(0.5deg);
+    }
+    75% {
+      transform: translateX(0px) translateY(1.2px) rotate(1.2deg);
+    }
+  }
+
+  .animate-ship-drift {
+    animation: ship-drift 2.5s ease-in-out infinite;
+    transform-origin: center bottom;
+  }
+
+  /* Physical sailing vessel: gentle oceanic rocking (±2deg) and subtle vertical bobbing */
+  @keyframes ship-sail-bob {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-2px) rotate(-1.8deg);
+    }
+    50% {
+      transform: translateY(0.5px) rotate(0.8deg);
+    }
+    75% {
+      transform: translateY(-1.2px) rotate(1.8deg);
+    }
+  }
+
+  .animate-ship-sail-bob {
+    animation: ship-sail-bob 2.6s ease-in-out infinite;
+    transform-origin: center bottom;
   }
 }

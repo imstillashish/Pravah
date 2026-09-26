@@ -16,6 +16,7 @@ import {
   Sparkles,
   Info,
   ArrowRight,
+  Plus,
 } from "lucide-react";
 
 interface FeasibilityRow {
@@ -206,9 +207,9 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
 
   if (error || !data) {
     return (
-      <div className="m-6 rounded-xl border border-red-200 bg-red-50 p-6 text-red-900">
-        <h3 className="font-semibold text-lg">Unable to load Analysis #{analysisId}</h3>
-        <p className="mt-1 text-sm text-red-700">{error || "Data unavailable"}</p>
+      <div className="m-6 rounded-card border border-alarm-red/40 bg-fog p-6 text-charcoal">
+        <h3 className="font-semibold text-lg text-alarm-red">Unable to load Analysis #{analysisId}</h3>
+        <p className="mt-1 text-sm text-slate">{error || "Data unavailable"}</p>
       </div>
     );
   }
@@ -234,47 +235,62 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
             </span>
             <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium uppercase ${
               data.status === "finalized"
-                ? "bg-emerald-100 text-emerald-800"
+                ? "bg-linen-mist text-forest-ink"
                 : data.status === "overridden"
-                ? "bg-amber-100 text-amber-800"
-                : "bg-slate-100 text-slate-700"
+                ? "bg-amber-wash text-amber-warning"
+                : "bg-fog text-charcoal"
             }`}>
               {data.status}
             </span>
           </div>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             {data.title}
           </h1>
         </div>
 
-        {/* Section 10: Emergency Procurement Mode Toggle */}
-        <div className="flex items-center gap-3 rounded-xl border border-pebble bg-linen-mist/30 p-2.5">
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-charcoal flex items-center gap-1">
-              <Flame className="size-3.5 text-amber-600" />
-              Emergency Mode
-            </span>
-            <span className="text-[10px] text-slate">Force immediate chartering</span>
-          </div>
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Action button to launch New Analysis wizard */}
           <button
             type="button"
-            onClick={() => setEmergencyMode(!emergencyMode)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              emergencyMode ? "bg-amber-600" : "bg-pebble"
-            }`}
+            onClick={() => {
+              window.location.hash = "#new-analysis";
+            }}
+            className="flex items-center gap-1.5 rounded-full bg-forest-ink px-3.5 py-2 text-xs font-semibold text-paper shadow-xs transition-all hover:bg-forest-ink/90 active:scale-95 cursor-pointer"
+            title="Configure and compute new voyage analysis"
           >
-            <span
-              className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
-                emergencyMode ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
+            <Plus className="size-3.5 text-lime-voltage" />
+            <span>New Analysis</span>
           </button>
+
+          {/* Section 10: Emergency Procurement Mode Toggle */}
+          <div className="flex items-center gap-3 rounded-card border border-pebble bg-linen-mist/30 p-2">
+            <div className="flex flex-col">
+              <span className="text-xs font-semibold text-charcoal flex items-center gap-1">
+                <Flame className="size-3.5 text-amber-warning" />
+                Emergency Mode
+              </span>
+              <span className="text-[10px] text-slate">Force immediate chartering</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setEmergencyMode(!emergencyMode)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                emergencyMode ? "bg-amber-warning" : "bg-pebble"
+              }`}
+            >
+              <span
+                className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
+                  emergencyMode ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
         </div>
       </div>
 
       {emergencyMode && (
-        <div className="flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
-          <AlertTriangle className="size-4 shrink-0 text-amber-700" />
+        <div className="flex items-center gap-2 rounded-card border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+          <AlertTriangle className="size-4 shrink-0 text-amber-warning" />
           <span>
             <strong>Emergency Mode Active:</strong> Recommendation engine prioritizes immediate vessel fixture and suppresses laycan deferral windows.
           </span>
@@ -282,7 +298,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       )}
 
       {/* SECTION 1: Context Summary */}
-      <section className="grid grid-cols-2 gap-4 rounded-xl border border-pebble bg-paper p-5 sm:grid-cols-4">
+      <section className="grid grid-cols-2 gap-4 rounded-card border border-pebble bg-paper p-5 sm:grid-cols-4">
         <div>
           <span className="text-xs text-slate">Route Corridor</span>
           <p className="mt-0.5 font-semibold text-charcoal">
@@ -325,30 +341,30 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       {/* SECTION 5: Stock-Out Alert (Rendered conditionally with Red/Green border per Task 238 & 313) */}
       {data.stockout_alert && (
         <section
-          className={`rounded-xl border-2 p-5 ${
+          className={`rounded-card border-2 p-5 ${
             data.stockout_alert.is_at_risk
-              ? "border-red-500 bg-red-50/60 text-red-950"
-              : "border-emerald-500 bg-emerald-50/60 text-emerald-950"
+              ? "border-alarm-red bg-alarm-wash text-charcoal"
+              : "border-forest-ink/30 bg-linen-mist text-charcoal"
           }`}
         >
           <div className="flex items-start gap-3">
             {data.stockout_alert.is_at_risk ? (
-              <ShieldAlert className="size-6 text-red-600 shrink-0 mt-0.5" />
+              <ShieldAlert className="size-6 text-alarm-red shrink-0 mt-0.5" />
             ) : (
-              <CheckCircle2 className="size-6 text-emerald-600 shrink-0 mt-0.5" />
+              <CheckCircle2 className="size-6 text-forest-ink shrink-0 mt-0.5" />
             )}
             <div className="flex-1">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="font-bold text-base">
+                <h3 className="font-bold text-base text-obsidian">
                   {data.stockout_alert.is_at_risk
                     ? "CRITICAL STOCK-OUT RISK ALERT"
                     : "Inventory Buffer Adequate"}
                 </h3>
                 <div className="flex gap-2">
-                  <span className="rounded-md bg-white/80 px-2.5 py-1 font-mono text-xs font-semibold shadow-sm">
+                  <span className="rounded-full border border-pebble bg-paper px-3 py-1 font-mono text-xs font-medium text-charcoal">
                     Stock Life: {data.stockout_alert.days_to_stockout} Days
                   </span>
-                  <span className="rounded-md bg-white/80 px-2.5 py-1 font-mono text-xs font-semibold shadow-sm">
+                  <span className="rounded-full border border-pebble bg-paper px-3 py-1 font-mono text-xs font-medium text-charcoal">
                     Best Rate Window: {data.stockout_alert.days_to_best_window} Days
                   </span>
                 </div>
@@ -364,21 +380,21 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       {/* SECTION 7 & 8: Recommendation Hero Card & Explainability Waterfall */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Recommendation Hero Card (Section 7) */}
-        <section className="rounded-xl border border-forest-ink/30 bg-gradient-to-br from-paper via-linen-mist/20 to-emerald-50/40 p-6 shadow-sm lg:col-span-5">
+        <section className="rounded-card border border-pebble bg-paper p-6 lg:col-span-5">
           <div className="flex items-center justify-between">
-            <span className="rounded-full bg-forest-ink px-3 py-1 text-xs font-semibold uppercase tracking-wider text-paper">
+            <span className="rounded-full bg-forest-ink px-3 py-1 text-xs font-medium uppercase tracking-wider text-lime-voltage">
               Rank #{rec.rank} Recommended
             </span>
             <div className="text-right">
               <span className="text-[10px] text-slate uppercase">Total Deterministic Score</span>
-              <p className="font-mono text-3xl font-extrabold text-forest-ink">
+              <p className="font-mono text-3xl font-bold text-forest-ink">
                 {rec.total_score.toFixed(3)}
               </p>
             </div>
           </div>
 
           <div className="mt-4">
-            <h3 className="text-xl font-bold text-charcoal">
+            <h3 className="text-xl font-bold text-obsidian">
               {rec.vessel_class} Class Charter
             </h3>
             <p className="text-xs text-slate">
@@ -388,15 +404,15 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
 
           {/* Quick Metrics */}
           <div className="mt-5 grid grid-cols-2 gap-3 border-t border-pebble pt-4">
-            <div className="rounded-lg bg-paper p-3 border border-pebble">
+            <div className="rounded-card bg-fog p-3 border border-pebble">
               <span className="text-xs text-slate">Predicted Freight</span>
-              <p className="text-lg font-bold text-charcoal">
+              <p className="text-lg font-bold text-obsidian">
                 ${data.predicted_rate_pmt.toFixed(2)} <span className="text-xs font-normal text-slate">/ MT</span>
               </p>
             </div>
-            <div className="rounded-lg bg-paper p-3 border border-pebble">
+            <div className="rounded-card bg-fog p-3 border border-pebble">
               <span className="text-xs text-slate">Est. Net Savings</span>
-              <p className="text-lg font-bold text-emerald-600">
+              <p className="text-lg font-bold text-forest-ink">
                 ${data.estimated_savings_usd.toLocaleString()}
               </p>
             </div>
@@ -408,7 +424,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
         </section>
 
         {/* Explainability Panel (Section 8 — Tasks 241, 285, 311) */}
-        <section className="rounded-xl border border-pebble bg-paper p-6 shadow-sm lg:col-span-7">
+        <section className="rounded-card border border-pebble bg-paper p-6 lg:col-span-7">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-charcoal">
@@ -501,10 +517,10 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </div>
 
       {/* SECTION 2: Freight Rate Forecast (P10 / P50 / P90) */}
-      <section className="rounded-xl border border-pebble bg-paper p-6 shadow-sm">
+      <section className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h3 className="text-base font-bold text-charcoal">Section 2: Freight Rate Forecast</h3>
+            <h3 className="text-base font-bold text-obsidian">Section 2: Freight Rate Forecast</h3>
             <p className="text-xs text-slate">
               P50 = most likely rate, P10 = best case, P90 = worst case
             </p>
@@ -512,10 +528,10 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
           <span
             className={`rounded-full px-3 py-1 font-mono text-xs font-semibold ${
               data.forecast.confidence_label === "HIGH"
-                ? "bg-emerald-100 text-emerald-800"
+                ? "bg-linen-mist text-forest-ink"
                 : data.forecast.confidence_label === "MEDIUM"
-                ? "bg-amber-100 text-amber-800"
-                : "bg-red-100 text-red-800"
+                ? "bg-amber-wash text-amber-warning"
+                : "bg-alarm-wash text-alarm-red"
             }`}
           >
             Confidence: {data.forecast.confidence_label}
@@ -523,50 +539,50 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
-          <div className="rounded-xl border border-pebble bg-paper p-4 text-center">
+          <div className="rounded-card border border-pebble bg-paper p-4 text-center">
             <span className="text-xs font-medium text-slate uppercase">P10 (Best Case)</span>
-            <p className="mt-1 font-mono text-2xl font-bold text-emerald-600">
+            <p className="mt-1 font-mono text-2xl font-bold text-forest-ink">
               {data.forecast?.p10_usd_per_mt != null ? `$${data.forecast.p10_usd_per_mt.toFixed(2)}` : "unavailable"}
             </p>
             <div className="mt-1">
-              <span className="rounded bg-sky-100 px-1.5 py-0.5 text-[9px] font-semibold text-sky-800 font-sans">
+              <span className="rounded-full bg-linen-mist px-2 py-0.5 text-[9px] font-semibold text-forest-ink font-sans">
                 MODEL OUTPUT
               </span>
             </div>
           </div>
 
-          <div className="rounded-xl border-2 border-forest-ink bg-linen-mist/30 p-4 text-center">
+          <div className="rounded-card border-2 border-forest-ink bg-linen-mist/30 p-4 text-center">
             <span className="text-xs font-bold text-forest-ink uppercase">P50 (Most Likely)</span>
             <p className="mt-1 font-mono text-3xl font-extrabold text-forest-ink">
               {data.forecast?.p50_usd_per_mt != null ? `$${data.forecast.p50_usd_per_mt.toFixed(2)}` : "unavailable"}
             </p>
             <div className="mt-1">
-              <span className="rounded bg-sky-100 px-1.5 py-0.5 text-[9px] font-semibold text-sky-800 font-sans">
-                MODEL OUTPUT
+              <span className="rounded-full bg-forest-ink px-2 py-0.5 text-[9px] font-semibold text-lime-voltage font-sans">
+                OPTIMAL
               </span>
             </div>
           </div>
 
-          <div className="rounded-xl border border-pebble bg-paper p-4 text-center">
+          <div className="rounded-card border border-pebble bg-paper p-4 text-center">
             <span className="text-xs font-medium text-slate uppercase">P90 (Worst Case)</span>
-            <p className="mt-1 font-mono text-2xl font-bold text-amber-600">
+            <p className="mt-1 font-mono text-2xl font-bold text-amber-warning">
               {data.forecast?.p90_usd_per_mt != null ? `$${data.forecast.p90_usd_per_mt.toFixed(2)}` : "unavailable"}
             </p>
             <div className="mt-1">
-              <span className="rounded bg-sky-100 px-1.5 py-0.5 text-[9px] font-semibold text-sky-800 font-sans">
-                MODEL OUTPUT
+              <span className="rounded-full bg-amber-wash px-2 py-0.5 text-[9px] font-semibold text-amber-warning font-sans">
+                HIGH VOLATILITY
               </span>
             </div>
           </div>
 
-          <div className="rounded-xl border border-pebble bg-fog/50 p-4 text-center">
+          <div className="rounded-card border border-pebble bg-fog p-4 text-center">
             <span className="text-xs font-medium text-slate uppercase">ARIMA Baseline</span>
             <p className="mt-1 font-mono text-2xl font-bold text-charcoal">
               {data.forecast?.arima_baseline_usd_per_mt != null ? `$${data.forecast.arima_baseline_usd_per_mt.toFixed(2)}` : "$25.50"}
             </p>
             <div className="mt-1">
-              <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-800 font-sans">
-                MODEL OUTPUT
+              <span className="rounded-full bg-paper border border-pebble px-2 py-0.5 text-[9px] font-semibold text-slate font-sans">
+                STATISTICAL
               </span>
             </div>
           </div>
@@ -574,7 +590,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 3: Total Landed Cost (Task 236, 310) */}
-      <section className="rounded-xl border border-pebble bg-paper p-6 shadow-sm">
+      <section className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-charcoal">Section 3: Total Landed Cost</h3>
@@ -672,10 +688,10 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 4: Vessel & Port Feasibility Matrix (Tasks 237, 308) */}
-      <section className="rounded-xl border border-pebble bg-paper p-6 shadow-sm">
+      <section className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-charcoal">
+            <h3 className="text-base font-bold text-obsidian">
               Section 4: Vessel & Port Feasibility Matrix
             </h3>
             <p className="text-xs text-slate">
@@ -702,45 +718,45 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
               {data.feasibility.map((row) => (
                 <tr
                   key={row.vessel_class}
-                  className={row.overall_feasible ? "hover:bg-emerald-50/20" : "bg-red-50/30"}
+                  className={row.overall_feasible ? "hover:bg-linen-mist/20" : "bg-alarm-wash"}
                 >
                   <td className="py-3 px-4 font-semibold text-charcoal">
                     {row.vessel_class}
                   </td>
                   <td className="py-3 px-3 text-center">
                     {row.draft_pass ? (
-                      <CheckCircle2 className="inline size-4 text-emerald-600" />
+                      <CheckCircle2 className="inline size-4 text-forest-ink" />
                     ) : (
-                      <XCircle className="inline size-4 text-red-600" />
+                      <XCircle className="inline size-4 text-alarm-red" />
                     )}
                   </td>
                   <td className="py-3 px-3 text-center">
                     {row.loa_pass ? (
-                      <CheckCircle2 className="inline size-4 text-emerald-600" />
+                      <CheckCircle2 className="inline size-4 text-forest-ink" />
                     ) : (
-                      <XCircle className="inline size-4 text-red-600" />
+                      <XCircle className="inline size-4 text-alarm-red" />
                     )}
                   </td>
                   <td className="py-3 px-3 text-center">
                     {row.beam_pass ? (
-                      <CheckCircle2 className="inline size-4 text-emerald-600" />
+                      <CheckCircle2 className="inline size-4 text-forest-ink" />
                     ) : (
-                      <XCircle className="inline size-4 text-red-600" />
+                      <XCircle className="inline size-4 text-alarm-red" />
                     )}
                   </td>
                   <td className="py-3 px-3 text-center">
                     {row.dwt_pass ? (
-                      <CheckCircle2 className="inline size-4 text-emerald-600" />
+                      <CheckCircle2 className="inline size-4 text-forest-ink" />
                     ) : (
-                      <XCircle className="inline size-4 text-red-600" />
+                      <XCircle className="inline size-4 text-alarm-red" />
                     )}
                   </td>
                   <td className="py-3 px-3 text-center">
                     <span
-                      className={`rounded px-2 py-0.5 font-semibold text-[10px] uppercase ${
+                      className={`rounded-full px-2.5 py-0.5 font-semibold text-[10px] uppercase ${
                         row.overall_feasible
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-red-100 text-red-800"
+                          ? "bg-linen-mist text-forest-ink"
+                          : "bg-alarm-wash text-alarm-red border border-alarm-red/20"
                       }`}
                     >
                       {row.overall_feasible ? "FEASIBLE" : "RESTRICTED"}
@@ -748,11 +764,11 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                   </td>
                   <td className="py-3 px-4 text-slate">
                     {row.failure_reason ? (
-                      <span className="font-medium text-red-700">
+                      <span className="font-medium text-alarm-red">
                         ⚠️ {row.failure_reason}
                       </span>
                     ) : (
-                      <span className="text-emerald-700">
+                      <span className="text-forest-ink">
                         Fully compliant with berth draught and handling envelope.
                       </span>
                     )}
@@ -765,17 +781,17 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 6: Multi-Dimensional Risk Assessment */}
-      <section className="rounded-xl border border-pebble bg-paper p-6 shadow-sm">
+      <section className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-charcoal">
+            <h3 className="text-base font-bold text-obsidian">
               Section 6: Multi-Dimensional Supply Chain Risk Assessment
             </h3>
             <p className="text-xs text-slate">
               Real-time telemetry and risk classification across 6 strategic risk vectors
             </p>
           </div>
-          <AlertTriangle className="size-5 text-amber-600" />
+          <AlertTriangle className="size-5 text-amber-warning" />
         </div>
 
         <div className="mt-4 overflow-x-auto">
@@ -796,14 +812,14 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                   </td>
                   <td className="py-3 px-3 text-center">
                     <span
-                      className={`rounded px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                      className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
                         risk.severity === "LOW"
-                          ? "bg-emerald-100 text-emerald-800"
+                          ? "bg-linen-mist text-forest-ink"
                           : risk.severity === "MEDIUM"
-                          ? "bg-amber-100 text-amber-800"
+                          ? "bg-amber-wash text-amber-warning"
                           : risk.severity === "HIGH"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-600"
+                          ? "bg-alarm-wash text-alarm-red"
+                          : "bg-fog text-charcoal"
                       }`}
                     >
                       {risk.severity || "unavailable"}
@@ -823,10 +839,10 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 9: Your Decision (Accept / Override Workflow — Task 242, 312) */}
-      <section className="rounded-xl border border-pebble bg-paper p-6 shadow-sm">
+      <section className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-charcoal">
+            <h3 className="text-base font-bold text-obsidian">
               Section 9: Procurement Officer Chartering Decision
             </h3>
             <p className="text-xs text-slate">
@@ -837,20 +853,20 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
         </div>
 
         {decisionRecorded ? (
-          <div className="mt-4 rounded-xl border border-emerald-300 bg-emerald-50/80 p-5">
+          <div className="mt-4 rounded-card border border-forest-ink/20 bg-linen-mist p-5">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="size-6 text-emerald-600" />
+              <CheckCircle2 className="size-6 text-forest-ink" />
               <div>
-                <h4 className="font-bold text-emerald-950">
+                <h4 className="font-bold text-forest-ink">
                   Decision Recorded and Committed to Audit Log
                 </h4>
-                <p className="text-xs text-emerald-800 mt-0.5">
+                <p className="text-xs text-charcoal mt-0.5">
                   Vessel Class: <strong>{data.decision?.chosen_vessel_class || data.recommended_vessel}</strong> •
                   Override: {data.decision?.was_override ? "Yes" : "No"} •
                   Timestamp: {data.decision?.decided_at ? new Date(data.decision.decided_at).toLocaleString() : "Just now"}
                 </p>
                 {data.decision?.override_reason && (
-                  <p className="text-xs text-emerald-900 mt-1 italic">
+                  <p className="text-xs text-charcoal mt-1 italic">
                     Reason: "{data.decision.override_reason}"
                   </p>
                 )}
@@ -861,7 +877,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                     onClick={() => {
                       window.location.hash = `#decision-${data.id}`;
                     }}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-forest-ink px-4 py-2 text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 transition-all active:scale-95"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-forest-ink px-4 py-2 text-xs font-medium text-paper hover:bg-forest-ink/90 transition-all active:scale-95"
                   >
                     <span>Approve / Send for Booking (Decision Record)</span>
                     <ArrowRight className="size-3.5" />
@@ -878,7 +894,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => handleDecisionSubmit(false)}
-                  className="flex items-center gap-2 rounded-xl bg-forest-ink px-5 py-3 text-sm font-semibold text-paper shadow-sm transition-all hover:bg-forest-ink/90 active:scale-95 disabled:opacity-50"
+                  className="flex items-center gap-2 rounded-full bg-lime-voltage px-5 py-2.5 text-sm font-medium text-forest-ink transition-all hover:brightness-95 active:scale-95 disabled:opacity-50"
                 >
                   <CheckCircle2 className="size-4" />
                   Accept Recommendation ({rec.vessel_class} @ Paradip)
@@ -886,14 +902,14 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                 <button
                   type="button"
                   onClick={() => setIsOverrideMode(true)}
-                  className="rounded-xl border border-pebble bg-paper px-5 py-3 text-sm font-semibold text-charcoal transition-all hover:bg-fog"
+                  className="rounded-full border border-forest-ink bg-paper px-5 py-2.5 text-sm font-medium text-forest-ink transition-colors hover:bg-fog"
                 >
                   Override & Choose Different Option
                 </button>
               </div>
             ) : (
-              <div className="rounded-xl border border-pebble bg-fog/30 p-5 space-y-4">
-                <h4 className="font-semibold text-charcoal text-sm">
+              <div className="rounded-card border border-pebble bg-fog p-5 space-y-4">
+                <h4 className="font-semibold text-obsidian text-sm">
                   Procurement Officer Override
                 </h4>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -904,7 +920,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                     <select
                       value={overrideVessel}
                       onChange={(e) => setOverrideVessel(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2.5 text-sm text-charcoal focus:border-forest-ink focus:outline-none"
+                      className="mt-1 w-full rounded-card border border-pebble bg-paper p-2.5 text-sm text-charcoal focus:border-forest-ink focus:outline-none"
                     >
                       {data.feasibility
                         .filter((f) => f.overall_feasible || f.vessel_class !== "Capesize")
@@ -924,7 +940,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                       placeholder="e.g. Dedicated plant conveyor preference / urgent laycan..."
                       value={overrideReason}
                       onChange={(e) => setOverrideReason(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-pebble bg-paper p-2.5 text-sm text-charcoal focus:border-forest-ink focus:outline-none"
+                      className="mt-1 w-full rounded-card border border-pebble bg-paper p-2.5 text-sm text-charcoal focus:border-forest-ink focus:outline-none"
                     />
                   </div>
                 </div>
@@ -934,14 +950,14 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                     type="button"
                     disabled={isSubmitting || !overrideReason.trim()}
                     onClick={() => handleDecisionSubmit(true)}
-                    className="flex items-center gap-2 rounded-xl bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-amber-700 disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-full bg-amber-warning px-5 py-2.5 text-sm font-medium text-white transition-all hover:brightness-95 active:scale-95 disabled:opacity-50"
                   >
                     Confirm Override & Record in Audit Log
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsOverrideMode(false)}
-                    className="rounded-xl border border-pebble bg-paper px-4 py-2.5 text-sm text-slate hover:text-charcoal"
+                    className="rounded-full border border-pebble bg-paper px-4 py-2.5 text-sm font-medium text-charcoal hover:bg-fog"
                   >
                     Cancel
                   </button>
@@ -953,7 +969,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 11: Spot vs. COA Comparison (Collapsible — Task 244) */}
-      <section className="rounded-xl border border-pebble bg-paper shadow-sm">
+      <section className="rounded-card border border-pebble bg-paper">
         <button
           type="button"
           onClick={() => setCoaExpanded(!coaExpanded)}

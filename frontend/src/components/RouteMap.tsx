@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigation, Anchor, Compass, ShieldCheck, AlertCircle } from "lucide-react";
 
 interface PortInfo {
@@ -76,7 +76,34 @@ export const RouteMap: React.FC<RouteMapProps> = ({
   shipProgress,
   shipPositionText,
 }) => {
-  const [selectedPort, setSelectedPort] = useState<PortInfo>(VERIFIED_PORTS[0]);
+  const cleanOrigin = originName.replace(/\s*\([^)]*\)/g, "").trim();
+  const cleanDest = destinationName.replace(/\s*\([^)]*\)/g, "").trim();
+  const isCircularRoute = cleanOrigin.toLowerCase() === cleanDest.toLowerCase();
+
+  const [selectedPort, setSelectedPort] = useState<PortInfo>(() => {
+    const match = VERIFIED_PORTS.find(
+      (p) =>
+        destinationName.toLowerCase().includes(p.name.toLowerCase()) ||
+        destinationName.toLowerCase().includes(p.id.toLowerCase()) ||
+        p.name.toLowerCase().includes(cleanDest.toLowerCase()) ||
+        cleanDest.toLowerCase().includes(p.name.toLowerCase()),
+    );
+    return match || VERIFIED_PORTS[0];
+  });
+
+  useEffect(() => {
+    const match = VERIFIED_PORTS.find(
+      (p) =>
+        destinationName.toLowerCase().includes(p.name.toLowerCase()) ||
+        destinationName.toLowerCase().includes(p.id.toLowerCase()) ||
+        p.name.toLowerCase().includes(cleanDest.toLowerCase()) ||
+        cleanDest.toLowerCase().includes(p.name.toLowerCase()),
+    );
+    if (match) {
+      setSelectedPort(match);
+    }
+  }, [destinationName, cleanDest]);
+
   const [zoomLevel, setZoomLevel] = useState<"corridor" | "bay">("corridor");
 
   const t = typeof shipProgress === "number" ? Math.max(0, Math.min(1, shipProgress)) : 0.52;
@@ -85,23 +112,23 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-xl border border-pebble bg-paper shadow-sm ${className}`}
+      className={`relative overflow-hidden rounded-card border border-pebble bg-paper ${className}`}
     >
       {/* Map Header Toolbar */}
       <div className="flex flex-wrap items-center justify-between border-b border-pebble bg-linen-mist/40 px-4 py-2.5 text-xs text-charcoal">
         <div className="flex items-center gap-2 font-medium">
           <Navigation className="size-4 text-forest-ink" />
           <span>Maritime Sailing Corridor & Port Constraints</span>
-          <span className="rounded-full bg-forest-ink/10 px-2 py-0.5 font-mono text-[10px] text-forest-ink">
+          <span className="rounded-full bg-forest-ink/10 px-2.5 py-0.5 font-mono text-[10px] text-forest-ink">
             Great-Circle Approximation
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center rounded-lg border border-pebble bg-paper p-0.5">
+          <div className="flex items-center rounded-full border border-pebble bg-paper p-0.5">
             <button
               type="button"
               onClick={() => setZoomLevel("corridor")}
-              className={`rounded px-2 py-1 text-[11px] transition-colors ${
+              className={`rounded-full px-2.5 py-1 text-[11px] transition-colors ${
                 zoomLevel === "corridor"
                   ? "bg-forest-ink font-medium text-paper"
                   : "text-slate hover:text-forest-ink"
@@ -112,7 +139,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
             <button
               type="button"
               onClick={() => setZoomLevel("bay")}
-              className={`rounded px-2 py-1 text-[11px] transition-colors ${
+              className={`rounded-full px-2.5 py-1 text-[11px] transition-colors ${
                 zoomLevel === "bay"
                   ? "bg-forest-ink font-medium text-paper"
                   : "text-slate hover:text-forest-ink"
@@ -195,31 +222,46 @@ export const RouteMap: React.FC<RouteMapProps> = ({
                 </text>
               </g>
 
-              {/* Origin Marker (Newcastle, AU) */}
+              {/* Origin Marker */}
               <g transform="translate(720, 230)" className="cursor-pointer">
                 <circle r="8" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
                 <circle r="16" fill="rgba(245, 158, 11, 0.2)" className="animate-pulse" />
                 <text x="14" y="4" fill="#fbbf24" fontSize="11" fontWeight="bold">
-                  ORIGIN: Newcastle (AU)
+                  ORIGIN: {cleanOrigin}
                 </text>
                 <text x="14" y="16" fill="#94a3b8" fontSize="9">
-                  -32.9° S, 151.8° E
+                  Loading Port Terminal
                 </text>
               </g>
 
-              {/* Destination Marker (Paradip, IN) */}
+              {/* Destination Marker */}
               <g
                 transform="translate(205, 130)"
                 className="cursor-pointer"
-                onClick={() => setSelectedPort(VERIFIED_PORTS[0])}
+                onClick={() => setSelectedPort(selectedPort)}
               >
-                <circle r="9" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
-                <circle r="18" fill="rgba(16, 185, 129, 0.25)" className="animate-ping" />
-                <text x="-120" y="-8" fill="#34d399" fontSize="12" fontWeight="bold">
-                  DESTINATION: Paradip (IN)
+                <circle
+                  r={9}
+                  fill={isCircularRoute ? "#ef4444" : "#10b981"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                />
+                <circle
+                  r={18}
+                  fill={isCircularRoute ? "rgba(239, 68, 68, 0.25)" : "rgba(16, 185, 129, 0.25)"}
+                  className="animate-ping"
+                />
+                <text
+                  x="-120"
+                  y="-8"
+                  fill={isCircularRoute ? "#f87171" : "#34d399"}
+                  fontSize="12"
+                  fontWeight="bold"
+                >
+                  DESTINATION: {cleanDest}
                 </text>
                 <text x="-120" y="5" fill="#94a3b8" fontSize="9">
-                  Draft Limit: 16.5m
+                  Draft Limit: {selectedPort.maxDraft}m
                 </text>
               </g>
             </g>
@@ -307,26 +349,35 @@ export const RouteMap: React.FC<RouteMapProps> = ({
         </svg>
 
         {/* Distance Badge Overlay */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1 rounded-lg border border-white/10 bg-slate-900/80 p-2.5 backdrop-blur-md">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
-            <Compass className="size-3.5 text-sky-400" />
-            <span>{distanceNm.toLocaleString()} Nautical Miles</span>
+        <div className="absolute top-3 left-3 flex flex-col gap-1 rounded-card border border-pebble/30 bg-forest-ink/90 p-2.5 backdrop-blur-md">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-paper">
+            <Compass className={`size-3.5 ${isCircularRoute ? "text-amber-400" : "text-lime-voltage"}`} />
+            <span>
+              {isCircularRoute
+                ? "0.0 Nautical Miles (Invalid Corridor)"
+                : `${distanceNm.toLocaleString()} Nautical Miles`}
+            </span>
           </div>
-          <span className="text-[10px] text-slate-400">
-            Route: {originName.split(" ")[0]} → {destinationName.split(" ")[0]}
+          <span className="text-[10px] text-fog">
+            Route: {cleanOrigin} → {cleanDest}
           </span>
+          {isCircularRoute && (
+            <span className="rounded bg-alarm-red/20 px-1.5 py-0.5 text-[9px] font-semibold text-alarm-red">
+              ⚠️ Identical Origin &amp; Destination Terminal
+            </span>
+          )}
         </div>
 
         {/* Quick Legend Overlay */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded-lg border border-white/10 bg-slate-900/80 px-3 py-1.5 text-[10px] text-slate-300 backdrop-blur-md">
+        <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded-card border border-pebble/30 bg-forest-ink/90 px-3 py-1.5 text-[10px] text-fog backdrop-blur-md">
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-emerald-500" /> Destination Port
+            <span className="size-2 rounded-full bg-lime-voltage" /> Destination Port
           </span>
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-amber-500" /> Origin Port
+            <span className="size-2 rounded-full bg-amber-400" /> Origin Port
           </span>
           <span className="flex items-center gap-1">
-            <span className="size-2 rounded-full bg-sky-400" /> Alternate Ports
+            <span className="size-2 rounded-full bg-paper" /> Alternate Ports
           </span>
         </div>
       </div>
@@ -337,11 +388,11 @@ export const RouteMap: React.FC<RouteMapProps> = ({
           <div className="flex items-center gap-2">
             <Anchor className="size-4 text-forest-ink" />
             <h4 className="font-semibold text-charcoal">{selectedPort.name}</h4>
-            <span className="rounded bg-fog px-1.5 py-0.5 font-mono text-[10px] text-slate">
+            <span className="rounded-full bg-fog px-2 py-0.5 font-mono text-[10px] text-slate">
               LOCODE: {selectedPort.locode}
             </span>
             {selectedPort.isDestination && (
-              <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+              <span className="flex items-center gap-1 rounded-full bg-linen-mist px-2.5 py-0.5 text-[10px] font-semibold text-forest-ink">
                 <ShieldCheck className="size-3" /> Target Analysis Port
               </span>
             )}
@@ -362,8 +413,8 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
         {/* Constraint Warning for Paradip */}
         {selectedPort.id === "INPRT" && (
-          <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/70 p-2 text-xs text-amber-900">
-            <AlertCircle className="mt-0.5 size-3.5 shrink-0 text-amber-700" />
+          <div className="mt-2 flex items-start gap-2 rounded-card border border-pebble bg-linen-mist/50 p-2.5 text-xs text-forest-ink">
+            <AlertCircle className="mt-0.5 size-3.5 shrink-0 text-forest-ink" />
             <span>
               <strong>Draft Restriction Notice:</strong> Paradip's 16.5m maximum permissible draught requires Capesize vessels (18.2m draft) to undergo offshore lightering or diverts to Panamax class (recommended).
             </span>

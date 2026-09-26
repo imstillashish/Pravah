@@ -18,14 +18,27 @@ import { AstitvaLogo } from "./AstitvaLogo";
  */
 const RAIL_ITEMS = [
   { icon: LayoutGrid, label: "Overview", hash: "#dashboard" },
+  { icon: BarChart3, label: "Analysis", hash: "#results" },
   { icon: Ship, label: "Live Fleet Map", hash: "#live-map" },
-  { icon: BarChart3, label: "Analysis Results", hash: "#results" },
   { icon: BookOpen, label: "Historical Records", hash: "#history" },
 ];
 
-export const IconRail: React.FC = () => {
+export interface IconRailProps {
+  currentView?: string;
+}
+
+export const IconRail: React.FC<IconRailProps> = ({ currentView = "dashboard" }) => {
   const { user, logout } = useAuth();
   const initials = user ? user.full_name.charAt(0).toUpperCase() : "?";
+
+  const isHashActive = (hash: string) => {
+    const key = hash.replace("#", "");
+    if (key === "dashboard") return currentView === "dashboard" || currentView === "";
+    if (key === "results") return currentView === "results" || currentView === "analysis" || currentView.startsWith("analysis") || currentView === "new-analysis";
+    if (key === "live-map") return currentView === "live-map" || currentView === "map";
+    if (key === "history") return currentView === "history";
+    return currentView === key;
+  };
 
   return (
     <aside
@@ -44,8 +57,7 @@ export const IconRail: React.FC = () => {
 
         <nav aria-label="Workspace sections" className="flex flex-col items-center gap-2">
           {RAIL_ITEMS.map(({ icon: Icon, label, hash }) => {
-            const currentHash = window.location.hash || "#dashboard";
-            const active = currentHash === hash;
+            const active = isHashActive(hash);
             return (
               <button
                 key={label}
@@ -56,7 +68,7 @@ export const IconRail: React.FC = () => {
                 title={label}
                 className={`flex size-10 items-center justify-center rounded-full transition-colors duration-150 ${
                   active
-                    ? "bg-linen-mist text-forest-ink"
+                    ? "bg-linen-mist text-forest-ink font-semibold"
                     : "text-charcoal hover:bg-fog hover:text-forest-ink"
                 }`}
               >

@@ -76,23 +76,22 @@ export const MaritimeGlobe: React.FC<MaritimeGlobeProps> = ({
 
     const RADIUS = 80;
 
-    // 1. Dark oceanic inner sphere
+    // 1. Dark forest ink inner sphere (Wise theme)
     const sphereGeo = new THREE.SphereGeometry(RADIUS - 0.5, 36, 36);
     const sphereMat = new THREE.MeshBasicMaterial({
-      color: 0x061527,
+      color: 0x112800,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.88,
     });
     const innerSphere = new THREE.Mesh(sphereGeo, sphereMat);
     globeGroup.add(innerSphere);
 
-    // 2. Graticule / Wireframe lines
-    // 2. Graticule / Wireframe lines with subtle glow
+    // 2. Graticule / Wireframe lines with subtle lime accent
     const wireGeo = new THREE.WireframeGeometry(new THREE.SphereGeometry(RADIUS, 24, 24));
     const wireMat = new THREE.LineBasicMaterial({
-      color: 0x38bdf8,
+      color: 0x9fe870,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.20,
     });
     const wireframe = new THREE.LineSegments(wireGeo, wireMat);
     globeGroup.add(wireframe);
@@ -100,10 +99,10 @@ export const MaritimeGlobe: React.FC<MaritimeGlobeProps> = ({
     // 2b. Atmospheric outer ring / halo
     const haloGeo = new THREE.RingGeometry(RADIUS + 1, RADIUS + 4, 64);
     const haloMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
+      color: 0x9fe870,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.15,
+      opacity: 0.12,
     });
     const haloMesh = new THREE.Mesh(haloGeo, haloMat);
     haloMesh.rotation.x = Math.PI / 2;
@@ -132,11 +131,11 @@ export const MaritimeGlobe: React.FC<MaritimeGlobeProps> = ({
       const curve = new THREE.CubicBezierCurve3(p1, ctrl1, ctrl2, p2);
       arcCurves.push(curve);
 
-      // Draw arc line with vibrant glowing cyan
+      // Draw arc line with Lime Voltage (#9fe870)
       const points = curve.getPoints(50);
       const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
       const arcMat = new THREE.LineBasicMaterial({
-        color: 0x38bdf8,
+        color: 0x9fe870,
         transparent: true,
         opacity: 0.85,
       });
@@ -153,10 +152,10 @@ export const MaritimeGlobe: React.FC<MaritimeGlobeProps> = ({
       const v = latLongToVector3(p.lat, p.lon, RADIUS + 1.2);
       portPositions.push(v.x, v.y, v.z);
       if (p.type === "dest") {
-        // High-voltage Electric Cyan for Indian discharge terminals
-        portColors.push(0.22, 0.74, 0.97);
+        // Lime Voltage for Indian discharge terminals (#9fe870: 0.62, 0.91, 0.44)
+        portColors.push(0.62, 0.91, 0.44);
       } else {
-        // Bright gold/amber for loading ports
+        // Warm amber for loading ports
         portColors.push(0.98, 0.75, 0.28);
       }
     });

@@ -121,11 +121,11 @@ export const LiveMapPage: React.FC = () => {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
-      {/* Task 400: Persistent Non-Dismissible Amber Banner */}
-      <div className="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50/95 p-4 text-amber-900 shadow-sm">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
+      {/* Task 400: Persistent Non-Dismissible Simulation Banner */}
+      <div className="flex items-start gap-3 rounded-card border border-pebble bg-linen-mist/50 p-4 text-forest-ink">
+        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-forest-ink" />
         <div className="text-xs leading-relaxed">
-          <span className="font-bold uppercase tracking-wider text-amber-950">
+          <span className="font-bold uppercase tracking-wider text-forest-ink">
             Navigation Simulation Notice:{" "}
           </span>
           Ship position is automatically generated to demonstrate tracking. This is not a live AIS feed.
@@ -139,12 +139,12 @@ export const LiveMapPage: React.FC = () => {
             <span className="rounded-full bg-forest-ink/10 px-2.5 py-0.5 font-mono text-xs font-semibold text-forest-ink">
               PAGE 13: LIVE FLEET MAP
             </span>
-            <span className="inline-flex items-center gap-1 font-mono text-xs text-emerald-700 font-semibold">
-              <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="inline-flex items-center gap-1 font-mono text-xs text-forest-ink font-semibold">
+              <span className="size-2 rounded-full bg-lime-voltage animate-pulse" />
               {isLoading ? "INITIALIZING AIS FEED…" : "SIMULATED AIS FEED (3s LOOP)"}
             </span>
           </div>
-          <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+          <h1 className="mt-1 font-sans text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             Live Vessel Tracking & East Coast Port Corridor
           </h1>
           <p className="mt-0.5 text-xs text-slate">
@@ -156,9 +156,9 @@ export const LiveMapPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsPlaying(!isPlaying)}
-            className="flex items-center gap-1.5 rounded-xl border border-pebble bg-paper px-3.5 py-2 text-xs font-semibold text-charcoal shadow-sm hover:bg-linen-mist/50 transition-all active:scale-95"
+            className="flex items-center gap-1.5 rounded-full border border-pebble bg-paper px-3.5 py-2 text-xs font-semibold text-charcoal hover:bg-fog transition-all active:scale-95"
           >
-            {isPlaying ? <Pause className="size-3.5 text-amber-600" /> : <Play className="size-3.5 text-forest-ink" />}
+            {isPlaying ? <Pause className="size-3.5 text-slate" /> : <Play className="size-3.5 text-forest-ink" />}
             <span>{isPlaying ? "Pause Tracking" : "Resume Tracking"}</span>
           </button>
 
@@ -168,7 +168,7 @@ export const LiveMapPage: React.FC = () => {
               setProgressPct(0.0);
               progressRef.current = 0.0;
             }}
-            className="flex items-center gap-1.5 rounded-xl border border-pebble bg-paper px-3.5 py-2 text-xs font-medium text-slate shadow-sm hover:bg-linen-mist/50"
+            className="flex items-center gap-1.5 rounded-full border border-pebble bg-paper px-3.5 py-2 text-xs font-medium text-slate hover:bg-fog"
           >
             <RotateCcw className="size-3.5" />
             <span>Restart Voyage</span>
@@ -178,12 +178,12 @@ export const LiveMapPage: React.FC = () => {
 
       {/* Real-time Telemetry Bar */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <div className="flex items-center justify-between text-slate">
             <span className="font-mono text-[10px] uppercase tracking-wider">Active Vessel</span>
             <Ship className="size-4 text-forest-ink" />
           </div>
-          <div className="mt-1 font-serif text-base font-bold text-charcoal">
+          <div className="mt-1 font-sans text-base font-bold text-obsidian">
             MV OCEAN PRIDE
           </div>
           <div className="mt-0.5 flex items-center gap-2 font-mono text-[11px] text-slate">
@@ -193,7 +193,7 @@ export const LiveMapPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <div className="flex items-center justify-between text-slate">
             <span className="font-mono text-[10px] uppercase tracking-wider">Current Position</span>
             <Compass className="size-4 text-forest-ink" />
@@ -207,7 +207,7 @@ export const LiveMapPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <div className="flex items-center justify-between text-slate">
             <span className="font-mono text-[10px] uppercase tracking-wider">Sailing Distance</span>
             <Navigation className="size-4 text-forest-ink" />
@@ -220,12 +220,12 @@ export const LiveMapPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-4">
           <div className="flex items-center justify-between text-slate">
             <span className="font-mono text-[10px] uppercase tracking-wider">Estimated Arrival (ETA)</span>
             <Clock className="size-4 text-forest-ink" />
           </div>
-          <div className="mt-1 font-serif text-base font-bold text-forest-ink">
+          <div className="mt-1 font-sans text-base font-bold text-forest-ink">
             {calculatedEtaDays} Days
           </div>
           <div className="mt-0.5 flex items-center gap-1 font-mono text-[11px] text-slate">
@@ -253,15 +253,15 @@ export const LiveMapPage: React.FC = () => {
           distanceNm={route.estimated_distance_nm}
           shipProgress={progressPct}
           shipPositionText={`MV OCEAN PRIDE (${Math.round(progressPct * 100)}% • ${currentLat.toFixed(1)}°, ${currentLon.toFixed(1)}°)`}
-          className="min-h-[520px] w-full shadow-md"
+          className="min-h-[520px] w-full"
         />
       </div>
 
       {/* Route Corridor Reference Cards */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-pebble bg-paper p-5 shadow-sm space-y-2">
-          <div className="flex items-center gap-2 font-serif text-sm font-bold text-charcoal">
-            <Anchor className="size-4 text-amber-600" />
+        <div className="rounded-card border border-pebble bg-paper p-5 space-y-2">
+          <div className="flex items-center gap-2 font-sans text-sm font-bold text-obsidian">
+            <Anchor className="size-4 text-forest-ink" />
             <span>Loading Terminal: Port of Newcastle (PWCS)</span>
           </div>
           <p className="text-xs text-slate leading-relaxed">
@@ -269,9 +269,9 @@ export const LiveMapPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="rounded-xl border border-pebble bg-paper p-5 shadow-sm space-y-2">
-          <div className="flex items-center gap-2 font-serif text-sm font-bold text-charcoal">
-            <Anchor className="size-4 text-emerald-600" />
+        <div className="rounded-card border border-pebble bg-paper p-5 space-y-2">
+          <div className="flex items-center gap-2 font-sans text-sm font-bold text-obsidian">
+            <Anchor className="size-4 text-forest-ink" />
             <span>Discharge Port: Paradip Port (SAIL Berth)</span>
           </div>
           <p className="text-xs text-slate leading-relaxed">

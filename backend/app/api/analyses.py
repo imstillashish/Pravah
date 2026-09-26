@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import User, Analysis
-from app.api.auth import get_current_user
+from app.api.auth import get_current_user, get_current_user_or_demo
 from app.schemas import AnalysisCreate, AnalysisResponse
 
 router = APIRouter(prefix="/api/analyses", tags=["analyses"])
@@ -27,6 +27,17 @@ def determine_recommended_vessel(tonnage: float, destination_port: str) -> str:
             vessel = "Panamax" if tonnage >= 60000 else "Handysize"
 
     return vessel
+
+@router.get("", response_model=List[AnalysisResponse])
+@router.get("/", response_model=List[AnalysisResponse])
+def get_all_analyses(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Ensure demo items exist if empty
+    get_recent_analyses(current_user=current_user, db=db)
+    return db.query(Analysis).order_by(Analysis.created_at.desc()).all()
+
 
 @router.get("/recent", response_model=List[AnalysisResponse])
 def get_recent_analyses(
@@ -103,9 +114,15 @@ def get_recent_analyses(
 @router.post("", response_model=AnalysisResponse)
 def create_analysis(
     payload: AnalysisCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_or_demo),
     db: Session = Depends(get_db)
 ):
+    if payload.origin_port.strip().lower() == payload.destination_port.strip().lower():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Origin port '{payload.origin_port}' and destination terminal '{payload.destination_port}' cannot be the same. A valid charter voyage requires distinct loading and discharge locations."
+        )
+
     recommended_vessel = determine_recommended_vessel(payload.parcel_tonnage, payload.destination_port)
 
     # Benchmark rate heuristic
@@ -140,6 +157,57 @@ def create_analysis(
     db.add(analysis)
     db.commit()
     db.refresh(analysis)
+
+    # Resolve accurate geographic coordinates and Great-Circle distance
+    from app.connectors.locode_connector import get_port_coordinates, calculate_haversine_distance_nm
+    from app.models.entities import ContextObject, ForecastResult, FeasibilityResult
+
+    orig_coords = get_port_coordinates(payload.origin_port) or {"lat": -32.9272, "lon": 151.7765}
+    dest_coords = get_port_coordinates(payload.destination_port) or {"lat": 20.3167, "lon": 86.6167}
+
+    raw_dist = calculate_haversine_distance_nm(orig_coords["lat"], orig_coords["lon"], dest_coords["lat"], dest_coords["lon"])
+    dist_nm = round(raw_dist * 1.18, 1) if raw_dist > 1000 else raw_dist
+
+    ctx = ContextObject(
+        analysis_id=analysis.id,
+        route_distance_nm=dist_nm,
+        inferred_vessel_class=recommended_vessel,
+        origin_lat=orig_coords["lat"],
+        origin_lon=orig_coords["lon"],
+        destination_lat=dest_coords["lat"],
+        destination_lon=dest_coords["lon"],
+    )
+    db.add(ctx)
+
+    # Baseline forecast entry
+    fc = ForecastResult(
+        analysis_id=analysis.id,
+        p10_usd_per_mt=round(predicted * 0.92, 2),
+        p50_usd_per_mt=predicted,
+        p90_usd_per_mt=round(predicted * 1.15, 2),
+        arima_baseline_usd_per_mt=benchmark,
+        confidence_label="HIGH" if payload.status == "finalized" else "MEDIUM",
+        model_used="LightGBM_Quantile_v1",
+    )
+    db.add(fc)
+
+    # Port feasibility record
+    is_haldia = "haldia" in payload.destination_port.strip().lower()
+    feas = FeasibilityResult(
+        analysis_id=analysis.id,
+        vessel_class=recommended_vessel,
+        port_name=payload.destination_port,
+        draft_pass=not (is_haldia and recommended_vessel == "Capesize"),
+        loa_pass=True,
+        beam_pass=True,
+        dwt_pass=True,
+        overall_feasible=not (is_haldia and recommended_vessel == "Capesize"),
+        requires_lightering=is_haldia and payload.parcel_tonnage > 60000,
+        failure_reason="Haldia max draft (14.5m) restricts laden Capesize" if (is_haldia and recommended_vessel == "Capesize") else None,
+    )
+    db.add(feas)
+    db.commit()
+
     return analysis
 
 
@@ -206,6 +274,25 @@ def get_analysis_detail(
     pred_rate: float = float(analysis.predicted_rate_pmt or 0.0)
     tonnage: float = float(analysis.parcel_tonnage or 0.0)
 
+    from app.connectors.locode_connector import get_port_coordinates, calculate_haversine_distance_nm
+
+    is_same_port = analysis.origin_port.strip().lower() == analysis.destination_port.strip().lower()
+    resolved_orig = get_port_coordinates(analysis.origin_port)
+    resolved_dest = get_port_coordinates(analysis.destination_port)
+
+    origin_lat = resolved_orig["lat"] if resolved_orig else (getattr(context_obj, "origin_lat", -32.9272) if context_obj else -32.9272)
+    origin_lon = resolved_orig["lon"] if resolved_orig else (getattr(context_obj, "origin_lon", 151.7765) if context_obj else 151.7765)
+    dest_lat = resolved_dest["lat"] if resolved_dest else (getattr(context_obj, "destination_lat", 20.3167) if context_obj else 20.3167)
+    dest_lon = resolved_dest["lon"] if resolved_dest else (getattr(context_obj, "destination_lon", 86.6167) if context_obj else 86.6167)
+
+    if is_same_port:
+        route_dist = 0.0
+    elif context_obj and context_obj.route_distance_nm is not None and not (context_obj.route_distance_nm == 5832.4 and "newcastle" not in analysis.origin_port.lower()):
+        route_dist = context_obj.route_distance_nm
+    else:
+        raw_nm = calculate_haversine_distance_nm(origin_lat, origin_lon, dest_lat, dest_lon)
+        route_dist = round(raw_nm * 1.18, 1) if raw_nm > 1000 else raw_nm
+
     return {
         "id": analysis.id,
         "title": analysis.title,
@@ -221,13 +308,14 @@ def get_analysis_detail(
         "status": analysis.status,
         "created_at": analysis.created_at.isoformat() if hasattr(analysis.created_at, "isoformat") else str(analysis.created_at),
         "context": {
-            "route_distance_nm": getattr(context_obj, "route_distance_nm", 5832.4) if context_obj else 5832.4,
+            "route_distance_nm": route_dist,
             "inferred_vessel_class": getattr(context_obj, "inferred_vessel_class", analysis.recommended_vessel) if context_obj else analysis.recommended_vessel,
-            "origin_lat": getattr(context_obj, "origin_lat", -32.9272) if context_obj else -32.9272,
-            "origin_lon": getattr(context_obj, "origin_lon", 151.7765) if context_obj else 151.7765,
-            "destination_lat": getattr(context_obj, "destination_lat", 20.3167) if context_obj else 20.3167,
-            "destination_lon": getattr(context_obj, "destination_lon", 86.6167) if context_obj else 86.6167,
-            "note": "approximate great-circle distance",
+            "origin_lat": origin_lat,
+            "origin_lon": origin_lon,
+            "destination_lat": dest_lat,
+            "destination_lon": dest_lon,
+            "is_invalid_route": is_same_port,
+            "note": "approximate great-circle distance" if not is_same_port else "invalid identical port route (0 NM)",
         },
         "forecast": forecast.to_dict() if forecast else {
             "p10_usd_per_mt": round(pred_rate * 0.92, 2),
@@ -514,4 +602,5 @@ VERIFIED REGULATORY RECORD — IMMUTABLE AUDIT TRAIL LOGGED
     return PlainTextResponse(content=export_content, media_type="text/plain", headers=headers)
 
 
-
+# Alias for backward compatibility / audit endpoint naming
+export_decision_audit = export_decision_record

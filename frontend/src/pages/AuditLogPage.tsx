@@ -18,7 +18,7 @@ interface AuditEntry {
 }
 
 export const AuditLogPage: React.FC = () => {
-  const [logs, setLogs] = useState<AuditEntry[]>([
+  const [logs, setLogs] = useState<AuditEntry[]>(() => [
     {
       id: 1,
       user_email: "demo@sail.gov.in",
@@ -100,17 +100,17 @@ export const AuditLogPage: React.FC = () => {
   const getActionBadgeColor = (action: string) => {
     switch (action) {
       case "DECISION_RECORDED":
-        return "bg-emerald-100 text-emerald-800 border-emerald-300";
+        return "bg-linen-mist text-forest-ink border-forest-ink/20";
       case "ANALYSIS_CREATE":
-        return "bg-sky-100 text-sky-800 border-sky-300";
+        return "bg-linen-mist/60 text-forest-ink border-forest-ink/20";
       case "USER_LOGIN":
-        return "bg-indigo-100 text-indigo-800 border-indigo-300";
+        return "bg-fog text-charcoal border-pebble";
       case "DEMAND_POOLED":
-        return "bg-purple-100 text-purple-800 border-purple-300";
+        return "bg-linen-mist text-forest-ink border-forest-ink/20";
       case "PORT_UPDATE":
-        return "bg-amber-100 text-amber-800 border-amber-300";
+        return "bg-fog text-charcoal border-pebble";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-fog text-slate border-pebble";
     }
   };
 
@@ -127,7 +127,7 @@ export const AuditLogPage: React.FC = () => {
               Immutable Trail
             </span>
           </div>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             Audit Trails & Regulatory Governance
           </h1>
           <p className="mt-0.5 text-xs text-slate">
@@ -138,14 +138,14 @@ export const AuditLogPage: React.FC = () => {
         <button
           type="button"
           onClick={fetchLogs}
-          className="flex items-center gap-1.5 rounded-xl border border-pebble bg-paper px-3.5 py-2 text-xs font-semibold text-charcoal hover:bg-fog"
+          className="flex items-center gap-1.5 rounded-full border border-pebble bg-paper px-3.5 py-2 text-xs font-semibold text-charcoal hover:bg-fog"
         >
           <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} /> Refresh
         </button>
       </div>
 
       {/* Filter Controls (Search + Action Type + Date Range) */}
-      <div className="grid grid-cols-1 gap-4 rounded-xl border border-pebble bg-paper p-4 shadow-sm sm:grid-cols-12">
+      <div className="grid grid-cols-1 gap-4 rounded-card border border-pebble bg-paper p-4 sm:grid-cols-12">
         <div className="relative sm:col-span-6">
           <Search className="absolute left-3 top-2.5 size-4 text-slate" />
           <input
@@ -153,7 +153,7 @@ export const AuditLogPage: React.FC = () => {
             placeholder="Search by keywords, user email, or record ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-lg border border-pebble bg-paper pl-9 pr-4 py-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+            className="w-full rounded-card border border-pebble bg-paper pl-9 pr-4 py-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
           />
         </div>
 
@@ -161,7 +161,7 @@ export const AuditLogPage: React.FC = () => {
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
-            className="w-full rounded-lg border border-pebble bg-paper p-2 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
+            className="w-full rounded-card border border-pebble bg-paper p-2 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
           >
             <option value="ALL">All Action Types</option>
             <option value="DECISION_RECORDED">DECISION_RECORDED</option>
@@ -176,7 +176,7 @@ export const AuditLogPage: React.FC = () => {
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="w-full rounded-lg border border-pebble bg-paper p-2 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
+            className="w-full rounded-card border border-pebble bg-paper p-2 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
           >
             <option value="ALL">All Time</option>
             <option value="24H">Last 24 Hours</option>
@@ -187,7 +187,7 @@ export const AuditLogPage: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-pebble bg-paper shadow-sm overflow-hidden">
+      <div className="rounded-card border border-pebble bg-paper overflow-hidden">
         <div className="p-4 border-b border-pebble bg-linen-mist/30 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShieldCheck className="size-4 text-forest-ink" />
@@ -229,7 +229,7 @@ export const AuditLogPage: React.FC = () => {
                     </td>
                     <td className="py-3 px-3">
                       <span
-                        className={`inline-block rounded border px-2 py-0.5 text-[10px] font-bold ${getActionBadgeColor(
+                        className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${getActionBadgeColor(
                           log.action_type
                         )}`}
                       >

@@ -8,9 +8,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import joblib
-import pandas as pd
-
 # Ensure repo root is on sys.path for ml module imports
 _backend_dir = Path(__file__).resolve().parent.parent.parent
 _repo_root = _backend_dir.parent
@@ -19,11 +16,18 @@ if str(_repo_root) not in sys.path:
 if str(_backend_dir) not in sys.path:
     sys.path.insert(0, str(_backend_dir))
 
-from ml.feature_engineering import build_features
-from ml.train_arima import arima_forecast, fit_arima_baseline
-from ml.train_lgbm import FEATURE_COLS
-
 from app.models import Analysis, ForecastResult
+
+FEATURE_COLS = [
+    "lag_7",
+    "lag_14",
+    "lag_30",
+    "rolling_mean_14",
+    "rolling_std_14",
+    "rolling_mean_30",
+    "month",
+    "quarter",
+]
 
 
 def _resolve_model_registry_path() -> Path:
@@ -106,6 +110,11 @@ def run_forecast(analysis: Any, enrichment_data: Dict[str, Any]) -> ForecastResu
     analysis_id = getattr(analysis, "id", None) if analysis is not None else None
 
     try:
+        import joblib
+        import pandas as pd
+        from ml.feature_engineering import build_features
+        from ml.train_arima import arima_forecast, fit_arima_baseline
+
         # 1. Load models from registry
         registry_path = _resolve_model_registry_path()
         p10_model = joblib.load(registry_path / "lgbm_p10.pkl")

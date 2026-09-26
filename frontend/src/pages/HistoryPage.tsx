@@ -143,8 +143,7 @@ export const HistoryPage: React.FC = () => {
             <span className="font-mono text-xs text-slate">
               AUDIT LOG ARCHIVE
             </span>
-          </div>
-          <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+          </div>          <h1 className="mt-1 font-sans text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             Historical Freight & Charter Analyses
           </h1>
           <p className="mt-0.5 text-xs text-slate">
@@ -157,7 +156,7 @@ export const HistoryPage: React.FC = () => {
             type="button"
             onClick={fetchAnalyses}
             aria-label="Refresh analyses"
-            className="flex items-center gap-1.5 rounded-xl border border-pebble bg-paper px-3 py-2 text-xs font-medium text-charcoal shadow-sm hover:bg-linen-mist/50"
+            className="flex items-center gap-1.5 rounded-full border border-pebble bg-paper px-3 py-2 text-xs font-medium text-charcoal hover:bg-fog"
           >
             <RotateCcw className="size-3.5" />
           </button>
@@ -165,7 +164,7 @@ export const HistoryPage: React.FC = () => {
       </div>
 
       {/* Task 385: Filter Controls Above Table */}
-      <div className="rounded-xl border border-pebble bg-paper p-4 shadow-sm space-y-3">
+      <div className="rounded-card border border-pebble bg-paper p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold text-charcoal">
             <Filter className="size-4 text-forest-ink" />
@@ -191,7 +190,7 @@ export const HistoryPage: React.FC = () => {
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+              className="w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
             />
           </div>
 
@@ -203,7 +202,7 @@ export const HistoryPage: React.FC = () => {
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+              className="w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
             />
           </div>
 
@@ -216,7 +215,7 @@ export const HistoryPage: React.FC = () => {
               placeholder="e.g. Coking Coal"
               value={cargoTypeFilter}
               onChange={(e) => setCargoTypeFilter(e.target.value)}
-              className="w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+              className="w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
             />
           </div>
 
@@ -229,14 +228,14 @@ export const HistoryPage: React.FC = () => {
               placeholder="e.g. Paradip or Newcastle"
               value={portFilter}
               onChange={(e) => setPortFilter(e.target.value)}
-              className="w-full rounded-lg border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
+              className="w-full rounded-card border border-pebble bg-paper p-2 text-xs text-charcoal focus:border-forest-ink focus:outline-none"
             />
           </div>
         </div>
       </div>
 
       {/* Task 384: Table of Analyses */}
-      <div className="overflow-hidden rounded-xl border border-pebble bg-paper shadow-sm">
+      <div className="overflow-hidden rounded-card border border-pebble bg-paper">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-pebble bg-linen-mist/40 font-mono text-[10px] uppercase tracking-wider text-slate">
@@ -300,7 +299,7 @@ export const HistoryPage: React.FC = () => {
                     </td>
 
                     <td className="px-5 py-3.5 text-center">
-                      <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-800">
+                      <span className="inline-flex items-center rounded-full bg-linen-mist px-2.5 py-0.5 font-mono text-[10px] font-bold text-forest-ink">
                         {a.status}
                       </span>
                     </td>
@@ -312,7 +311,7 @@ export const HistoryPage: React.FC = () => {
                         onClick={() => {
                           window.location.hash = `#analysis-${a.id}`;
                         }}
-                        className="inline-flex items-center gap-1 rounded-lg bg-forest-ink/10 px-3 py-1.5 text-xs font-semibold text-forest-ink hover:bg-forest-ink hover:text-paper transition-all"
+                        className="inline-flex items-center gap-1 rounded-full bg-forest-ink/10 px-3.5 py-1.5 text-xs font-semibold text-forest-ink hover:bg-forest-ink hover:text-paper transition-all"
                       >
                         <span>Open</span>
                         <ArrowRight className="size-3" />

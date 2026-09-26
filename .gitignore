@@ -12,6 +12,8 @@ node_modules/
 dist/
 **/dist/
 build/
+.next/
+**/.next/
 
 # Databases & local state
 *.db
@@ -33,3 +35,4 @@ MICROSCOPIC_TASK_BREAKDOWN_PROMPT.md
 Thumbs.db
 .vscode/
 .idea/
+screenshots/

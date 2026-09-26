@@ -34,17 +34,17 @@ export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
         width="64"
         height="64"
         rx="16"
-        fill={isInverse ? "#38bdf8" : "#07192f"}
+        fill={isInverse ? "#9fe870" : "#163300"}
       />
       {/* Outer Vessel Bow Chevron 'A' */}
       <path
         d="M32 9L51.5 48H41.5L32 29L22.5 48H12.5L32 9Z"
-        fill={isInverse ? "#07192f" : "#ffffff"}
+        fill={isInverse ? "#163300" : "#ffffff"}
       />
       {/* Inner Predictive Delta Arrow */}
       <path
         d="M32 20L43 44H36.2L32 35L27.8 44H21L32 20Z"
-        fill={isInverse ? "#0369a1" : "#38bdf8"}
+        fill={isInverse ? "#054d28" : "#9fe870"}
       />
       {/* Dynamic Waterline & Draft Indicator */}
       <rect
@@ -53,7 +53,7 @@ export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
         width="18"
         height="3.5"
         rx="1.75"
-        fill={isInverse ? "#07192f" : "#38bdf8"}
+        fill={isInverse ? "#163300" : "#9fe870"}
       />
     </svg>
   );

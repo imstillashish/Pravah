@@ -97,7 +97,7 @@ export const AdminReferencePage: React.FC = () => {
               Master Reference Tables
             </span>
           </div>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             Maritime & Industrial Reference Master Data
           </h1>
           <p className="mt-0.5 text-xs text-slate">
@@ -107,8 +107,8 @@ export const AdminReferencePage: React.FC = () => {
       </div>
 
       {saveSuccess && (
-        <div className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-xs text-emerald-900 font-medium">
-          <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
+        <div className="flex items-center gap-2 rounded-card border border-pebble bg-linen-mist p-3 text-xs text-forest-ink font-medium">
+          <CheckCircle2 className="size-4 text-forest-ink shrink-0" />
           <span>{saveSuccess}</span>
         </div>
       )}
@@ -163,7 +163,7 @@ export const AdminReferencePage: React.FC = () => {
 
       {/* Tab 1: Ports Editable Table */}
       {activeTab === "ports" && (
-        <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-4">
+        <div className="rounded-card border border-pebble bg-paper p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-charcoal">
@@ -205,7 +205,7 @@ export const AdminReferencePage: React.FC = () => {
                           step="0.1"
                           value={port.max_draft_m}
                           onChange={(e) => handleDraftChange(port.id, parseFloat(e.target.value) || 0)}
-                          className="w-24 rounded border border-pebble bg-paper px-2 py-1 font-mono font-bold text-charcoal focus:border-forest-ink focus:outline-none"
+                          className="w-24 rounded-card border border-pebble bg-paper px-2 py-1 font-mono font-bold text-charcoal focus:border-forest-ink focus:outline-none"
                         />
                         <span className="text-slate">m</span>
                       </div>
@@ -217,14 +217,14 @@ export const AdminReferencePage: React.FC = () => {
                           step="1000"
                           value={port.max_dwt_mt}
                           onChange={(e) => handleDwtChange(port.id, parseInt(e.target.value) || 0)}
-                          className="w-28 rounded border border-pebble bg-paper px-2 py-1 font-mono text-charcoal focus:border-forest-ink focus:outline-none"
+                          className="w-28 rounded-card border border-pebble bg-paper px-2 py-1 font-mono text-charcoal focus:border-forest-ink focus:outline-none"
                         />
                         <span className="text-slate">MT</span>
                       </div>
                     </td>
                     <td className="py-3 px-3 text-center font-sans">
                       <span
-                        className={`rounded px-2 py-0.5 text-[10px] font-semibold ${
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
                           port.has_lightering
                             ? "bg-amber-100 text-amber-800"
                             : "bg-fog text-slate"
@@ -238,7 +238,7 @@ export const AdminReferencePage: React.FC = () => {
                         type="button"
                         disabled={savingPortId === port.id}
                         onClick={() => savePort(port)}
-                        className="flex items-center gap-1.5 mx-auto rounded-lg bg-forest-ink px-3 py-1.5 font-sans text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 disabled:opacity-50"
+                        className="flex items-center gap-1.5 mx-auto rounded-full bg-forest-ink px-3.5 py-1.5 font-sans text-xs font-semibold text-paper hover:bg-forest-ink/90 disabled:opacity-50"
                       >
                         {savingPortId === port.id ? (
                           <RefreshCw className="size-3.5 animate-spin" />
@@ -258,7 +258,7 @@ export const AdminReferencePage: React.FC = () => {
 
       {/* Tab 2: Vessel Classes */}
       {activeTab === "vessels" && (
-        <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-4">
+        <div className="rounded-card border border-pebble bg-paper p-6 space-y-4">
           <h3 className="text-base font-bold text-charcoal">
             Standard Dry Bulk Vessel Classification
           </h3>
@@ -304,7 +304,7 @@ export const AdminReferencePage: React.FC = () => {
                 <tr>
                   <td className="py-3 px-4 font-sans font-bold text-charcoal">Capesize</td>
                   <td className="py-3 px-4">100,000 – 210,000</td>
-                  <td className="py-3 px-4 text-red-600 font-bold">18.2 m (Draft restricted)</td>
+                  <td className="py-3 px-4 text-alarm-red font-bold">18.2 m (Draft restricted)</td>
                   <td className="py-3 px-4">292 m</td>
                   <td className="py-3 px-4">45 m</td>
                   <td className="py-3 px-4 font-sans text-slate">High-volume long-haul ore & coal</td>
@@ -317,38 +317,38 @@ export const AdminReferencePage: React.FC = () => {
 
       {/* Tab 3: Cargo Types */}
       {activeTab === "cargos" && (
-        <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-4">
+        <div className="rounded-card border border-pebble bg-paper p-6 space-y-4">
           <h3 className="text-base font-bold text-charcoal">Registered Industrial Bulk Cargoes</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-xl border border-pebble p-4 bg-paper">
+            <div className="rounded-card border border-pebble p-4 bg-paper">
               <h4 className="font-bold text-charcoal">Coking Coal</h4>
               <p className="text-xs text-slate mt-1">Stowage Factor: 1.25 m³/MT</p>
               <p className="text-xs text-slate">Grade: Hard Coking Coal (HCC)</p>
-              <span className="mt-3 inline-block rounded bg-forest-ink/10 px-2 py-0.5 text-[10px] font-semibold text-forest-ink">
+              <span className="mt-3 inline-block rounded-full bg-forest-ink/10 px-2.5 py-0.5 text-[10px] font-semibold text-forest-ink">
                 Blast Furnace Fuel
               </span>
             </div>
-            <div className="rounded-xl border border-pebble p-4 bg-paper">
+            <div className="rounded-card border border-pebble p-4 bg-paper">
               <h4 className="font-bold text-charcoal">Thermal Coal</h4>
               <p className="text-xs text-slate mt-1">Stowage Factor: 1.35 m³/MT</p>
               <p className="text-xs text-slate">Grade: Non-coking GCV 5500</p>
-              <span className="mt-3 inline-block rounded bg-fog px-2 py-0.5 text-[10px] font-semibold text-slate">
+              <span className="mt-3 inline-block rounded-full bg-fog px-2.5 py-0.5 text-[10px] font-semibold text-slate">
                 Captive Power Plant
               </span>
             </div>
-            <div className="rounded-xl border border-pebble p-4 bg-paper">
+            <div className="rounded-card border border-pebble p-4 bg-paper">
               <h4 className="font-bold text-charcoal">Iron Ore Fines</h4>
               <p className="text-xs text-slate mt-1">Stowage Factor: 0.50 m³/MT</p>
               <p className="text-xs text-slate">High bulk density</p>
-              <span className="mt-3 inline-block rounded bg-fog px-2 py-0.5 text-[10px] font-semibold text-slate">
+              <span className="mt-3 inline-block rounded-full bg-fog px-2.5 py-0.5 text-[10px] font-semibold text-slate">
                 Sinter Plant
               </span>
             </div>
-            <div className="rounded-xl border border-pebble p-4 bg-paper">
+            <div className="rounded-card border border-pebble p-4 bg-paper">
               <h4 className="font-bold text-charcoal">Limestone</h4>
               <p className="text-xs text-slate mt-1">Stowage Factor: 0.85 m³/MT</p>
               <p className="text-xs text-slate">Fluxing Agent</p>
-              <span className="mt-3 inline-block rounded bg-fog px-2 py-0.5 text-[10px] font-semibold text-slate">
+              <span className="mt-3 inline-block rounded-full bg-fog px-2.5 py-0.5 text-[10px] font-semibold text-slate">
                 SMS Refractory
               </span>
             </div>
@@ -358,7 +358,7 @@ export const AdminReferencePage: React.FC = () => {
 
       {/* Tab 4: Plants */}
       {activeTab === "plants" && (
-        <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-4">
+        <div className="rounded-card border border-pebble bg-paper p-6 space-y-4">
           <h3 className="text-base font-bold text-charcoal">
             Steel Authority of India Limited (SAIL) Integrated Steel Plants
           </h3>
@@ -378,7 +378,7 @@ export const AdminReferencePage: React.FC = () => {
                   <td className="py-3 px-4 font-sans font-bold text-charcoal">Bhilai Steel Plant (BSP)</td>
                   <td className="py-3 px-4 font-sans">Chhattisgarh</td>
                   <td className="py-3 px-4 font-bold">800 MT / day</td>
-                  <td className="py-3 px-4 text-red-600 font-bold">14 Days (Critical)</td>
+                  <td className="py-3 px-4 text-alarm-red font-bold">14 Days (Critical)</td>
                   <td className="py-3 px-4 font-sans font-semibold text-forest-ink">Paradip / Vizag</td>
                 </tr>
                 <tr>
@@ -392,21 +392,21 @@ export const AdminReferencePage: React.FC = () => {
                   <td className="py-3 px-4 font-sans font-bold text-charcoal">Bokaro Steel Plant (BSL)</td>
                   <td className="py-3 px-4 font-sans">Jharkhand</td>
                   <td className="py-3 px-4 font-bold">750 MT / day</td>
-                  <td className="py-3 px-4 text-emerald-600 font-bold">18 Days</td>
+                  <td className="py-3 px-4 text-forest-ink font-bold">18 Days</td>
                   <td className="py-3 px-4 font-sans">Paradip / Haldia</td>
                 </tr>
                 <tr>
                   <td className="py-3 px-4 font-sans font-bold text-charcoal">Durgapur Steel Plant (DSP)</td>
                   <td className="py-3 px-4 font-sans">West Bengal</td>
                   <td className="py-3 px-4 font-bold">450 MT / day</td>
-                  <td className="py-3 px-4 text-emerald-600 font-bold">21 Days</td>
+                  <td className="py-3 px-4 text-forest-ink font-bold">21 Days</td>
                   <td className="py-3 px-4 font-sans">Haldia / Dhamra</td>
                 </tr>
                 <tr>
                   <td className="py-3 px-4 font-sans font-bold text-charcoal">IISCO Burnpur (ISP)</td>
                   <td className="py-3 px-4 font-sans">West Bengal</td>
                   <td className="py-3 px-4 font-bold">350 MT / day</td>
-                  <td className="py-3 px-4 text-emerald-600 font-bold">21 Days</td>
+                  <td className="py-3 px-4 text-forest-ink font-bold">21 Days</td>
                   <td className="py-3 px-4 font-sans">Haldia</td>
                 </tr>
               </tbody>

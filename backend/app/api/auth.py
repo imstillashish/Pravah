@@ -7,8 +7,10 @@ from app.models import User
 from app.security import hash_password, verify_password, create_access_token, decode_access_token
 from app.schemas import UserSignup, UserRegister, UserLogin, RoleSwitchRequest, UserResponse, TokenResponse
 
+from typing import Optional
 router = APIRouter(tags=["auth"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     try:
@@ -22,6 +24,23 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Account not found. Please sign in again.")
     return user
+
+def get_current_user_or_demo(token: Optional[str] = Depends(oauth2_scheme_optional), db: Session = Depends(get_db)) -> User:
+    if token:
+        try:
+            payload = decode_access_token(token)
+            email: str = payload.get("sub")
+            if email:
+                user = db.query(User).filter(User.email == email).first()
+                if user:
+                    return user
+        except Exception:
+            pass
+    # Fallback to demo user if available
+    demo_user = db.query(User).first()
+    if demo_user:
+        return demo_user
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Account not found. Please sign in again.")
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 def register(payload: UserRegister, db: Session = Depends(get_db)):

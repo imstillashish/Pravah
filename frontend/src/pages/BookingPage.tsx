@@ -156,8 +156,8 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Task 389: Persistent Non-Dismissible Manual Tracking Banner */}
-      <div className="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50/90 p-4 text-amber-900 shadow-sm">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
+      <div className="flex items-start gap-3 rounded-card border border-amber-300 bg-amber-50 p-4 text-amber-900">
+        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-warning" />
         <div className="text-xs leading-relaxed">
           <span className="font-bold uppercase tracking-wider text-amber-950">Notice: </span>
           Booking status is tracked manually. This system does not connect to any shipping company or broker system.
@@ -166,7 +166,7 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
 
       {/* Toast */}
       {toastMessage && (
-        <div className="flex items-center gap-2 rounded-xl bg-forest-ink p-3 text-xs font-semibold text-paper shadow-md">
+        <div className="flex items-center gap-2 rounded-card bg-forest-ink p-3 text-xs font-semibold text-paper">
           <CheckCircle2 className="size-4 text-lime-voltage" />
           <span>{toastMessage}</span>
         </div>
@@ -183,7 +183,7 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
               FIXTURE #{booking?.id || 1}
             </span>
           </div>
-          <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-charcoal sm:text-3xl">
+          <h1 className="mt-1 font-sans text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             Vessel Charter Booking Management
           </h1>
           <p className="mt-0.5 text-xs text-slate">
@@ -197,7 +197,7 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
               value={booking?.id || ""}
               onChange={(e) => setActiveId(Number(e.target.value))}
               aria-label="Select charter booking"
-              className="rounded-lg border border-pebble bg-paper px-3 py-1.5 text-xs font-medium text-charcoal shadow-sm focus:border-forest-ink focus:outline-none"
+              className="rounded-card border border-pebble bg-paper px-3 py-1.5 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
             >
               {allBookings.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -210,7 +210,7 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
           <button
             type="button"
             onClick={fetchBookings}
-            className="flex items-center gap-1.5 rounded-lg border border-pebble bg-paper px-3 py-1.5 text-xs font-medium text-charcoal shadow-sm hover:bg-linen-mist/50"
+            className="flex items-center gap-1.5 rounded-full border border-forest-ink bg-paper px-3.5 py-1.5 text-xs font-medium text-forest-ink hover:bg-fog transition-colors"
           >
             <RotateCcw className="size-3.5" /> Refresh
           </button>
@@ -223,16 +223,16 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
           <span className="mt-3 font-mono text-xs text-slate">Loading charter booking fixture…</span>
         </div>
       ) : !booking ? (
-        <div className="rounded-xl border border-pebble bg-paper p-8 text-center text-charcoal shadow-sm">
+        <div className="rounded-card border border-pebble bg-paper p-8 text-center text-charcoal">
           <Ship className="mx-auto size-10 text-slate/50" />
-          <h3 className="mt-2 font-serif text-base font-bold">No active bookings found</h3>
+          <h3 className="mt-2 font-sans text-base font-bold text-obsidian">No active bookings found</h3>
           <p className="mt-1 text-xs text-slate">
             Initiate a booking from the Decision Record page after Plant Manager approval.
           </p>
           <button
             type="button"
             onClick={() => (window.location.hash = "#decision")}
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-forest-ink px-4 py-2 text-xs font-semibold text-paper"
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-forest-ink px-4 py-2 text-xs font-medium text-paper hover:bg-forest-ink/90 transition-all"
           >
             Go to Decision Record <ArrowRight className="size-3.5" />
           </button>
@@ -242,30 +242,30 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
           {/* Main Booking Details & Timeline (2 cols) */}
           <div className="space-y-6 lg:col-span-2">
             {/* Task 387: Timeline-style Status Card */}
-            <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm">
+            <div className="rounded-card border border-pebble bg-paper p-6">
               <div className="flex items-center justify-between border-b border-pebble pb-4">
                 <div>
-                  <h2 className="font-serif text-base font-bold text-charcoal">Booking Lifecycle Timeline</h2>
+                  <h2 className="font-sans text-base font-bold text-obsidian">Booking Lifecycle Timeline</h2>
                   <p className="text-xs text-slate">Real-time procurement & broker communication pipeline</p>
                 </div>
                 <div>
                   {booking.status === "CONFIRMED" && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-linen-mist px-3 py-1 text-xs font-bold text-forest-ink">
                       <CheckCircle2 className="size-3.5" /> CONFIRMED
                     </span>
                   )}
                   {booking.status === "WAITING" && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-wash px-3 py-1 text-xs font-bold text-amber-warning">
                       <Clock className="size-3.5" /> WAITING BROKER
                     </span>
                   )}
                   {booking.status === "SENT_TO_BROKER" && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-linen-mist px-3 py-1 text-xs font-bold text-signal-blue">
                       <Send className="size-3.5" /> SENT TO BROKER
                     </span>
                   )}
                   {booking.status === "CANCELLED" && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-800">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-alarm-wash px-3 py-1 text-xs font-bold text-alarm-red">
                       <XCircle className="size-3.5" /> CANCELLED
                     </span>
                   )}
@@ -274,10 +274,10 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
 
               {/* Visual Timeline Bar */}
               {booking.status === "CANCELLED" ? (
-                <div className="my-6 rounded-lg border border-red-200 bg-red-50 p-4 text-center">
-                  <XCircle className="mx-auto size-6 text-red-600" />
-                  <p className="mt-1 text-xs font-bold text-red-900">Booking Cancelled</p>
-                  <p className="text-xs text-red-700">Reason / Note: {booking.note || "Manual cancellation by operator"}</p>
+                <div className="my-6 rounded-card border border-alarm-red/40 bg-fog p-4 text-center">
+                  <XCircle className="mx-auto size-6 text-alarm-red" />
+                  <p className="mt-1 text-xs font-bold text-alarm-red">Booking Cancelled</p>
+                  <p className="text-xs text-charcoal">Reason / Note: {booking.note || "Manual cancellation by operator"}</p>
                 </div>
               ) : (
                 <div className="my-6 relative flex items-center justify-between">
@@ -323,13 +323,13 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
               )}
 
               {/* Status Note Log */}
-              <div className="rounded-lg bg-linen-mist/30 p-3.5 text-xs text-slate border border-pebble/60">
-                <div className="font-semibold text-charcoal">Audit Context / Operation Log:</div>
-                <div className="mt-1 text-slate font-mono text-[11px]">
+              <div className="rounded-card bg-fog p-3.5 text-xs text-slate border border-pebble">
+                <div className="font-semibold text-obsidian">Audit Context / Operation Log:</div>
+                <div className="mt-1 text-charcoal font-mono text-[11px]">
                   {booking.note || "Charter fixture initiated. Awaiting final freight fixture slip from shipping partner."}
                 </div>
                 {booking.confirmed_at && (
-                  <div className="mt-1 text-[11px] text-emerald-800">
+                  <div className="mt-1 text-[11px] text-forest-ink font-semibold">
                     Confirmed timestamp: {new Date(booking.confirmed_at).toLocaleString()}
                   </div>
                 )}
@@ -337,10 +337,10 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
             </div>
 
             {/* Cargo & Fixture Specifications */}
-            <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-4">
-              <h3 className="font-serif text-base font-bold text-charcoal">Charter Specifications</h3>
+            <div className="rounded-card border border-pebble bg-paper p-6 space-y-4">
+              <h3 className="font-sans text-base font-bold text-obsidian">Charter Specifications</h3>
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-lg border border-pebble/60 bg-linen-mist/20 p-3">
+                <div className="rounded-card border border-pebble bg-fog p-3">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-slate">Vessel Class</span>
                   <div className="mt-1 flex items-center gap-1.5 font-semibold text-charcoal text-sm">
                     <Ship className="size-4 text-forest-ink" />
@@ -348,14 +348,14 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
                   </div>
                 </div>
 
-                <div className="rounded-lg border border-pebble/60 bg-linen-mist/20 p-3">
+                <div className="rounded-card border border-pebble bg-fog p-3">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-slate">Cargo & Tonnage</span>
                   <div className="mt-1 font-semibold text-charcoal text-sm">
                     {booking.commodity || "Coking Coal"} — {booking.parcel_tonnage ? `${booking.parcel_tonnage.toLocaleString()} MT` : "75,000 MT"}
                   </div>
                 </div>
 
-                <div className="rounded-lg border border-pebble/60 bg-linen-mist/20 p-3">
+                <div className="rounded-card border border-pebble bg-fog p-3">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-slate">Origin Port</span>
                   <div className="mt-1 flex items-center gap-1.5 font-medium text-charcoal text-xs">
                     <Anchor className="size-3.5 text-slate" />
@@ -363,7 +363,7 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
                   </div>
                 </div>
 
-                <div className="rounded-lg border border-pebble/60 bg-linen-mist/20 p-3">
+                <div className="rounded-card border border-pebble bg-fog p-3">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-slate">Discharge Port</span>
                   <div className="mt-1 flex items-center gap-1.5 font-medium text-charcoal text-xs">
                     <Building className="size-3.5 text-slate" />
@@ -376,8 +376,8 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
 
           {/* Action Card (Task 388) */}
           <div className="space-y-6">
-            <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm">
-              <h3 className="font-serif text-base font-bold text-charcoal">Charter Actions</h3>
+            <div className="rounded-card border border-pebble bg-paper p-6 space-y-4">
+              <h3 className="font-sans text-base font-bold text-obsidian">Charter Actions</h3>
               <p className="mt-1 text-xs text-slate">
                 Authorized for Admin and Plant Manager governance roles.
               </p>
@@ -388,7 +388,7 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
                   type="button"
                   disabled={!isManagerOrAdmin || isTerminal || isUpdating}
                   onClick={handleConfirm}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-lime-voltage py-2.5 text-xs font-medium text-forest-ink hover:brightness-95 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
                   <CheckCircle2 className="size-4" /> Mark as Confirmed
                 </button>
@@ -397,13 +397,13 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
                   type="button"
                   disabled={!isManagerOrAdmin || isTerminal || isUpdating}
                   onClick={handleCancel}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-300 bg-red-50/50 py-2.5 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-alarm-red bg-paper py-2.5 text-xs font-medium text-alarm-red hover:bg-alarm-red/10 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
                   <XCircle className="size-4" /> Cancel Booking
                 </button>
 
                 {isTerminal && (
-                  <div className="rounded-lg bg-linen-mist/50 p-3 text-center text-xs text-slate">
+                  <div className="rounded-card bg-fog p-3 text-center text-xs text-slate">
                     Booking finalized ({booking.status}). Additional lifecycle modifications locked.
                   </div>
                 )}
@@ -431,8 +431,8 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
             </div>
 
             {/* Manual Tracking Guide Box */}
-            <div className="rounded-xl border border-pebble bg-linen-mist/30 p-4 text-xs text-slate">
-              <div className="flex items-center gap-2 font-semibold text-charcoal">
+            <div className="rounded-card border border-pebble bg-linen-mist/30 p-4 text-xs text-slate">
+              <div className="flex items-center gap-2 font-semibold text-forest-ink">
                 <FileCheck className="size-4 text-forest-ink" /> SOP Compliance Notice
               </div>
               <p className="mt-1 text-[11px] leading-relaxed">

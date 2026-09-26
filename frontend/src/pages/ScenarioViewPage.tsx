@@ -136,7 +136,7 @@ export const ScenarioViewPage: React.FC = () => {
         <button
           type="button"
           onClick={resetToBaseline}
-          className="flex items-center gap-1.5 rounded-xl border border-pebble bg-paper px-3.5 py-2 text-xs font-semibold text-charcoal hover:bg-fog"
+          className="flex items-center gap-1.5 rounded-full border border-forest-ink bg-paper px-3.5 py-2 text-xs font-medium text-forest-ink hover:bg-fog"
         >
           <RotateCcw className="size-3.5" /> Reset to Baseline
         </button>
@@ -144,9 +144,9 @@ export const ScenarioViewPage: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Controls Column (5 Variable Sliders / Selectors) */}
-        <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm lg:col-span-5 space-y-5">
+        <div className="rounded-none border border-pebble bg-paper p-6 space-y-5 lg:col-span-5">
           <div className="flex items-center justify-between border-b border-pebble pb-3">
-            <h3 className="font-bold text-sm text-charcoal flex items-center gap-2">
+            <h3 className="font-bold text-sm text-obsidian flex items-center gap-2">
               <Sliders className="size-4 text-forest-ink" /> Simulation Variables
             </h3>
             <span className="text-[11px] text-slate font-mono">5 Parameters</span>
@@ -209,7 +209,7 @@ export const ScenarioViewPage: React.FC = () => {
             <select
               value={vesselOverride}
               onChange={(e) => setVesselOverride(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-pebble bg-paper p-2.5 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
+              className="mt-1.5 w-full rounded-none border border-pebble bg-paper p-2.5 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
             >
               <option value="Handysize">Handysize (25k - 39k DWT)</option>
               <option value="Supramax">Supramax (40k - 59k DWT)</option>
@@ -226,7 +226,7 @@ export const ScenarioViewPage: React.FC = () => {
             <select
               value={portOverride}
               onChange={(e) => setPortOverride(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-pebble bg-paper p-2.5 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
+              className="mt-1.5 w-full rounded-none border border-pebble bg-paper p-2.5 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none"
             >
               <option value="Paradip">Paradip Port (16.5m draft) — Baseline</option>
               <option value="Dhamra">Dhamra Port (18.0m draft)</option>
@@ -264,7 +264,7 @@ export const ScenarioViewPage: React.FC = () => {
             type="button"
             disabled={isCalculating}
             onClick={runScenarioSimulation}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-forest-ink py-3 text-sm font-semibold text-paper shadow-sm transition-all hover:bg-forest-ink/90 active:scale-95 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-lime-voltage py-3 text-sm font-bold text-forest-ink transition-all hover:brightness-105 active:scale-95 disabled:opacity-50"
           >
             {isCalculating ? (
               <RefreshCw className="size-4 animate-spin" />
@@ -278,13 +278,13 @@ export const ScenarioViewPage: React.FC = () => {
         {/* Comparison Output Column */}
         <div className="space-y-6 lg:col-span-7">
           {/* Side-by-side comparison card */}
-          <div className="rounded-xl border border-pebble bg-paper p-6 shadow-sm space-y-5">
+          <div className="rounded-none border border-pebble bg-paper p-6 space-y-5">
             <div className="flex items-center justify-between border-b border-pebble pb-3">
               <h3 className="font-bold text-base text-charcoal">
                 Side-by-Side Scenario Variance Analysis
               </h3>
               {scenarioExecuted && (
-                <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
+                <span className="rounded-full bg-linen-mist px-2.5 py-0.5 text-xs font-semibold text-forest-ink">
                   Simulation Calculated
                 </span>
               )}
@@ -292,8 +292,8 @@ export const ScenarioViewPage: React.FC = () => {
 
             {/* Feasibility Alert if restricted */}
             {!activeScenario.overall_feasible && (
-              <div className="flex items-start gap-2.5 rounded-lg border border-red-300 bg-red-50 p-3 text-xs text-red-900">
-                <AlertCircle className="size-4 shrink-0 text-red-600 mt-0.5" />
+              <div className="flex items-start gap-2.5 rounded-none border border-alarm-red/30 bg-alarm-red/10 p-3 text-xs text-alarm-red">
+                <AlertCircle className="size-4 shrink-0 text-alarm-red mt-0.5" />
                 <div>
                   <strong className="font-bold">Physical Port Constraint Violation:</strong>
                   <p className="mt-0.5">{activeScenario.feasibility_note}</p>
@@ -356,13 +356,13 @@ export const ScenarioViewPage: React.FC = () => {
                         : `-₹${Math.abs(activeScenario.landed_cost_inr_pmt - baseline.landed_cost_inr_pmt).toFixed(2)}`}
                     </td>
                   </tr>
-                  <tr className="bg-emerald-50/50">
-                    <td className="py-3 px-3 font-sans font-bold text-emerald-900">Total Savings (USD)</td>
-                    <td className="py-3 px-3 text-right font-bold text-emerald-800">${baseline.total_savings_usd.toLocaleString()}</td>
-                    <td className="py-3 px-3 text-right font-extrabold text-emerald-700 text-sm">
+                  <tr className="bg-linen-mist/30">
+                    <td className="py-3 px-3 font-sans font-bold text-forest-ink">Total Savings (USD)</td>
+                    <td className="py-3 px-3 text-right font-bold text-forest-ink">${baseline.total_savings_usd.toLocaleString()}</td>
+                    <td className="py-3 px-3 text-right font-extrabold text-forest-ink text-sm">
                       ${activeScenario.total_savings_usd.toLocaleString()}
                     </td>
-                    <td className="py-3 px-3 text-right font-bold text-emerald-700">
+                    <td className="py-3 px-3 text-right font-bold text-forest-ink">
                       {(activeScenario.total_savings_usd - baseline.total_savings_usd) >= 0
                         ? `+$${(activeScenario.total_savings_usd - baseline.total_savings_usd).toLocaleString()}`
                         : `-$${Math.abs(activeScenario.total_savings_usd - baseline.total_savings_usd).toLocaleString()}`}
