@@ -29,6 +29,21 @@ backend/logistics.db
 .planning/
 .geminirules
 MICROSCOPIC_TASK_BREAKDOWN_PROMPT.md
+.superpowers/
+
+# Internal design & task docs (not for end users)
+DESIGN.md
+docs/
+AGENTS.md
+next-app/
+
+# Dev tooling configs (not for end users)
+pyrefly.toml
+pyrightconfig.json
+
+# Internal scripts (not for end users)
+scripts/full_qa_sweep.js
+scripts/verify_palak_all.py
 
 # OS / Editor files
 .DS_Store
