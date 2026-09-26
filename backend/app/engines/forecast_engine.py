@@ -84,6 +84,18 @@ def compute_confidence_label(p10: float, p50: float, p90: float) -> str:
         return "LOW"
 
 
+def _safe_predict(model: Any, X: Any) -> float:
+    """ponytail: unpack booster when sklearn unpickling skips get_params on newer lightgbm."""
+    try:
+        return float(model.predict(X)[0])
+    except Exception:
+        if hasattr(model, "_Booster") and model._Booster is not None:
+            return float(model._Booster.predict(X)[0])
+        if hasattr(model, "booster_") and model.booster_ is not None:
+            return float(model.booster_.predict(X)[0])
+        raise
+
+
 def run_forecast(analysis: Any, enrichment_data: Dict[str, Any]) -> ForecastResult:
     """
     Loads the 3 saved LightGBM models from MODEL_REGISTRY_PATH, builds a feature
@@ -127,9 +139,9 @@ def run_forecast(analysis: Any, enrichment_data: Dict[str, Any]) -> ForecastResu
             X_feat = last_row
 
         # 4. Generate LightGBM quantile predictions
-        p10_pred = float(p10_model.predict(X_feat)[0])
-        p50_pred = float(p50_model.predict(X_feat)[0])
-        p90_pred = float(p90_model.predict(X_feat)[0])
+        p10_pred = _safe_predict(p10_model, X_feat)
+        p50_pred = _safe_predict(p50_model, X_feat)
+        p90_pred = _safe_predict(p90_model, X_feat)
 
         # 5. Run ARIMA baseline
         arima_fit = fit_arima_baseline(df_history)
