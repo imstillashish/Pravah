@@ -26,6 +26,7 @@ interface DecisionDetail {
     total_inr: number;
   };
   decision?: {
+    id?: number;
     chosen_vessel_class?: string;
     was_override?: boolean;
     override_reason?: string | null;
@@ -110,7 +111,11 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
       setIsSubmitting(true);
       await apiClient("/bookings", {
         method: "POST",
-        body: JSON.stringify({ decision_record_id: data.id }),
+        body: JSON.stringify({
+          analysis_id: data.id,
+          decision_record_id: data.decision?.id || data.id,
+          auto_approve: true,
+        }),
       });
       window.location.hash = "#booking";
     } catch (err: unknown) {

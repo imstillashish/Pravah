@@ -99,6 +99,9 @@ function MainApp() {
   if (currentView.startsWith("analysis-")) {
     const parsed = parseInt(currentView.replace("analysis-", ""), 10);
     if (!isNaN(parsed)) activeAnalysisId = parsed;
+  } else if (currentView.startsWith("decision-")) {
+    const parsed = parseInt(currentView.replace("decision-", ""), 10);
+    if (!isNaN(parsed)) activeAnalysisId = parsed;
   }
 
   let activeBookingId: number | string = 1;

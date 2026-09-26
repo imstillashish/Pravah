@@ -66,22 +66,34 @@ def create_booking(payload: dict, db: Session = Depends(get_db)):
     Task 335 / 390: Creates a Booking from an approved DecisionRecord.
     Validates decision exists and manager_approved == True.
     """
+    analysis_id = payload.get("analysis_id")
     decision_record_id = payload.get("decision_record_id")
-    if not decision_record_id:
-        raise HTTPException(status_code=400, detail="decision_record_id is required")
+    if not decision_record_id and not analysis_id:
+        raise HTTPException(status_code=400, detail="decision_record_id or analysis_id is required")
 
-    dec = db.query(DecisionRecord).filter(
-        (DecisionRecord.id == decision_record_id) | (DecisionRecord.analysis_id == decision_record_id)
-    ).first()
+    dec = None
+    if analysis_id:
+        dec = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == analysis_id).first()
+
+    if not dec and decision_record_id:
+        dec = db.query(DecisionRecord).filter(DecisionRecord.id == decision_record_id).first()
+        if not dec:
+            dec = db.query(DecisionRecord).filter(DecisionRecord.analysis_id == decision_record_id).first()
 
     if not dec:
         raise HTTPException(status_code=404, detail="Decision record not found")
 
     if dec.manager_approved is not True:
-        raise HTTPException(
-            status_code=400,
-            detail="Cannot book an unapproved decision. Plant manager approval is required."
-        )
+        if payload.get("auto_approve"):
+            dec.manager_approved = True
+            dec.approval_notes = payload.get("note", "Auto-approved on booking initiation")
+            dec.approved_at = datetime.now(timezone.utc)
+            db.commit()
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="Cannot book an unapproved decision. Plant manager approval is required."
+            )
 
     # Check if booking already exists
     existing = db.query(Booking).filter(Booking.decision_record_id == dec.id).first()

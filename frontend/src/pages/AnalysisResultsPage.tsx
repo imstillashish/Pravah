@@ -859,7 +859,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                   <button
                     type="button"
                     onClick={() => {
-                      window.location.hash = "#decision";
+                      window.location.hash = `#decision-${data.id}`;
                     }}
                     className="inline-flex items-center gap-1.5 rounded-lg bg-forest-ink px-4 py-2 text-xs font-semibold text-paper shadow-sm hover:bg-forest-ink/90 transition-all active:scale-95"
                   >

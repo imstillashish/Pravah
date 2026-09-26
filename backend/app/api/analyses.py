@@ -328,6 +328,7 @@ def get_analysis_detail(
             {"regret_pct": 8.1, "chosen_day_rate": 15600.0, "best_rate_in_window": 14430.0},
         ],
         "decision": {
+            "id": getattr(decision, "id", None) if decision else None,
             "chosen_vessel_class": getattr(decision, "chosen_vessel_class", None) if decision else None,
             "was_override": getattr(decision, "was_override", False) if decision else False,
             "override_reason": getattr(decision, "override_reason", None) if decision else None,
