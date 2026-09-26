@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(
-    title="Astitva — Intelligent Freight Forecasting API (SIH26006)",
+    title="Pravah — Intelligent Freight Forecasting API (SIH26006)",
     lifespan=lifespan
 )
 
@@ -205,6 +205,6 @@ def post_root_analysis_decision_reject(analysis_id: int, payload: dict):
 @app.get("/health")
 @app.get("/api/health")
 def health_check():
-    return {"status": "ok", "service": "Astitva Core API"}
+    return {"status": "ok", "service": "Pravah Core API"}
 
 

@@ -2,7 +2,7 @@
 set -e
 
 echo "============================================================"
-echo "ASTITVA PRODUCTION DEPLOYMENT STARTUP"
+echo "PRAVAH PRODUCTION DEPLOYMENT STARTUP"
 echo "============================================================"
 
 # 1. Run database migrations to head

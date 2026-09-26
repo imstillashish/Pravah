@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
 import { Compass, Lock, Mail, User, AlertCircle, ArrowRight } from "lucide-react";
 import { PrimaryButton, Card, TextButton } from "../components/ui";
-import { AstitvaLogo } from "../components/AstitvaLogo";
+import { PravahLogo } from "../components/PravahLogo";
 import { MaritimeGlobe } from "../components/MaritimeGlobe";
 import { cx } from "../lib/cn";
 
@@ -88,7 +88,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
             className="inline-flex cursor-pointer transition-opacity hover:opacity-85"
             title="Return to Public Overview"
           >
-            <AstitvaLogo size={32} variant="inverse" subtitle={true} />
+            <PravahLogo size={32} variant="inverse" subtitle={true} />
           </a>
         </div>
 

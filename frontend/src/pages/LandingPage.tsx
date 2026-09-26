@@ -8,7 +8,7 @@ import {
   FileCheck,
   AlertTriangle,
 } from "lucide-react";
-import { AstitvaLogo } from "../components/AstitvaLogo";
+import { PravahLogo } from "../components/PravahLogo";
 
 export const LandingPage: React.FC<{
   onNavigateToLogin: () => void;
@@ -20,7 +20,7 @@ export const LandingPage: React.FC<{
       <header className="sticky top-0 z-40 border-b border-pebble bg-paper/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <AstitvaLogo size={32} variant="full" />
+            <PravahLogo size={32} variant="full" />
             <span className="hidden sm:inline rounded-full bg-forest-ink/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-forest-ink">
               SIH26006 • SAIL LOGISTICS
             </span>
@@ -129,7 +129,7 @@ export const LandingPage: React.FC<{
               Workflow Pipeline
             </span>
             <h2 className="font-sans text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
-              How Astitva Works in 4 Simple Steps
+              How Pravah Works in 4 Simple Steps
             </h2>
           </div>
 
@@ -150,7 +150,7 @@ export const LandingPage: React.FC<{
               </div>
               <h3 className="mt-4 font-sans text-base font-bold text-obsidian">Predict Prices & Berth Fit</h3>
               <p className="mt-1 text-xs text-charcoal leading-relaxed">
-                Astitva runs ARIMA+GBM freight rates, checks physical draft/beam rules at Paradip/Dhamra, and scans risk alerts.
+                Pravah runs ARIMA+GBM freight rates, checks physical draft/beam rules at Paradip/Dhamra, and scans risk alerts.
               </p>
             </div>
 
@@ -185,7 +185,7 @@ export const LandingPage: React.FC<{
               Capabilities
             </span>
             <h2 className="font-sans text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
-              What You Get with Astitva
+              What You Get with Pravah
             </h2>
           </div>
 
@@ -235,7 +235,7 @@ export const LandingPage: React.FC<{
             Transparency & Governance Protocol
           </h2>
           <p className="text-xs text-charcoal leading-relaxed max-w-2xl mx-auto">
-            Astitva clearly demarcates ML predictive models from simulated operational feeds. Freight rate forecasts, landed cost calculations, and vessel draft compatibility checks use verified engineering formulas. Baltic broker quotes and real-time ship positions are marked as sample demonstrations.
+            Pravah clearly demarcates ML predictive models from simulated operational feeds. Freight rate forecasts, landed cost calculations, and vessel draft compatibility checks use verified engineering formulas. Baltic broker quotes and real-time ship positions are marked as sample demonstrations.
           </p>
 
           <div className="pt-4">
@@ -253,7 +253,7 @@ export const LandingPage: React.FC<{
 
       {/* Footer */}
       <footer className="border-t border-pebble bg-paper py-6 text-center text-xs text-slate">
-        <p>© 2026 Steel Authority of India Limited (SAIL). Astitva Freight Intelligence Platform — SIH26006.</p>
+        <p>© 2026 Steel Authority of India Limited (SAIL). Pravah Freight Intelligence Platform — SIH26006.</p>
       </footer>
     </div>
   );

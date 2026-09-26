@@ -1,6 +1,6 @@
-# ASTITVA — Advanced Shipping & Transport Intelligence for Tracking Vessel Availability
+# PRAVAH — Advanced Shipping & Transport Intelligence for Tracking Vessel Availability
 
-ASTITVA is an intelligent maritime logistics and vessel tracking platform designed to optimize port operations, monitor vessel availability, track cargo lifecycles, and streamline vessel-to-berth allocation.
+PRAVAH is an intelligent maritime logistics and vessel tracking platform designed to optimize port operations, monitor vessel availability, track cargo lifecycles, and streamline vessel-to-berth allocation.
 
 ## Architecture
 

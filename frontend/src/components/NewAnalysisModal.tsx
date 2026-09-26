@@ -1200,7 +1200,7 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
                     Select your corridor &amp; sailing window
                   </h2>
                   <p className="mt-1.5 text-sm text-slate max-w-lg">
-                    Choose the loading port, discharge terminal, and laycan date — Astitva will compute the live freight rate, draft clearance, and optimal vessel class.
+                    Choose the loading port, discharge terminal, and laycan date — Pravah will compute the live freight rate, draft clearance, and optimal vessel class.
                   </p>
                 </div>
 

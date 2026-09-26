@@ -427,7 +427,7 @@ def seed_all_demo_scenarios():
     db = SessionLocal()
     try:
         print("=" * 60)
-        print("ASTITVA — SEEDING DEMO SCENARIOS")
+        print("PRAVAH — SEEDING DEMO SCENARIOS")
         print("=" * 60)
         user: Any = create_demo_user(db)
         analysis: Any = seed_golden_demo_analysis(db, user.id)

@@ -8,7 +8,7 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import { AstitvaLogo } from "./AstitvaLogo";
+import { PravahLogo } from "./PravahLogo";
 
 /**
  * Left icon rail (56px) — Wise shell. Paper panel, Pebble hairline
@@ -45,14 +45,14 @@ export const IconRail: React.FC<IconRailProps> = ({ currentView = "dashboard" })
       aria-label="Primary navigation"
       className="fixed inset-y-0 left-0 z-40 hidden w-14 flex-col items-center justify-between border-r border-pebble bg-paper py-4 md:flex"
     >
-      {/* Brand mark — Astitva predictive prow mark */}
+      {/* Brand mark — Pravah predictive prow mark */}
       <div className="flex flex-col items-center gap-6">
         <div 
           onClick={() => { window.location.hash = "#dashboard"; }}
           className="cursor-pointer"
           title="Return to Dashboard"
         >
-          <AstitvaLogo size={32} variant="mark-only" />
+          <PravahLogo size={32} variant="mark-only" />
         </div>
 
         <nav aria-label="Workspace sections" className="flex flex-col items-center gap-2">

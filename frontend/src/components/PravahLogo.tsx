@@ -1,6 +1,6 @@
 import React from "react";
 
-interface AstitvaLogoProps {
+interface PravahLogoProps {
   className?: string;
   size?: number;
   variant?: "mark-only" | "full" | "inverse";
@@ -8,11 +8,11 @@ interface AstitvaLogoProps {
 }
 
 /**
- * Astitva Brand Logo:
+ * Pravah Brand Logo:
  * - Option 1: Maritime Horizon & Predictive Delta
  * - Deep Oceanic Navy (#07192f) authority + Electric Cyan (#38bdf8) forward vector
  */
-export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
+export const PravahLogo: React.FC<PravahLogoProps> = ({
   className = "",
   size = 32,
   variant = "mark-only",
@@ -72,7 +72,7 @@ export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
               isInverse ? "text-paper" : "text-forest-ink"
             }`}
           >
-            Astitva
+            Pravah
           </span>
           <span
             className={`font-mono text-[9px] uppercase tracking-[0.1em] px-1.5 py-0.5 rounded font-semibold ${
@@ -98,4 +98,4 @@ export const AstitvaLogo: React.FC<AstitvaLogoProps> = ({
   );
 };
 
-export default AstitvaLogo;
+export default PravahLogo;

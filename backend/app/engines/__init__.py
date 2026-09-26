@@ -1,5 +1,5 @@
 """
-Engines package for Astitva backend.
+Engines package for Pravah backend.
 Phase 1C: ML and Decision Engines (Tasks 162–204).
 """
 from . import (

@@ -20,7 +20,7 @@ interface UserRow {
 export const AdminUsersPage: React.FC = () => {
   const [users, setUsers] = useState<UserRow[]>([
     { id: 1, email: "demo@sail.gov.in", full_name: "SAIL Demo Officer", role: "PROCUREMENT_OFFICER", is_active: true },
-    { id: 2, email: "admin@astitva.gov.in", full_name: "Astitva Administrator", role: "ADMIN", is_active: true },
+    { id: 2, email: "admin@pravah.gov.in", full_name: "Pravah Administrator", role: "ADMIN", is_active: true },
     { id: 3, email: "planner@sail.gov.in", full_name: "Bhilai Logistics Desk", role: "logistics_planner", is_active: true },
     { id: 4, email: "operator@sail.gov.in", full_name: "Paradip Vessel Operator", role: "PLANT_MANAGER", is_active: true },
   ]);

@@ -53,7 +53,7 @@ export const AuditLogPage: React.FC = () => {
     },
     {
       id: 5,
-      user_email: "admin@astitva.gov.in",
+      user_email: "admin@pravah.gov.in",
       action_type: "PORT_UPDATE",
       affected_record_id: "INPRT",
       logged_at: new Date(Date.now() - 86400000).toISOString(),

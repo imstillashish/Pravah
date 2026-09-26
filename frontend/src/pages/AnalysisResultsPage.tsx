@@ -1025,7 +1025,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                   </tr>
                   <tr className="bg-emerald-50/40">
                     <td className="py-2.5 px-3 font-sans font-semibold text-emerald-900">
-                      Predicted Spot Fixture (Astitva)
+                      Predicted Spot Fixture (Pravah)
                     </td>
                     <td className="py-2.5 px-3 text-right text-emerald-700 font-bold">
                       ${data.predicted_rate_pmt.toFixed(2)}

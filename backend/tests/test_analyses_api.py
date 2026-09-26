@@ -186,7 +186,7 @@ def test_decision_record_and_booking_lifecycle():
     # 5. Export decision record -> 200 plain text
     export = client.get(f"/api/analyses/{analysis_id}/export")
     assert export.status_code == 200
-    assert "ASTITVA" in export.text
+    assert "PRAVAH" in export.text
 
     # 6. Book approved decision -> 201
     book_res = client.post("/api/bookings", json={"decision_record_id": analysis_id})

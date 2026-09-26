@@ -139,7 +139,7 @@ export const VendorQuotesPage: React.FC = () => {
             Baltic Shipbroker Quotations & Valuation
           </h1>
           <p className="mt-0.5 text-xs text-slate">
-            Evaluate live charter market indications against Astitva's ML-forecasted P50 freight baseline.
+            Evaluate live charter market indications against Pravah's ML-forecasted P50 freight baseline.
           </p>
         </div>
 
@@ -217,7 +217,7 @@ export const VendorQuotesPage: React.FC = () => {
       <div className="overflow-hidden rounded-card border border-pebble bg-paper">
         <div className="border-b border-pebble bg-linen-mist/20 px-6 py-3.5">
           <h2 className="font-sans text-sm font-bold text-obsidian">
-            Received Broker Quotes vs Astitva P50 Engine
+            Received Broker Quotes vs Pravah P50 Engine
           </h2>
         </div>
 
@@ -228,7 +228,7 @@ export const VendorQuotesPage: React.FC = () => {
                 <th className="px-5 py-3">Broker</th>
                 <th className="px-5 py-3">Vessel Type</th>
                 <th className="px-5 py-3 text-right">Quoted Rate ($/MT)</th>
-                <th className="px-5 py-3 text-right">Astitva P50 Comparison</th>
+                <th className="px-5 py-3 text-right">Pravah P50 Comparison</th>
                 <th className="px-5 py-3 text-center">Delivery Days</th>
                 <th className="px-5 py-3">Valid Until</th>
                 <th className="px-5 py-3 text-center">Classification</th>

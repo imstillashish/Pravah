@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Compass, User, Mail, Lock, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { registerUser } from "../api/auth";
 import { PrimaryButton, Card, TextButton } from "../components/ui";
-import { AstitvaLogo } from "../components/AstitvaLogo";
+import { PravahLogo } from "../components/PravahLogo";
 import { MaritimeGlobe } from "../components/MaritimeGlobe";
 import { cx } from "../lib/cn";
 import type { RegisterPayload } from "../types";
@@ -98,7 +98,7 @@ export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
             className="inline-flex cursor-pointer transition-opacity hover:opacity-85"
             title="Return to Public Overview"
           >
-            <AstitvaLogo size={32} variant="inverse" subtitle={true} />
+            <PravahLogo size={32} variant="inverse" subtitle={true} />
           </a>
         </div>
 

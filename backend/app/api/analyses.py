@@ -561,7 +561,7 @@ def export_decision_record(analysis_id: int, db: Session = Depends(get_db)):
     )
 
     export_content = f"""================================================================================
-ASTITVA — FREIGHT FORECASTING & CHARTERING DECISION RECORD (SIH26006)
+PRAVAH — FREIGHT FORECASTING & CHARTERING DECISION RECORD (SIH26006)
 STEEL AUTHORITY OF INDIA LIMITED (SAIL) — LOGISTICS PROCUREMENT DIVISION
 ================================================================================
 

@@ -34,7 +34,7 @@ def reset_to_clean_state():
     Works seamlessly on both PostgreSQL and SQLite.
     """
     print("=" * 60)
-    print("ASTITVA — RESETTING DEMO DATABASE")
+    print("PRAVAH — RESETTING DEMO DATABASE")
     print("=" * 60)
 
     # Tables to clear in reverse-dependency order
