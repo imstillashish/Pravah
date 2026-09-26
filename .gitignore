@@ -43,3 +43,11 @@ docs/screenshots/
 screenshots/
 local_user_files_backup/
 *.audit.md
+
+# Archives & Bloat
+*.zip
+*.tar.*
+*.rar
+*.psd
+.freebuff/
+.superpowers/
