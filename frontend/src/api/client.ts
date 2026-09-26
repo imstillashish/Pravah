@@ -3,7 +3,7 @@
  * ponytail: Native fetch wrapper avoids heavy extra dependency while fulfilling Task 45 interceptor requirements.
  */
 const getBaseUrl = (): string => {
-  return import.meta.env.VITE_API_BASE_URL || "/api";
+  return import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE || "/api";
 };
 
 export async function apiClient<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {

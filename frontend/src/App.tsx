@@ -19,7 +19,6 @@ import { AdminReferencePage } from "./pages/AdminReferencePage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { AuditLogPage } from "./pages/AuditLogPage";
 import { NewAnalysisModal } from "./components/NewAnalysisModal";
-import { Agentation } from "agentation";
 
 function MainApp() {
   const { user, isLoading } = useAuth();
@@ -89,7 +88,6 @@ function MainApp() {
               setCurrentView("login");
             }}
           />
-          {import.meta.env.DEV && <Agentation />}
         </div>
       );
     }
@@ -103,7 +101,6 @@ function MainApp() {
             setCurrentView("signup");
           }}
         />
-        {import.meta.env.DEV && <Agentation />}
       </div>
     );
   }
@@ -208,8 +205,6 @@ function MainApp() {
           window.location.hash = `#analysis-${analysisId}`;
         }}
       />
-
-      {import.meta.env.DEV && <Agentation />}
     </div>
   );
 }
