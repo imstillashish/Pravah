@@ -83,6 +83,25 @@ def get_root_analyses():
         db.close()
 
 
+@app.post("/analyses")
+def post_root_analyses(payload: dict):
+    from app.database import SessionLocal
+    from app.api.analyses import create_analysis
+    from app.schemas import AnalysisCreate, AnalysisResponse
+    from app.models import User
+    db = SessionLocal()
+    try:
+        user = db.query(User).first()
+        if not user:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=401, detail="User not authenticated")
+        schema_obj = AnalysisCreate(**payload)
+        res = create_analysis(payload=schema_obj, current_user=user, db=db)
+        return AnalysisResponse.model_validate(res).model_dump(mode="json")
+    finally:
+        db.close()
+
+
 @app.get("/metrics/global")
 def get_root_metrics_global():
     from app.api.metrics import get_global_metrics

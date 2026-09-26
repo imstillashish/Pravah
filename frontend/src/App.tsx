@@ -7,7 +7,6 @@ import { LandingPage } from "./pages/LandingPage";
 import { AuthPage } from "./pages/AuthPage";
 import { SignUpPage } from "./pages/SignUpPage";
 import { Dashboard } from "./pages/Dashboard";
-import { NewAnalysisPage } from "./pages/NewAnalysisPage";
 import { AnalysisResultsPage } from "./pages/AnalysisResultsPage";
 import { ScenarioViewPage } from "./pages/ScenarioViewPage";
 import { DecisionRecordPage } from "./pages/DecisionRecordPage";
@@ -19,22 +18,39 @@ import { LiveMapPage } from "./pages/LiveMapPage";
 import { AdminReferencePage } from "./pages/AdminReferencePage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { AuditLogPage } from "./pages/AuditLogPage";
+import { NewAnalysisModal } from "./components/NewAnalysisModal";
 import { Agentation } from "agentation";
 
 function MainApp() {
   const { user, isLoading } = useAuth();
+  const initialHash = window.location.hash.replace("#", "");
   const [currentView, setCurrentView] = useState<string>(
-    window.location.hash.replace("#", "") || (user ? "dashboard" : "landing")
+    initialHash || (user ? "dashboard" : "landing")
   );
+  const [prevView, setPrevView] = useState<string>(
+    initialHash && initialHash !== "new-analysis" ? initialHash : "dashboard"
+  );
+
+  const isAnalysisModalOpen = currentView === "new-analysis";
 
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.replace("#", "");
+      if (hash && hash !== "new-analysis") {
+        setPrevView(hash);
+      } else if (!hash) {
+        setPrevView(user ? "dashboard" : "landing");
+      }
       setCurrentView(hash || (user ? "dashboard" : "landing"));
     };
     window.addEventListener("hashchange", handleHash);
     return () => window.removeEventListener("hashchange", handleHash);
   }, [user]);
+
+  const handleCloseModal = () => {
+    const target = prevView && prevView !== "new-analysis" ? `#${prevView}` : "#dashboard";
+    window.location.hash = target;
+  };
 
   if (isLoading) {
     return (
@@ -109,62 +125,63 @@ function MainApp() {
 
   // Task 404: 16-page router mapping from Features.md
   const renderContent = () => {
+    // When popup modal is open, preserve whichever view was actively being viewed underneath!
+    const effectiveView = currentView === "new-analysis" ? (prevView || "dashboard") : currentView;
+
     // Page 4: Dashboard
-    if (currentView === "dashboard" || currentView === "") {
+    if (effectiveView === "dashboard" || effectiveView === "") {
       return <Dashboard />;
     }
-    // Page 5: New Analysis
-    if (currentView === "new-analysis") {
-      return <NewAnalysisPage />;
-    }
     // Page 6: Analysis Results
-    if (currentView === "results" || currentView.startsWith("analysis")) {
+    if (effectiveView === "results" || effectiveView.startsWith("analysis")) {
       return <AnalysisResultsPage analysisId={activeAnalysisId} />;
     }
     // Page 7: Scenario Studio
-    if (currentView === "scenario") {
+    if (effectiveView === "scenario") {
       return <ScenarioViewPage />;
     }
     // Page 8: Decision Record (Tasks 380–383, 390)
-    if (currentView === "decision" || currentView.startsWith("decision-")) {
+    if (effectiveView === "decision" || effectiveView.startsWith("decision-")) {
       return <DecisionRecordPage analysisId={activeAnalysisId} />;
     }
     // Page 9: My Analyses / History (Tasks 384–386)
-    if (currentView === "history") {
+    if (effectiveView === "history") {
       return <HistoryPage />;
     }
     // Page 10: Booking Page (Tasks 387–390)
-    if (currentView === "booking" || currentView.startsWith("booking-") || currentView === "bookings") {
+    if (effectiveView === "booking" || effectiveView.startsWith("booking-") || effectiveView === "bookings") {
       return <BookingPage bookingId={activeBookingId} />;
     }
     // Page 11: Demand Board (Tasks 391–394)
-    if (currentView === "demand" || currentView === "demand-board") {
+    if (effectiveView === "demand" || effectiveView === "demand-board") {
       return <DemandBoardPage />;
     }
     // Page 12: Vendor Quotes (Tasks 395–397)
-    if (currentView === "quotes" || currentView === "vendor-quotes") {
+    if (effectiveView === "quotes" || effectiveView === "vendor-quotes") {
       return <VendorQuotesPage />;
     }
     // Page 13: Live Map Page (Tasks 398–401)
-    if (currentView === "live-map" || currentView === "map") {
+    if (effectiveView === "live-map" || effectiveView === "map") {
       return <LiveMapPage />;
     }
     // Page 14: Admin Reference Data (Tasks 253, 406)
-    if (currentView === "admin-reference") {
+    if (effectiveView === "admin-reference") {
       return <AdminReferencePage />;
     }
     // Page 15: Admin Users (Tasks 254, 406)
-    if (currentView === "admin-users") {
+    if (effectiveView === "admin-users") {
       return <AdminUsersPage />;
     }
     // Page 16: Audit Logs (Task 255)
-    if (currentView === "audit-logs" || currentView === "audit") {
+    if (effectiveView === "audit-logs" || effectiveView === "audit") {
       return <AuditLogPage />;
     }
 
     // Fallback: Dashboard
     return <Dashboard />;
   };
+
+  const underlyingView = currentView === "new-analysis" ? (prevView || "dashboard") : currentView;
 
   return (
     <div className="min-h-screen bg-paper">
@@ -174,10 +191,21 @@ function MainApp() {
         <div className="min-w-0 flex-1 md:pl-14">
           {renderContent()}
         </div>
-        {currentView === "dashboard" && (
+        {underlyingView === "dashboard" && (
           <RightRail desk={isPlanner ? "planner" : "operator"} />
         )}
       </div>
+
+      {/* Interactive Voyage Analysis Pop-Up Window Modal */}
+      <NewAnalysisModal
+        isOpen={isAnalysisModalOpen}
+        onClose={handleCloseModal}
+        onAnalysisCreated={(analysisId) => {
+          setPrevView(`analysis-${analysisId}`);
+          window.location.hash = `#analysis-${analysisId}`;
+        }}
+      />
+
       {import.meta.env.DEV && <Agentation />}
     </div>
   );

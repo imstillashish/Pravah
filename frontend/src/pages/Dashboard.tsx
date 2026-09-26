@@ -88,7 +88,7 @@ export const Dashboard: React.FC = () => {
           </div>
           {isPlanner && (
             <div className="shrink-0">
-              <PrimaryButton onClick={() => setIsDrawerOpen(true)}>
+              <PrimaryButton onClick={() => { window.location.hash = "#new-analysis"; }}>
                 <Plus className="size-4" aria-hidden="true" />
                 <span>Run New Analysis</span>
               </PrimaryButton>

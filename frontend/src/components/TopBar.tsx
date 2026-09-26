@@ -22,7 +22,6 @@ import {
   Users,
   FileText,
 } from "lucide-react";
-import { AstitvaLogo } from "./AstitvaLogo";
 
 export interface TopBarProps {
   currentView?: string;
@@ -53,7 +52,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
 
   const navItems = [
     { label: "Dashboard", hash: "#dashboard", viewKey: "dashboard", icon: LayoutGrid },
-    { label: "Analysis Results", hash: "#results", viewKey: "results", icon: BarChart3 },
+    { label: "Analysis", hash: "#results", viewKey: "results", icon: BarChart3 },
     { label: "Scenario Studio", hash: "#scenario", viewKey: "scenario", icon: Sliders },
     { label: "Demand Board", hash: "#demand", viewKey: "demand", icon: Layers },
     { label: "Live Map", hash: "#live-map", viewKey: "live-map", icon: Ship },
@@ -71,7 +70,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
 
   const isItemActive = (viewKey: string) => {
     if (viewKey === "dashboard") return currentView === "dashboard" || currentView === "";
-    if (viewKey === "results") return currentView === "results" || currentView.startsWith("analysis");
+    if (viewKey === "results") return currentView === "results" || currentView === "analysis" || currentView.startsWith("analysis") || currentView === "new-analysis";
     if (viewKey === "booking") return currentView === "booking" || currentView.startsWith("booking") || currentView === "bookings";
     if (viewKey === "demand") return currentView === "demand" || currentView === "demand-board";
     if (viewKey === "quotes") return currentView === "quotes" || currentView === "vendor-quotes";
@@ -87,7 +86,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
 
   return (
     <header className="sticky top-0 z-30 border-b border-pebble bg-paper/95 backdrop-blur">
-      <div className="flex h-12 items-center gap-3 px-3 md:pl-[72px] md:pr-4">
+      <div className="flex h-14 items-center gap-3 px-3 md:pl-[72px] md:pr-4">
         {/* Mobile menu trigger */}
         <button
           type="button"
@@ -98,31 +97,21 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
           {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
 
-        {/* Brand mark on mobile */}
-        <div
-          onClick={() => navigateTo("#dashboard")}
-          className="cursor-pointer md:hidden"
-          title="Return to Dashboard"
-        >
-          <AstitvaLogo size={24} variant="mark-only" />
-        </div>
+
 
         {/* Search — Wise pill search on Fog fill */}
-        <div className="flex h-8 max-w-xs flex-1 items-center gap-2 rounded-full border border-transparent bg-fog px-3.5 transition-colors duration-150 focus-within:border-forest-ink focus-within:bg-paper">
-          <Search className="size-4 text-slate" aria-hidden="true" />
+        <div className="flex h-10 flex-1 items-center gap-2.5 rounded-full border border-transparent bg-fog px-4 transition-colors duration-150 focus-within:border-forest-ink focus-within:bg-paper">
+          <Search className="size-5 text-slate shrink-0" aria-hidden="true" />
           <input
             type="search"
             placeholder="Search routes, vessels, analyses"
             aria-label="Search routes, vessels, analyses"
-            className="h-full w-full bg-transparent text-sm text-charcoal placeholder:text-slate focus:outline-none"
+            className="h-full w-full bg-transparent text-base text-charcoal placeholder:text-slate focus:outline-none"
           />
-          <kbd className="hidden rounded-full border border-pebble bg-paper px-1.5 font-mono text-[10px] text-slate sm:inline">
-            /
-          </kbd>
         </div>
 
         {/* Primary View Navigation Pills (Desktop) */}
-        <nav aria-label="Main Views" className="hidden lg:flex items-center gap-1 ml-2">
+        <nav aria-label="Main Views" className="hidden lg:flex items-center gap-1.5 ml-3">
           {navItems.map((item) => {
             const active = isItemActive(item.viewKey);
             return (
@@ -130,7 +119,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
                 key={item.hash}
                 type="button"
                 onClick={() => navigateTo(item.hash)}
-                className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
+                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
                   active
                     ? "bg-linen-mist text-forest-ink border border-forest-ink/20 shadow-xs"
                     : "text-charcoal hover:bg-fog hover:text-forest-ink"
@@ -150,7 +139,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
                   key={item.hash}
                   type="button"
                   onClick={() => navigateTo(item.hash)}
-                  className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
+                  className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
                     active
                       ? "bg-linen-mist text-forest-ink border border-forest-ink/20 shadow-xs"
                       : "text-charcoal hover:bg-fog hover:text-forest-ink"
@@ -164,7 +153,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
           <button
             type="button"
             onClick={() => navigateTo(auditItem.hash)}
-            className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
               isItemActive(auditItem.viewKey)
                 ? "bg-linen-mist text-forest-ink border border-forest-ink/20 shadow-xs"
                 : "text-charcoal hover:bg-fog hover:text-forest-ink"
