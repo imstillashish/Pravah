@@ -4,7 +4,10 @@ ARIMA Baseline Model and Forecast Engine for BDRY time-series forecasting.
 import os
 import joblib
 import pandas as pd
-from statsmodels.tsa.arima.model import ARIMA
+try:
+    from statsmodels.tsa.arima.model import ARIMA
+except ImportError:
+    ARIMA = None
 
 import sys
 from pathlib import Path

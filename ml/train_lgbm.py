@@ -1,6 +1,9 @@
 import os
 import joblib
-import lightgbm as lgb
+try:
+    import lightgbm as lgb
+except ImportError:
+    lgb = None
 import pandas as pd
 import sys
 from pathlib import Path

@@ -5,7 +5,7 @@ ASTITVA is an intelligent maritime logistics and vessel tracking platform design
 ## Architecture
 
 - **Backend**: FastAPI (Python), SQLAlchemy, Pydantic, SQLite (local dev)
-- **Frontend**: React 19, TypeScript, TailwindCSS, Vite, Lucide Icons
+- **Frontend**: React 19, TypeScript, TailwindCSS, Vite, Phosphor Icons (@phosphor-icons/react)
 
 ## Getting Started
 

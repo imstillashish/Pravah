@@ -6,6 +6,7 @@ export interface User {
   email: string;
   full_name: string;
   role: "logistics_planner" | "port_operator" | "ADMIN" | "PLANT_MANAGER" | "PROCUREMENT_OFFICER" | string;
+  is_admin?: boolean;
   is_active: boolean;
 }
 
@@ -15,7 +16,6 @@ interface AuthContextType {
   isLoading: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
-  switchRole: (targetRole: "logistics_planner" | "port_operator") => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -64,30 +64,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
-  const switchRole = async (targetRole: "logistics_planner" | "port_operator") => {
-    if (!token) return false;
-    try {
-      const res = await fetch(`${API_BASE}/auth/switch-role`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ target_role: targetRole })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        login(data.access_token, data.user);
-        return true;
-      }
-    } catch (err) {
-      console.error("Role switch error:", err);
-    }
-    return false;
-  };
-
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout, switchRole }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

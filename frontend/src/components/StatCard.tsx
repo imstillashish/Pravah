@@ -3,7 +3,7 @@ import type { MotionValue } from "framer-motion";
 import { useReducedMotion, useTransform } from "framer-motion";
 import { motion } from "framer-motion";
 import { Card } from "./ui";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUp, ArrowDown } from "@phosphor-icons/react";
 import { useSpringNumber } from "../lib/useSpringNumber";
 import { cx } from "../lib/cn";
 
