@@ -1,5 +1,6 @@
 import React from "react";
-import { Activity, Anchor, Clock, Fuel, Ship, TrendingDown } from "lucide-react";
+import { Anchor, Clock } from "lucide-react";
+import { Pulse, GasPump, Boat, TrendDown } from "@phosphor-icons/react";
 import { cx } from "../lib/cn";
 
 /**
@@ -22,7 +23,7 @@ type Row = {
 
 const PLANNER_ROWS: Row[] = [
   {
-    icon: Activity,
+    icon: Pulse,
     iconClass: "text-forest-ink",
     label: "BDI Composite",
     sub: "Baltic Dry Index",
@@ -31,7 +32,7 @@ const PLANNER_ROWS: Row[] = [
     deltaTone: "up",
   },
   {
-    icon: TrendingDown,
+    icon: TrendDown,
     iconClass: "text-slate",
     label: "Route Benchmark",
     sub: "Australia → Paradip",
@@ -40,14 +41,14 @@ const PLANNER_ROWS: Row[] = [
     deltaTone: "down",
   },
   {
-    icon: Fuel,
+    icon: GasPump,
     iconClass: "text-slate",
     label: "VLSFO Singapore",
     sub: "Bunker fuel",
     value: "$612.50/MT",
   },
   {
-    icon: Ship,
+    icon: Boat,
     iconClass: "text-slate",
     label: "Capesize 5TC",
     sub: "Daily timecharter",

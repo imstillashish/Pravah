@@ -1,43 +1,51 @@
 import React, { useState } from "react";
-import { Compass, User, Mail, Lock, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  EnvelopeSimple,
+  User,
+  ArrowRight,
+  CheckCircle,
+  WarningCircle,
+  IdentificationBadge,
+  ShieldCheck,
+  Buildings,
+  NavigationArrow,
+  Info,
+} from "@phosphor-icons/react";
 import { registerUser } from "../api/auth";
 import { PrimaryButton, Card, TextButton } from "../components/ui";
+import { PasswordInput } from "../components/PasswordInput";
 import { AstitvaLogo } from "../components/AstitvaLogo";
-import { MaritimeGlobe } from "../components/MaritimeGlobe";
-import { cx } from "../lib/cn";
+import { SignUpCoordinatorIllustration } from "../assets/illustrations/AuthIllustrations";
 import type { RegisterPayload } from "../types";
+
+/*
+ * SignUpPage — registration surface (admin-approval flow).
+ *
+ * De-slop pass (2026-09-24): flat Forest Ink hero (no gradient, texture,
+ * glow, or glass), token-only colors, sentence-case labels, inline field
+ * errors tied via aria-describedby, and the "Organizational Role"
+ * selector removed — the backend register schema has no role field, so
+ * the control was dead UI pretending to do something.
+ */
+const INPUT_CLASS =
+  "w-full rounded-card border border-pebble bg-paper py-2.5 pl-10 pr-3.5 text-sm " +
+  "text-charcoal placeholder:text-slate transition-colors duration-150 " +
+  "hover:border-charcoal focus:border-forest-ink focus:outline-none";
+
+const LABEL_CLASS = "mb-1.5 block text-sm font-medium text-charcoal";
+
+const FIELD_ERROR_CLASS = "mt-1.5 text-xs text-alarm-red";
 
 export interface SignUpPageProps {
   onSwitchToLogin?: () => void;
 }
 
-const DESK_OPTIONS = [
-  {
-    value: "logistics_planner" as const,
-    code: "PLN-DESK",
-    title: "Logistics Planner",
-    sub: "Procurement & contracts",
-  },
-  {
-    value: "plant_manager" as const,
-    code: "PLT-MGR",
-    title: "Plant Manager",
-    sub: "Stock & clearance",
-  },
-  {
-    value: "admin" as const,
-    code: "SYS-ADM",
-    title: "Administrator",
-    sub: "User approvals",
-  },
-];
-
 export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
   const [fullName, setFullName] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<"logistics_planner" | "plant_manager" | "admin">("logistics_planner");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -45,7 +53,24 @@ export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
   // Validation rules
   const passwordsMatch = password.length > 0 && password === confirmPassword;
   const passwordLengthValid = password.length >= 8;
-  const isFormValid = fullName.trim() !== "" && email.trim() !== "" && passwordLengthValid && passwordsMatch;
+  const employeeIdValid = /^SAIL-[0-9]{4,6}$/.test(employeeId.trim());
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const isFormValid =
+    fullName.trim() !== "" && employeeIdValid && emailValid && passwordLengthValid && passwordsMatch;
+
+  // web.dev: a disabled submit must explain what's missing, or users
+  // retry-tap it thinking it's broken.
+  const missingRequirements: string[] = [];
+  if (fullName.trim() === "") missingRequirements.push("your full name");
+  if (!employeeIdValid) missingRequirements.push("an employee ID like SAIL-12345");
+  if (!emailValid) missingRequirements.push("a valid work email");
+  if (!passwordLengthValid) missingRequirements.push("a password of 8+ characters");
+  if (password.length > 0 && confirmPassword.length > 0 && !passwordsMatch)
+    missingRequirements.push("matching passwords");
+  const requirementText =
+    missingRequirements.length > 0
+      ? `To continue, add ${missingRequirements.slice(0, 2).join(" and ")}${missingRequirements.length > 2 ? "…" : ""}.`
+      : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,282 +85,334 @@ export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
         email: email.trim(),
         password,
         confirm_password: confirmPassword,
-        role,
+        employee_id: employeeId.trim(),
       };
 
       const res = await registerUser(payload);
-      setSuccessMsg(res.message || "Account created successfully. An admin must activate your account before you can log in.");
+      setSuccessMsg(
+        res.message ||
+          "Account created. A port admin must activate it before you can sign in."
+      );
     } catch (err: unknown) {
       if (err instanceof Error) {
         try {
           const parsed = JSON.parse(err.message);
-          setErrorMsg(parsed.detail || err.message);
+          const msg =
+            typeof parsed.detail === "string"
+              ? parsed.detail
+              : Array.isArray(parsed.detail) && parsed.detail[0]?.msg
+              ? parsed.detail[0].msg
+              : err.message;
+          setErrorMsg(msg || "Couldn't create your account. Please check your details.");
         } catch {
-          setErrorMsg(err.message || "Failed to create account. Please check your credentials.");
+          setErrorMsg(err.message || "Couldn't create your account. Please check your details.");
         }
       } else {
-        setErrorMsg("Failed to create account. Please check your credentials.");
+        setErrorMsg("Couldn't create your account. Please check your details.");
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const INPUT_CLASS =
-    "w-full rounded-card border border-pebble bg-paper py-2.5 pl-10 pr-3.5 text-sm " +
-    "text-charcoal placeholder:text-slate transition-colors duration-150 " +
-    "hover:border-charcoal focus:border-forest-ink focus:outline-none";
-
-  const LABEL_CLASS = "mb-1.5 block text-sm font-normal text-charcoal";
+  const errorBanner = errorMsg && (
+    <div
+      role="alert"
+      className="mt-5 flex items-start gap-3 rounded-card border border-pebble bg-fog p-4"
+    >
+      <WarningCircle className="mt-0.5 size-5 shrink-0 text-alarm-red" aria-hidden="true" />
+      <div className="flex-1 text-sm font-semibold text-alarm-red">{errorMsg}</div>
+    </div>
+  );
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-[45fr_55fr]">
-      {/* Forest Ink hero panel — matched directly from AuthPage */}
-      <aside className="relative m-4 hidden flex-col justify-between overflow-hidden rounded-[28px] bg-forest-ink p-12 lg:flex">
-        <div className="relative z-10">
-          <a
-            href="#landing"
-            className="inline-flex cursor-pointer transition-opacity hover:opacity-85"
-            title="Return to Public Overview"
-          >
-            <AstitvaLogo size={32} variant="inverse" subtitle={true} />
-          </a>
+    <div className="grid min-h-screen bg-paper lg:grid-cols-[48fr_52fr]">
+      {/*
+        Hero panel: one flat Forest Ink surface, same treatment as the
+        login hero — the gradient, texture grid, and glass card were
+        removed as documented AI-slop tells.
+      */}
+      <aside className="relative m-3 hidden flex-col justify-between overflow-hidden rounded-2xl bg-forest-ink p-10 text-paper lg:flex xl:p-12">
+        {/* Brand identity header */}
+        <div className="relative z-10 flex items-center justify-between">
+          <AstitvaLogo size={32} variant="inverse" subtitle={true} />
         </div>
 
-        {/* 3D Maritime Route Globe */}
-        <div className="absolute right-[-40px] top-[18%] z-0 h-[380px] w-[380px] opacity-75 xl:right-[10px] xl:h-[460px] xl:w-[460px]">
-          <MaritimeGlobe className="h-full w-full" />
-        </div>
-
-        <div className="relative z-10">
-          <h1 className="text-5xl font-black leading-[0.9] tracking-[-0.03em] text-lime-voltage xl:text-[64px] 2xl:text-[89px]">
-            Intelligent freight chartering.
+        {/* Center: headline + sub + illustration, direct on navy */}
+        <div className="relative z-10 my-auto">
+          <h1 className="max-w-[14ch] text-[2.5rem] font-bold leading-[1.05] tracking-tight text-paper xl:text-[2.75rem]">
+            Unified chartering for Indian steel.
           </h1>
-          <p className="mt-5 max-w-[46ch] text-base leading-relaxed text-paper/90">
-            Join SAIL&apos;s unified logistics desk to forecast voyage rates, monitor berthing
-            congestion, and coordinate raw material deliveries with AI clarity.
+          <p className="mt-4 max-w-[46ch] text-sm leading-relaxed text-paper/75">
+            Coordinate coking coal shipments across Paradip, Vizag, Gopalpur, and Haldia.
           </p>
-          <PrimaryButton
-            className="mt-8"
-            onClick={() => onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "#login")}
-          >
-            Sign in to existing account
-            <ArrowRight className="size-4" aria-hidden="true" />
-          </PrimaryButton>
+
+          {/* Approval note — the one thing new users must know */}
+          <div className="mt-5 flex max-w-[46ch] items-start gap-2.5 rounded-card border border-white/15 bg-white/5 p-3.5">
+            <Info className="mt-0.5 size-4 shrink-0 text-lime-voltage" aria-hidden="true" />
+            <p className="text-xs leading-relaxed text-paper/85">
+              New accounts are reviewed by a port admin before access is granted.
+            </p>
+          </div>
+
+          {/* Transhumans "chillin" character */}
+          <SignUpCoordinatorIllustration size={300} className="mt-8 select-none" />
         </div>
 
-        <div className="relative z-10 flex items-center justify-between font-mono text-xs text-paper/60">
-          <span>Steel in motion, rates on time</span>
-          <span className="flex items-center gap-1.5 text-lime-voltage">
-            <span className="size-1.5 animate-pulse rounded-full bg-lime-voltage" />
-            Live Global Route Radar
-          </span>
+        {/* Desk highlights — facts the product can back up */}
+        <div className="relative z-10 grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-lime-voltage">
+              <Buildings className="size-4" aria-hidden="true" />
+            </div>
+            <div className="text-left leading-tight">
+              <div className="font-mono text-xs font-semibold text-paper">5 Plants</div>
+              <div className="text-[11px] text-paper/70">Demand aggregation</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-lime-voltage">
+              <NavigationArrow className="size-4" aria-hidden="true" />
+            </div>
+            <div className="text-left leading-tight">
+              <div className="font-mono text-xs font-semibold text-paper">Paradip · Vizag</div>
+              <div className="text-[11px] text-paper/70">+ Gopalpur &amp; Haldia</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-lime-voltage">
+              <ShieldCheck className="size-4" aria-hidden="true" />
+            </div>
+            <div className="text-left leading-tight">
+              <div className="font-mono text-xs font-semibold text-paper">Admin approved</div>
+              <div className="text-[11px] text-paper/70">Reviewed before access</div>
+            </div>
+          </div>
         </div>
       </aside>
 
-      {/* Form side — Paper canvas, card centered */}
-      <main className="flex flex-col justify-center px-4 py-10 sm:px-8">
-        {/* Mobile banner — condensed hero */}
-        <div className="mb-6 rounded-[28px] bg-forest-ink p-6 lg:hidden">
-          <div className="mb-3 flex items-center justify-between">
-            <a href="#landing" className="flex items-center gap-2">
-              <span className="flex size-6 items-center justify-center rounded-full bg-lime-voltage text-forest-ink">
-                <Compass className="size-4" aria-hidden="true" />
-              </span>
-              <span className="text-sm font-medium text-paper">Intelligent Freight Portal</span>
-            </a>
-            <a href="#landing" className="font-mono text-xs font-semibold text-lime-voltage hover:underline">
-              Overview →
-            </a>
+      {/* Form side — Paper canvas */}
+      <main className="flex flex-col justify-center px-4 py-8 sm:px-8 lg:px-12 xl:px-16">
+        {/* Mobile banner — flat navy, no badge */}
+        <div className="mb-6 rounded-2xl bg-forest-ink p-6 text-paper lg:hidden">
+          <div className="mb-3">
+            <AstitvaLogo size={26} variant="inverse" subtitle={false} />
           </div>
-          <h1 className="text-2xl font-black leading-tight tracking-[-0.02em] text-lime-voltage">
-            Intelligent freight chartering.
+          <h1 className="text-2xl font-bold tracking-tight text-paper">
+            Create your operations account.
           </h1>
+          <p className="mt-2 text-xs leading-relaxed text-paper/75">
+            New accounts are reviewed by a port admin before access is granted.
+          </p>
         </div>
 
-        <Card className="mx-auto w-full max-w-md p-6 sm:p-8">
-          <h2 className="text-xl font-semibold leading-tight text-forest-ink">
-            Create your operations account
-          </h2>
-          <p className="mt-1.5 text-sm leading-relaxed text-charcoal">
-            Register your credentials to access SAIL&apos;s freight forecasting desk and port operations.
-          </p>
+        <div className="mx-auto w-full max-w-lg">
+          <Card className="border border-pebble/80 bg-paper p-6 shadow-lg sm:p-8">
+            <h2 className="mb-1 text-2xl font-bold tracking-tight text-forest-ink">
+              Create your operations account
+            </h2>
+            <p className="text-sm leading-relaxed text-charcoal">
+              Register for access to the freight forecasting console. A port admin
+              activates new accounts.
+            </p>
 
-          {errorMsg && (
-            <div
-              role="alert"
-              className="mt-5 flex items-start gap-3 rounded-card border border-pebble bg-fog p-4"
-            >
-              <AlertCircle className="mt-0.5 size-5 shrink-0 text-alarm-red" aria-hidden="true" />
-              <div className="flex-1 text-sm font-semibold text-alarm-red">{errorMsg}</div>
-            </div>
-          )}
+            {errorBanner}
 
-          {successMsg ? (
-            <div className="mt-6 rounded-card border border-pebble bg-linen-mist p-6 text-center">
-              <CheckCircle2 className="mx-auto mb-2.5 size-10 text-forest-ink" />
-              <h3 className="text-base font-semibold text-forest-ink">Registration Submitted</h3>
-              <p className="mt-1.5 text-sm text-forest-ink leading-relaxed">{successMsg}</p>
-              <div className="mt-6">
-                <PrimaryButton
-                  type="button"
-                  onClick={() => onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "#login")}
-                  className="w-full justify-center"
-                >
-                  Return to Sign In
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </PrimaryButton>
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              {/* Full Name */}
-              <div>
-                <label htmlFor="signup-name" className={LABEL_CLASS}>
-                  Full Name
-                </label>
-                <div className="relative">
-                  <User className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
-                  <input
-                    id="signup-name"
-                    type="text"
-                    required
-                    placeholder="e.g. Ramesh Kumar"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className={INPUT_CLASS}
-                  />
+            {successMsg ? (
+              <div className="mt-6 rounded-card border border-pebble bg-emerald-wash p-6 text-center">
+                <CheckCircle className="mx-auto mb-2.5 size-12 text-emerald-profit" aria-hidden="true" />
+                <h3 className="text-lg font-bold text-obsidian">Registration submitted</h3>
+                <p className="mt-2 text-sm leading-relaxed text-charcoal">{successMsg}</p>
+                <div className="mt-6">
+                  <PrimaryButton
+                    type="button"
+                    onClick={() =>
+                      onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "#login")
+                    }
+                    className="w-full justify-center py-2.5"
+                  >
+                    Return to sign in
+                    <ArrowRight className="size-4" aria-hidden="true" />
+                  </PrimaryButton>
                 </div>
               </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
+                {/* Identity row: full name + employee ID */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="signup-name" className={LABEL_CLASS}>
+                      Full name
+                    </label>
+                    <div className="relative">
+                      <User
+                        className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate"
+                        aria-hidden="true"
+                      />
+                      <input
+                        id="signup-name"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        required
+                        placeholder="e.g. Ramesh Kumar"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className={INPUT_CLASS}
+                      />
+                    </div>
+                  </div>
 
-              {/* Work Email / Employee ID */}
-              <div>
-                <label htmlFor="signup-email" className={LABEL_CLASS}>
-                  Work Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
-                  <input
-                    id="signup-email"
-                    type="text"
-                    required
-                    placeholder="name@sail.gov.in"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className={INPUT_CLASS}
-                  />
+                  <div>
+                    <label htmlFor="employee-id" className={LABEL_CLASS}>
+                      Employee ID
+                    </label>
+                    <div className="relative">
+                      <IdentificationBadge
+                        className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate"
+                        aria-hidden="true"
+                      />
+                      <input
+                        id="employee-id"
+                        name="employee-id"
+                        type="text"
+                        inputMode="text"
+                        required
+                        placeholder="SAIL-12345"
+                        value={employeeId}
+                        onChange={(e) => setEmployeeId(e.target.value)}
+                        aria-invalid={employeeId.length > 0 && !employeeIdValid}
+                        aria-describedby={
+                          employeeId.length > 0 && !employeeIdValid ? "employee-id-error" : undefined
+                        }
+                        className={INPUT_CLASS}
+                      />
+                    </div>
+                    {employeeId.length > 0 && !employeeIdValid && (
+                      <p id="employee-id-error" className={FIELD_ERROR_CLASS}>
+                        Employee IDs look like SAIL-12345.
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Operational Desk Selection */}
-              <div>
-                <span className={LABEL_CLASS}>Assigned Operational Desk</span>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                  {DESK_OPTIONS.map((desk) => {
-                    const selected = role === desk.value;
-                    return (
-                      <button
-                        key={desk.value}
-                        type="button"
-                        onClick={() => setRole(desk.value)}
-                        aria-pressed={selected}
-                        className={cx(
-                          "flex min-h-[70px] cursor-pointer flex-col justify-between rounded-card border p-2.5 text-left transition-colors duration-150",
-                          selected
-                            ? "border-forest-ink bg-linen-mist"
-                            : "border-pebble bg-paper hover:border-forest-ink"
-                        )}
-                      >
-                        <div className="flex w-full items-center justify-between">
-                          <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-                            {desk.code}
-                          </span>
-                          <span
-                            aria-hidden="true"
-                            className={cx(
-                              "size-2.5 rounded-full transition-colors",
-                              selected ? "bg-forest-ink" : "border border-pebble"
-                            )}
-                          />
-                        </div>
-                        <div className="mt-1">
-                          <div className="text-xs font-medium text-forest-ink leading-tight">{desk.title}</div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Password */}
-              <div>
-                <div className="flex items-center justify-between">
-                  <label htmlFor="signup-password" className={LABEL_CLASS}>
-                    Password
+                {/* Work email */}
+                <div>
+                  <label htmlFor="signup-email" className={LABEL_CLASS}>
+                    Work email
                   </label>
-                  <span className="text-[11px] font-mono text-slate">Min. 8 characters</span>
+                  <div className="relative">
+                    <EnvelopeSimple
+                      className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate"
+                      aria-hidden="true"
+                    />
+                    <input
+                      id="signup-email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      placeholder="name@sail.gov.in"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      aria-invalid={email.length > 0 && !emailValid}
+                      aria-describedby={
+                        email.length > 0 && !emailValid ? "signup-email-error" : undefined
+                      }
+                      className={INPUT_CLASS}
+                    />
+                  </div>
+                  {email.length > 0 && !emailValid && (
+                    <p id="signup-email-error" className={FIELD_ERROR_CLASS}>
+                      That doesn&apos;t look like a complete email address.
+                    </p>
+                  )}
                 </div>
-                <div className="relative">
-                  <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
-                  <input
-                    id="signup-password"
-                    type="password"
-                    required
-                    minLength={8}
-                    placeholder="At least 8 characters"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={INPUT_CLASS}
-                  />
-                </div>
-              </div>
 
-              {/* Confirm Password */}
-              <div>
-                <label htmlFor="signup-confirm-password" className={LABEL_CLASS}>
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" />
-                  <input
-                    id="signup-confirm-password"
-                    type="password"
-                    required
-                    placeholder="Re-enter your password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={INPUT_CLASS}
-                  />
+                {/* Password fields — confirmed because the backend contract
+                    requires confirm_password. */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <div className="mb-1.5 flex items-center justify-between">
+                      <label htmlFor="signup-password" className={LABEL_CLASS}>
+                        Password
+                      </label>
+                      <span className="text-[11px] text-slate">8+ characters</span>
+                    </div>
+                    <PasswordInput
+                      id="signup-password"
+                      name="new-password"
+                      autoComplete="new-password"
+                      required
+                      minLength={8}
+                      placeholder="At least 8 characters"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      aria-invalid={password.length > 0 && !passwordLengthValid}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="signup-confirm-password" className={LABEL_CLASS}>
+                      Confirm password
+                    </label>
+                    <PasswordInput
+                      id="signup-confirm-password"
+                      name="confirm-password"
+                      autoComplete="new-password"
+                      required
+                      placeholder="Re-enter your password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      aria-invalid={confirmPassword.length > 0 && !passwordsMatch}
+                      aria-describedby={
+                        confirmPassword.length > 0 && !passwordsMatch
+                          ? "signup-match-error"
+                          : undefined
+                      }
+                    />
+                  </div>
                 </div>
+
                 {confirmPassword.length > 0 && !passwordsMatch && (
-                  <p className="mt-1 text-xs text-alarm-red font-medium">
-                    Passwords do not match.
+                  <p id="signup-match-error" className={FIELD_ERROR_CLASS}>
+                    Passwords don&apos;t match yet.
                   </p>
                 )}
-              </div>
 
-              <PrimaryButton
-                type="submit"
-                disabled={!isFormValid || loading}
-                className="mt-5 w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                {/* Disabled until valid — the form is long, so the gated
+                    submit is correct here; the helper explains what's
+                    missing so the disabled state is never a dead end. */}
+                <PrimaryButton
+                  type="submit"
+                  disabled={!isFormValid || loading}
+                  aria-describedby={requirementText ? "signup-requirements" : undefined}
+                  className="mt-3 w-full justify-center py-3 text-sm font-semibold"
+                >
+                  <span>{loading ? "Creating account…" : "Create account"}</span>
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </PrimaryButton>
+                <p id="signup-requirements" aria-live="polite" className="min-h-4 text-center text-xs text-slate">
+                  {requirementText ?? ""}
+                </p>
+              </form>
+            )}
+
+            <div className="mt-5 border-t border-pebble pt-4 text-center">
+              <span className="text-xs text-slate">Already have an active account? </span>
+              <TextButton
+                onClick={() =>
+                  onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "#login")
+                }
               >
-                <span>{loading ? "Creating Account…" : "Create Account"}</span>
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </PrimaryButton>
-            </form>
-          )}
-
-          <div className="mt-6 border-t border-pebble pt-5 text-center">
-            <TextButton
-              onClick={() => onSwitchToLogin ? onSwitchToLogin() : (window.location.hash = "#login")}
-            >
-              Already have an account? Sign in here
-            </TextButton>
-          </div>
-        </Card>
+                Sign in here
+              </TextButton>
+            </div>
+          </Card>
+        </div>
       </main>
     </div>
   );
 };
-
-export default SignUpPage;

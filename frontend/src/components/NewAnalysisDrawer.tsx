@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useId, useRef, useCallback } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { X, Ship, CheckCircle, Loader2, AlertTriangle } from "lucide-react";
+import { X, CheckCircle, AlertTriangle } from "lucide-react";
+import { Boat, SpinnerGap } from "@phosphor-icons/react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
 import { AnimatedSvgChart } from "./AnimatedSvgChart";
@@ -679,7 +680,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                     <div className="flex items-center justify-between">
                       <span className={GROUP_LABEL_CLASS}>Vessel Recommendation</span>
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-linen-mist px-2.5 py-1 font-mono text-xs font-medium text-forest-ink">
-                        <Ship className="size-3.5 text-forest-ink" aria-hidden="true" />
+                        <Boat className="size-3.5 text-forest-ink" aria-hidden="true" />
                         <span>{recommendedVessel}</span>
                       </span>
                     </div>
@@ -752,7 +753,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                 >
                   {isSubmitting ? (
                     <span className="inline-flex items-center gap-1.5">
-                      <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+                      <SpinnerGap className="size-3.5 animate-spin" aria-hidden="true" />
                       <span>Saving…</span>
                     </span>
                   ) : (
@@ -768,7 +769,7 @@ export const NewAnalysisDrawer: React.FC<NewAnalysisDrawerProps> = ({
                 >
                   {isSubmitting ? (
                     <span className="inline-flex items-center gap-1.5">
-                      <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+                      <SpinnerGap className="size-3.5 animate-spin" aria-hidden="true" />
                       <span>Recording Forecast…</span>
                     </span>
                   ) : (

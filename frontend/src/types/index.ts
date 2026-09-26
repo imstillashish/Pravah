@@ -150,5 +150,6 @@ export interface RegisterPayload {
   email: string;
   password: string;
   confirm_password?: string;
-  role: "logistics_planner" | "plant_manager" | "admin" | "port_operator";
+  role?: "logistics_planner" | "plant_manager" | "admin" | "port_operator";
+  employee_id?: string;
 }

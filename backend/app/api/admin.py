@@ -23,7 +23,7 @@ class PortUpdate(BaseModel):
     source: str
 
 def require_admin(current_user: User = Depends(get_current_user)):
-    if current_user.role.lower() not in ["admin", "superadmin", "logistics_planner", "procurement_officer", "plant_manager"]:
+    if current_user.role.lower() not in ["admin", "superadmin", "logistics_planner"]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin privileges required")
     return current_user
 

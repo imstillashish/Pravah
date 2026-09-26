@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { RefreshCw, Layers, ArrowUp, ArrowRight } from "lucide-react";
+import { Layers, ArrowUp, ArrowRight } from "lucide-react";
+import { ArrowClockwise } from "@phosphor-icons/react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
 import { Card, Pill, SecondaryButton, SectionHeader, LoadingSkeleton, EmptyState } from "./ui";
@@ -131,7 +132,7 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
             aria-label="Refresh recent analyses"
             className="px-2.5 py-1.5 text-xs"
           >
-            <RefreshCw
+            <ArrowClockwise
               className={`size-3.5 ${isLoading ? "animate-spin" : ""}`}
               aria-hidden="true"
             />

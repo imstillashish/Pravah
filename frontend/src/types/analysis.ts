@@ -12,6 +12,8 @@ export interface AnalysisObject {
   benchmark_spot_pmt: number;
   estimated_savings_usd: number;
   status: "draft" | "finalized" | "overridden";
+  current_stock_mt?: number | null;
+  daily_consumption_mt?: number | null;
   created_at: string;
 }
 
@@ -20,7 +22,6 @@ export interface MetricsSeries {
   freight: number[];
   bunker: number[];
 }
-
 export interface GlobalMetrics {
   bdi_index: number;
   bdi_change_pct: number;
@@ -30,4 +31,20 @@ export interface GlobalMetrics {
   capesize_daily_usd: number;
   panamax_daily_usd: number;
   series?: MetricsSeries; // optional: fallback path (spec §6) may omit it
+}
+
+export interface SummaryAlert {
+  kind: "stockout" | "freshness";
+  severity: "high" | "info";
+  title: string;
+  message: string;
+}
+
+export interface DashboardSummary {
+  total_analyses: number;
+  drafts: number;
+  finalized: number;
+  total_savings_usd: number;
+  latest_analysis_at: string | null;
+  alerts: SummaryAlert[];
 }
