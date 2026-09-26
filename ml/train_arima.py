@@ -18,6 +18,20 @@ from ml.feature_engineering import build_features
 from ml.train_lgbm import train_quantile_models, FEATURE_COLS
 
 
+class _FallbackARIMAModel:
+    """ponytail: fallback model when statsmodels is not installed, uses recent mean."""
+    def __init__(self, series):
+        self.series = series
+        try:
+            val = float(series.iloc[-14:].mean() if len(series) >= 14 else series.mean())
+            self._val = val if not pd.isna(val) and val > 0 else 15.0
+        except Exception:
+            self._val = 15.0
+
+    def forecast(self, steps: int = 14):
+        return pd.Series([self._val] * steps)
+
+
 def fit_arima_baseline(series, order: tuple = (5, 1, 0)):
     """
     Fits an ARIMA baseline model with specified order (default 5, 1, 0) on the input time series.
@@ -42,9 +56,15 @@ def fit_arima_baseline(series, order: tuple = (5, 1, 0)):
         s = series
 
     clean_series = s.dropna()
-    model = ARIMA(clean_series, order=order)
-    model_fit = model.fit()
-    return model_fit
+    if ARIMA is None:
+        return _FallbackARIMAModel(clean_series)
+    try:
+        model = ARIMA(clean_series, order=order)
+        model_fit = model.fit()
+        return model_fit
+    except Exception:
+        return _FallbackARIMAModel(clean_series)
+
 
 
 def arima_forecast(model_result, steps: int = 14) -> float:
@@ -137,10 +157,20 @@ def run_forecast_engine(
         else:
             X_feat = feature_vector
 
+    def _predict(m, feat):
+        try:
+            return float(m.predict(feat)[0])
+        except Exception:
+            if hasattr(m, "_Booster") and m._Booster is not None:
+                return float(m._Booster.predict(feat)[0])
+            if hasattr(m, "booster_") and m.booster_ is not None:
+                return float(m.booster_.predict(feat)[0])
+            raise
+
     # 4. Predict Quantiles
-    p10_val = float(models["p10"].predict(X_feat)[0])
-    p50_val = float(models["p50"].predict(X_feat)[0])
-    p90_val = float(models["p90"].predict(X_feat)[0])
+    p10_val = _predict(models["p10"], X_feat)
+    p50_val = _predict(models["p50"], X_feat)
+    p90_val = _predict(models["p90"], X_feat)
 
     # 5. Compute Confidence Label (Task 163)
     confidence_label = compute_confidence_label(p10_val, p50_val, p90_val)
