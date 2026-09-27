@@ -377,7 +377,7 @@ export const DemandBoardPage: React.FC = () => {
       )}
 
       {/* Task 392: Merge Action Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-pebble bg-paper p-4">
+      <div data-tour="demand-consolidation" className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-pebble bg-paper p-4">
         <div className="flex items-center gap-3">
           <GitMerge className="size-5 text-forest-ink" />
           <div>

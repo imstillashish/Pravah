@@ -329,7 +329,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
 
           {/* Quick Demo Accounts Selection */}
           {!isRegister && (
-            <div className="mt-6 border-t border-pebble pt-5">
+            <div data-tour="auth-demo-accounts" className="mt-6 border-t border-pebble pt-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate">
                   Quick Demo Access

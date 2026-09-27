@@ -187,7 +187,7 @@ export const AuditLogPage: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="rounded-card border border-pebble bg-paper overflow-hidden">
+      <div data-tour="audit-ledger" className="rounded-card border border-pebble bg-paper overflow-hidden">
         <div className="p-4 border-b border-pebble bg-linen-mist/30 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShieldCheck className="size-4 text-forest-ink" />

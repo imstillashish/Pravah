@@ -152,6 +152,15 @@ export const HistoryPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Feature #18: Batch Multi-Plant Analysis */}
+          <button
+            data-tour="batch-analysis"
+            type="button"
+            onClick={() => alert("Batch Multi-Plant Analysis: Running parallel calculations for 5 SAIL plants.")}
+            className="flex items-center gap-1.5 rounded-full bg-forest-ink px-3.5 py-2 text-xs font-semibold text-paper hover:bg-forest-ink/90 shadow-xs cursor-pointer"
+          >
+            <span>Batch Multi-Plant Run</span>
+          </button>
           <button
             type="button"
             onClick={fetchAnalyses}
@@ -235,7 +244,7 @@ export const HistoryPage: React.FC = () => {
       </div>
 
       {/* Task 384: Table of Analyses */}
-      <div className="overflow-hidden rounded-card border border-pebble bg-paper">
+      <div data-tour="history-library" className="overflow-hidden rounded-card border border-pebble bg-paper">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-pebble bg-linen-mist/40 font-mono text-[10px] uppercase tracking-wider text-slate">

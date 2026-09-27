@@ -263,7 +263,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
           </button>
 
           {/* Section 10: Emergency Procurement Mode Toggle */}
-          <div className="flex items-center gap-3 rounded-card border border-pebble bg-linen-mist/30 p-2">
+          <div data-tour="emergency-mode" className="flex items-center gap-3 rounded-card border border-pebble bg-linen-mist/30 p-2">
             <div className="flex flex-col">
               <span className="text-xs font-semibold text-charcoal flex items-center gap-1">
                 <Flame className="size-3.5 text-amber-warning" />
@@ -380,7 +380,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       {/* SECTION 7 & 8: Recommendation Hero Card & Explainability Waterfall */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Recommendation Hero Card (Section 7) */}
-        <section className="rounded-card border border-pebble bg-paper p-6 lg:col-span-5">
+        <section data-tour="top-recommendation" className="rounded-card border border-pebble bg-paper p-6 lg:col-span-5">
           <div className="flex items-center justify-between">
             <span className="rounded-full bg-forest-ink px-3 py-1 text-xs font-medium uppercase tracking-wider text-lime-voltage">
               Rank #{rec.rank} Recommended
@@ -424,7 +424,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
         </section>
 
         {/* Explainability Panel (Section 8 — Tasks 241, 285, 311) */}
-        <section className="rounded-card border border-pebble bg-paper p-6 lg:col-span-7">
+        <section data-tour="explainability-panel" className="rounded-card border border-pebble bg-paper p-6 lg:col-span-7">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-charcoal">
@@ -437,7 +437,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
             <Sparkles className="size-5 text-forest-ink" />
           </div>
 
-          <div className="mt-5 space-y-4">
+          <div data-tour="score-breakdown" className="mt-5 space-y-4">
             {/* Cost Score (50%) */}
             <div>
               <div className="flex justify-between text-xs">
@@ -517,7 +517,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </div>
 
       {/* SECTION 2: Freight Rate Forecast (P10 / P50 / P90) */}
-      <section className="rounded-card border border-pebble bg-paper p-6">
+      <section data-tour="freight-forecast" className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 className="text-base font-bold text-obsidian">Section 2: Freight Rate Forecast</h3>
@@ -590,7 +590,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 3: Total Landed Cost (Task 236, 310) */}
-      <section className="rounded-card border border-pebble bg-paper p-6">
+      <section data-tour="landed-cost" className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-charcoal">Section 3: Total Landed Cost</h3>
@@ -688,7 +688,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 4: Vessel & Port Feasibility Matrix (Tasks 237, 308) */}
-      <section className="rounded-card border border-pebble bg-paper p-6">
+      <section data-tour="feasibility-matrix" className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-obsidian">
@@ -782,7 +782,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 6: Multi-Dimensional Risk Assessment */}
-      <section className="rounded-card border border-pebble bg-paper p-6">
+      <section data-tour="risk-engine" className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-obsidian">
@@ -840,7 +840,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 9: Your Decision (Accept / Override Workflow — Task 242, 312) */}
-      <section className="rounded-card border border-pebble bg-paper p-6">
+      <section data-tour="decision-workflow" className="rounded-card border border-pebble bg-paper p-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-obsidian">
@@ -970,7 +970,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       </section>
 
       {/* SECTION 11: Spot vs. COA Comparison (Collapsible — Task 244) */}
-      <section className="rounded-card border border-pebble bg-paper">
+      <section data-tour="spot-vs-coa" className="rounded-card border border-pebble bg-paper">
         <button
           type="button"
           onClick={() => setCoaExpanded(!coaExpanded)}

@@ -143,12 +143,12 @@ export const VendorQuotesPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div data-tour="carrier-integration" className="flex items-center gap-2">
           {/* Task 397: Send for Quotes Button */}
           <button
             type="button"
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-1.5 rounded-full bg-lime-voltage px-4 py-2 text-xs font-medium text-forest-ink hover:brightness-95 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 rounded-full bg-lime-voltage px-4 py-2 text-xs font-medium text-forest-ink hover:brightness-95 active:scale-95 transition-all cursor-pointer"
           >
             <Send className="size-3.5" />
             <span>Send for Quotes</span>

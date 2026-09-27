@@ -144,7 +144,7 @@ export const ScenarioViewPage: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Controls Column (5 Variable Sliders / Selectors) */}
-        <div className="rounded-none border border-pebble bg-paper p-6 space-y-5 lg:col-span-5">
+        <div data-tour="scenario-sandbox" className="rounded-none border border-pebble bg-paper p-6 space-y-5 lg:col-span-5">
           <div className="flex items-center justify-between border-b border-pebble pb-3">
             <h3 className="font-bold text-sm text-obsidian flex items-center gap-2">
               <Sliders className="size-4 text-forest-ink" /> Simulation Variables

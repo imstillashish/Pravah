@@ -236,7 +236,7 @@ export const LiveMapPage: React.FC = () => {
       </div>
 
       {/* Task 398: Full Prominent Map View with dynamic animated ship position */}
-      <div className="space-y-3">
+      <div data-tour="nautical-route" className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2 text-xs font-semibold text-charcoal">
             <Radio className="size-4 text-forest-ink animate-pulse" />

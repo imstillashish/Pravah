@@ -128,8 +128,33 @@ export const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Primary indicator row — dense 3-up tiles */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      {/* Feature #25: Maritime Disruption Alert Scanner */}
+      <div
+        data-tour="disruption-alert"
+        className="mb-6 flex items-center justify-between rounded-card border border-amber-300 bg-amber-50/80 p-3.5 text-amber-900 shadow-xs"
+      >
+        <div className="flex items-center gap-3">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-amber-200 text-amber-900 font-bold text-xs">
+            !
+          </span>
+          <div>
+            <div className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider text-amber-800">
+              <span>ACTIVE MARITIME ADVISORY</span>
+              <span>•</span>
+              <span>RED SEA SUEZ DIVERSION</span>
+            </div>
+            <p className="text-xs text-amber-950 mt-0.5">
+              Bulk carriers re-routing via Cape of Good Hope (+10 to 14 transit days). Australian coking coal routes to Indian East Coast remain clear of chokepoints.
+            </p>
+          </div>
+        </div>
+        <span className="hidden sm:inline-block rounded-full bg-amber-200/80 px-2.5 py-1 font-mono text-[10px] font-semibold text-amber-900 shrink-0">
+          SURCHARGE IMPACT: $0.00 PMT
+        </span>
+      </div>
+
+      {/* Primary indicator row — dense 4-up tiles */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {isPlanner ? (
           <>
             <Card tone="fog" className={METRIC_CARD}>
@@ -183,6 +208,24 @@ export const Dashboard: React.FC = () => {
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
                 Complies with current 14.5m draft constraints at Haldia Lock Gate and Paradip Berth
                 #2.
+              </p>
+            </Card>
+
+            {/* Feature #21: Steel Plant Stock-Out Alert */}
+            <Card data-tour="stockout-alert" tone="fog" className={METRIC_CARD}>
+              <div className="mb-2 flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
+                  PLANT COAL RESERVES
+                </span>
+                <span className="inline-flex items-center gap-1 rounded bg-amber-wash px-2 py-0.5 font-mono text-[10px] font-semibold text-amber-warning">
+                  15 DAYS LEFT
+                </span>
+              </div>
+              <div className="font-mono text-2xl font-bold tabular-nums text-forest-ink">
+                15d / 22d Lead
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-charcoal">
+                Bhilai stockpile requires fixture closure within 3 days to avoid critical depletion before arrival.
               </p>
             </Card>
           </>
