@@ -16,6 +16,8 @@ def test_token_lifecycle():
 def test_demo_logins():
     from fastapi.testclient import TestClient
     from app.main import app
+    from app.database import Base, engine
+    Base.metadata.create_all(bind=engine)
     client = TestClient(app)
     for email in ["demo@sail.gov.in", "portops@sail.gov.in", "admin@sail.gov.in"]:
         res = client.post("/api/auth/login", json={"email": email, "password": "Password123"})
