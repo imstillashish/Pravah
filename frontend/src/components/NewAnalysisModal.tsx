@@ -31,6 +31,8 @@ import {
   FileText,
   MapPin,
   ArrowLeftRight,
+  Check,
+  Globe,
 } from "lucide-react";
 
 export interface NewAnalysisModalProps {
@@ -219,7 +221,6 @@ const TONNAGE_CHIPS = [
 interface OriginCountry {
   name: string;
   code: string;
-  flag: string;
   ports: Array<{
     name: string;
     locode: string;
@@ -232,7 +233,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "India",
     code: "IN",
-    flag: "🇮🇳",
     ports: [
       { name: "Paradip", locode: "IN PBD", terminalType: "Mechanized Deepwater Coal Berth", maxDraft: "17.5m" },
       { name: "Vizag", locode: "IN VTZ", terminalType: "Outer Harbour High-Speed Conveyor", maxDraft: "18.1m" },
@@ -246,7 +246,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Australia",
     code: "AU",
-    flag: "🇦🇺",
     ports: [
       { name: "Hay Point", locode: "AU HPT", terminalType: "Deepwater Coal Terminal", maxDraft: "19.0m" },
       { name: "Newcastle", locode: "AU NCL", terminalType: "PWCS / NCIG Terminal", maxDraft: "16.8m" },
@@ -259,7 +258,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Indonesia",
     code: "ID",
-    flag: "🇮🇩",
     ports: [
       { name: "Tanjung Bara", locode: "ID TBX", terminalType: "KPC Coal Terminal (Cape)", maxDraft: "17.5m" },
       { name: "Balikpapan", locode: "ID BPN", terminalType: "East Kalimantan Coal Base", maxDraft: "14.0m" },
@@ -271,7 +269,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "South Africa",
     code: "ZA",
-    flag: "🇿🇦",
     ports: [
       { name: "Richards Bay", locode: "ZA RCB", terminalType: "RBCT Dedicated Coal Terminal", maxDraft: "17.5m" },
       { name: "Durban", locode: "ZA DUR", terminalType: "Point Berths Bulk", maxDraft: "12.8m" },
@@ -281,7 +278,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "United States",
     code: "US",
-    flag: "🇺🇸",
     ports: [
       { name: "Hampton Roads", locode: "US HRD", terminalType: "Norfolk Lamberts Point", maxDraft: "15.2m" },
       { name: "Baltimore", locode: "US BAL", terminalType: "CSX Curtis Bay", maxDraft: "14.5m" },
@@ -292,7 +288,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Brazil",
     code: "BR",
-    flag: "🇧🇷",
     ports: [
       { name: "Tubarão", locode: "BR TUB", terminalType: "Vale Iron Ore Pier", maxDraft: "22.5m" },
       { name: "Ponta da Madeira", locode: "BR PDM", terminalType: "Pier IV Valemax Capesize", maxDraft: "23.0m" },
@@ -302,7 +297,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Canada",
     code: "CA",
-    flag: "🇨🇦",
     ports: [
       { name: "Vancouver", locode: "CA VAN", terminalType: "Westshore Roberts Bank", maxDraft: "20.0m" },
       { name: "Prince Rupert", locode: "CA PRU", terminalType: "Ridley Island Coal Terminal", maxDraft: "21.0m" },
@@ -311,7 +305,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Russia",
     code: "RU",
-    flag: "🇷🇺",
     ports: [
       { name: "Vostochny", locode: "RU VYP", terminalType: "PPK Coal Handling Complex", maxDraft: "16.5m" },
       { name: "Ust-Luga", locode: "RU ULU", terminalType: "Rosterminalugol Baltic Terminal", maxDraft: "17.0m" },
@@ -321,7 +314,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Mozambique",
     code: "MZ",
-    flag: "🇲🇿",
     ports: [
       { name: "Maputo", locode: "MZ MPM", terminalType: "TCM Matola Coal Terminal", maxDraft: "15.4m" },
       { name: "Nacala", locode: "MZ MNC", terminalType: "Nacala-a-Velha Deepwater", maxDraft: "21.0m" },
@@ -330,7 +322,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Oman & UAE",
     code: "OM",
-    flag: "🇴🇲",
     ports: [
       { name: "Mina Saqr", locode: "AE MSA", terminalType: "Stevin Rock Limestone Berths", maxDraft: "15.5m" },
       { name: "Salalah", locode: "OM SLL", terminalType: "General Cargo Deep Berth", maxDraft: "18.0m" },
@@ -514,7 +505,6 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
   const allOriginPorts = useMemo(() => {
     const list: Array<{
       country: string;
-      flag: string;
       name: string;
       locode: string;
       terminalType: string;
@@ -524,7 +514,6 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
       c.ports.forEach((p) => {
         list.push({
           country: c.name,
-          flag: c.flag,
           name: p.name,
           locode: p.locode,
           terminalType: p.terminalType,
@@ -896,7 +885,7 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
                   </span>
                 </div>
                 <p className="font-mono text-[11px] text-slate truncate">
-                  {originPort}, {originCountry} ➔ {destinationPort} Port • {parcelTonnage.toLocaleString()} MT {commodity} • {inferredVessel}
+                  {originPort}, {originCountry} → {destinationPort} Port • {parcelTonnage.toLocaleString()} MT {commodity} • {inferredVessel}
                 </p>
               </div>
             </div>
@@ -1290,7 +1279,7 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
                                     }`}
                                   >
                                     <div className="flex items-center gap-2 min-w-0">
-                                      <span className="text-base">{p.flag}</span>
+                                      <Globe className="size-4 shrink-0 text-slate" />
                                       <div className="min-w-0">
                                         <div className="font-semibold truncate">{p.name}</div>
                                         <div className="font-mono text-[10px] text-slate truncate">
@@ -1439,7 +1428,7 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
                                           }`}
                                         >
                                           <div className="flex items-center gap-2 min-w-0">
-                                            <span className="text-base">{p.flag}</span>
+                                            <Globe className="size-4 shrink-0 text-slate" />
                                             <div className="min-w-0">
                                               <div className="font-semibold truncate">{p.name}</div>
                                               <div className="font-mono text-[10px] text-slate truncate">
@@ -1571,7 +1560,7 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
                             : "bg-paper/80 border border-pebble hover:border-charcoal hover:bg-fog text-charcoal"
                         }`}
                       >
-                        {corridor.origin} ➔ {corridor.dest}
+                        {corridor.origin} → {corridor.dest}
                       </button>
                     );
                   })}
@@ -1593,7 +1582,7 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
                   <div className="rounded-xl bg-fog/60 p-2.5 border border-pebble/60">
                     <span className="font-mono text-[9px] uppercase text-slate">Corridor</span>
                     <div className="font-bold text-obsidian text-xs truncate">
-                      {originPort} ➔ {destinationPort}
+                      {originPort} → {destinationPort}
                     </div>
                   </div>
 
@@ -1831,7 +1820,7 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
                       <div className="flex items-center gap-1.5">
                         <Navigation className="size-3.5 text-forest-ink" />
                         <span className="font-sans text-xs font-bold text-obsidian">
-                          Corridor: {analysisResult.origin_port} ({analysisResult.origin_country}) ➔ {analysisResult.destination_port} (India)
+                          Corridor: {analysisResult.origin_port} ({analysisResult.origin_country}) → {analysisResult.destination_port} (India)
                         </span>
                       </div>
                       <span className="font-mono text-[11px] text-slate">
@@ -1895,8 +1884,9 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
                           <div key={f.vessel_class} className="flex items-center justify-between py-0.5">
                             <span className="font-bold text-charcoal">{f.vessel_class}</span>
                             <div className="flex items-center gap-2">
-                              <span className={f.draft_pass ? "text-forest-ink" : "text-alarm-red"}>
-                                {f.draft_pass ? "Draft ✓" : "Draft ✗"}
+                              <span className={`inline-flex items-center gap-1 ${f.draft_pass ? "text-forest-ink" : "text-alarm-red"}`}>
+                                {f.draft_pass ? <Check className="size-3 shrink-0" /> : <X className="size-3 shrink-0" />}
+                                <span>Draft</span>
                               </span>
                               <span
                                 className={`rounded px-1.5 py-0.5 text-[9px] font-bold ${
@@ -1981,7 +1971,7 @@ export const NewAnalysisModal: React.FC<NewAnalysisModalProps> = ({
                 className="flex items-center gap-2 rounded-full bg-forest-ink px-5 py-2 text-xs font-bold text-paper hover:bg-forest-ink/90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shadow-md transition-all cursor-pointer"
               >
                 <Compass className="size-3.5 text-lime-voltage animate-pulse" />
-                <span>🚀 Compute Live Voyage Analysis</span>
+                <span>Compute Live Voyage Analysis</span>
               </button>
             )}
 

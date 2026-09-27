@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
-import { Compass, Lock, Mail, User, AlertCircle, ArrowRight } from "lucide-react";
+import { Compass, Lock, Mail, User, AlertCircle, ArrowRight, Ship, Anchor, ShieldCheck } from "lucide-react";
 import { PrimaryButton, Card, TextButton } from "../components/ui";
 import { PravahLogo } from "../components/PravahLogo";
 import { MaritimeGlobe } from "../components/MaritimeGlobe";
@@ -69,7 +69,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
       code: "FR8-PLN",
       email: "demo@sail.gov.in",
       password: "Password123",
-      icon: "🚢",
+      Icon: Ship,
       desc: "Voyage planning & forecasting",
     },
     {
@@ -77,7 +77,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
       code: "PRT-OPS",
       email: "portops@sail.gov.in",
       password: "Password123",
-      icon: "⚓",
+      Icon: Anchor,
       desc: "Berth clearance & draft alerts",
     },
     {
@@ -85,7 +85,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
       code: "ADM-EXEC",
       email: "admin@sail.gov.in",
       password: "Password123",
-      icon: "🛡️",
+      Icon: ShieldCheck,
       desc: "System management & logs",
     },
   ];
@@ -352,9 +352,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
                       )}
                     >
                       <div className="flex items-center justify-between w-full">
-                        <span className="text-base" role="img" aria-label={acc.roleName}>
-                          {acc.icon}
-                        </span>
+                        <acc.Icon className="size-4 text-forest-ink" />
                         <span className="font-mono text-[9px] font-semibold text-slate uppercase tracking-wide">
                           {acc.code}
                         </span>

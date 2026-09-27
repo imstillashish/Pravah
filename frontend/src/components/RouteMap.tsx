@@ -324,7 +324,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
                 />
                 <circle r="18" fill="rgba(16, 185, 129, 0.2)" className="animate-ping" />
                 <text x="16" y="4" fill="#34d399" fontSize="12" fontWeight="bold">
-                  ★ Paradip (16.5m) — Primary
+                  Paradip (16.5m) — Primary
                 </text>
               </g>
 
@@ -362,8 +362,8 @@ export const RouteMap: React.FC<RouteMapProps> = ({
             Route: {cleanOrigin} → {cleanDest}
           </span>
           {isCircularRoute && (
-            <span className="rounded bg-alarm-red/20 px-1.5 py-0.5 text-[9px] font-semibold text-alarm-red">
-              ⚠️ Identical Origin &amp; Destination Terminal
+            <span className="inline-flex items-center gap-1 rounded bg-alarm-red/20 px-1.5 py-0.5 text-[9px] font-semibold text-alarm-red">
+              <AlertCircle className="size-3 shrink-0" /> Identical Origin &amp; Destination Terminal
             </span>
           )}
         </div>

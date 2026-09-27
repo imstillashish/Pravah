@@ -27,6 +27,8 @@ import {
   TrendingDown,
   Loader2,
   Info,
+  Globe,
+  X,
 } from "lucide-react";
 
 // Types
@@ -226,7 +228,6 @@ const TONNAGE_CHIPS = [
 interface OriginCountry {
   name: string;
   code: string;
-  flag: string;
   ports: Array<{
     name: string;
     locode: string;
@@ -239,7 +240,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Australia",
     code: "AU",
-    flag: "🇦🇺",
     ports: [
       { name: "Hay Point", locode: "AU HPT", terminalType: "Deepwater Coal Terminal", maxDraft: "19.0m" },
       { name: "Newcastle", locode: "AU NCL", terminalType: "PWCS / NCIG Coal Terminal", maxDraft: "16.8m" },
@@ -253,7 +253,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Indonesia",
     code: "ID",
-    flag: "🇮🇩",
     ports: [
       { name: "Tanjung Bara", locode: "ID TBX", terminalType: "KPC Coal Terminal (Cape)", maxDraft: "17.5m" },
       { name: "Balikpapan", locode: "ID BPN", terminalType: "East Kalimantan Coal Base", maxDraft: "14.0m" },
@@ -266,7 +265,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "South Africa",
     code: "ZA",
-    flag: "🇿🇦",
     ports: [
       { name: "Richards Bay", locode: "ZA RCB", terminalType: "RBCT Dedicated Coal Terminal", maxDraft: "17.5m" },
       { name: "Durban", locode: "ZA DUR", terminalType: "Island View / Point Berths", maxDraft: "12.8m" },
@@ -277,7 +275,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "United States",
     code: "US",
-    flag: "🇺🇸",
     ports: [
       { name: "Hampton Roads", locode: "US HRD", terminalType: "Norfolk Lamberts Point", maxDraft: "15.2m" },
       { name: "Baltimore", locode: "US BAL", terminalType: "CSX Curtis Bay / CNX Marine", maxDraft: "14.5m" },
@@ -289,7 +286,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Brazil",
     code: "BR",
-    flag: "🇧🇷",
     ports: [
       { name: "Tubarão", locode: "BR TUB", terminalType: "Vale Iron Ore Pier", maxDraft: "22.5m" },
       { name: "Ponta da Madeira", locode: "BR PDM", terminalType: "Pier IV Valemax Capesize", maxDraft: "23.0m" },
@@ -300,7 +296,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Canada",
     code: "CA",
-    flag: "🇨🇦",
     ports: [
       { name: "Vancouver", locode: "CA VAN", terminalType: "Westshore Roberts Bank", maxDraft: "20.0m" },
       { name: "Prince Rupert", locode: "CA PRU", terminalType: "Ridley Island Coal Terminal", maxDraft: "21.0m" },
@@ -310,7 +305,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Russia",
     code: "RU",
-    flag: "🇷🇺",
     ports: [
       { name: "Vostochny", locode: "RU VYP", terminalType: "PPK Coal Handling Complex", maxDraft: "16.5m" },
       { name: "Ust-Luga", locode: "RU ULU", terminalType: "Rosterminalugol Baltic Terminal", maxDraft: "17.0m" },
@@ -321,7 +315,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Mozambique",
     code: "MZ",
-    flag: "🇲🇿",
     ports: [
       { name: "Maputo", locode: "MZ MPM", terminalType: "TCM Matola Coal Terminal", maxDraft: "15.4m" },
       { name: "Beira", locode: "MZ BEW", terminalType: "General Bulk Cargo Berth", maxDraft: "10.0m" },
@@ -331,7 +324,6 @@ const ORIGIN_COUNTRIES: OriginCountry[] = [
   {
     name: "Oman & UAE",
     code: "OM",
-    flag: "🇴🇲",
     ports: [
       { name: "Mina Saqr", locode: "AE MSA", terminalType: "Stevin Rock Limestone Berths", maxDraft: "15.5m" },
       { name: "Salalah", locode: "OM SLL", terminalType: "General Cargo Deep Berth", maxDraft: "18.0m" },
@@ -1056,7 +1048,7 @@ export const NewAnalysisPage: React.FC = () => {
                           : "border-pebble bg-paper text-charcoal hover:border-charcoal hover:bg-fog"
                       }`}
                     >
-                      <span className="text-sm">{c.flag}</span>
+                      <Globe className="size-3.5 shrink-0 opacity-70" />
                       <span>{c.name}</span>
                       <span className="font-mono text-[10px] opacity-70">({c.code})</span>
                     </button>
@@ -1180,8 +1172,9 @@ export const NewAnalysisPage: React.FC = () => {
                       </div>
 
                       {isDraftWarning && (
-                        <div className="mt-2.5 rounded-md border border-alarm-red/30 bg-fog p-2 text-[10px] text-alarm-red">
-                          ⚠️ Lock draft 14.5m prohibits fully laden Capesize!
+                        <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-alarm-red/30 bg-fog p-2 text-[10px] text-alarm-red">
+                          <AlertTriangle className="size-3.5 shrink-0" />
+                          <span>Lock draft 14.5m prohibits fully laden Capesize!</span>
                         </div>
                       )}
                     </div>
@@ -1213,7 +1206,7 @@ export const NewAnalysisPage: React.FC = () => {
                     <ArrowRight className="size-3 text-slate" />
                     <span>{destinationPort}</span>
                   </div>
-                  <span className="font-mono text-[10px] text-slate">{originCountry} ➔ India</span>
+                  <span className="font-mono text-[10px] text-slate">{originCountry} → India</span>
                 </div>
 
                 <div className="rounded-card bg-paper p-3 border border-pebble">
@@ -1235,7 +1228,7 @@ export const NewAnalysisPage: React.FC = () => {
                 <div className="rounded-card bg-paper p-3 border border-pebble">
                   <span className="font-mono text-[10px] text-slate uppercase">Laycan Window</span>
                   <div className="mt-1 font-mono font-bold text-obsidian text-[11px]">
-                    {laycanStart} ➔ {laycanEnd}
+                    {laycanStart} → {laycanEnd}
                   </div>
                   <span className="font-mono text-[10px] text-slate">Nominated Loading Range</span>
                 </div>
@@ -1279,7 +1272,7 @@ export const NewAnalysisPage: React.FC = () => {
                 className="flex items-center gap-2.5 rounded-full bg-forest-ink px-6 py-3 text-xs font-bold text-paper hover:bg-forest-ink/90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-md transition-all"
               >
                 <Compass className="size-4 text-lime-voltage animate-pulse" />
-                <span>🚀 Compute Live Voyage Analysis</span>
+                <span>Compute Live Voyage Analysis</span>
               </button>
             </div>
           </div>
@@ -1307,7 +1300,7 @@ export const NewAnalysisPage: React.FC = () => {
                 <div className="h-full bg-lime-voltage animate-indeterminate" />
               </div>
               <p className="font-mono text-[11px] text-slate">
-                Simulating counterfactual freight market volatility & nautical waypoints for {originPort} ➔ {destinationPort}
+                Simulating counterfactual freight market volatility & nautical waypoints for {originPort} → {destinationPort}
               </p>
             </div>
           )}
@@ -1451,7 +1444,7 @@ export const NewAnalysisPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <Navigation className="size-4 text-forest-ink" />
                     <h3 className="font-sans text-sm font-bold text-obsidian">
-                      Nautical Route Corridor: {analysisResult.origin_port} ({analysisResult.origin_country}) ➔ {analysisResult.destination_port} (India)
+                      Nautical Route Corridor: {analysisResult.origin_port} ({analysisResult.origin_country}) → {analysisResult.destination_port} (India)
                     </h3>
                   </div>
                   <span className="font-mono text-xs text-slate">
@@ -1546,16 +1539,24 @@ export const NewAnalysisPage: React.FC = () => {
                             <td className="py-2.5 font-bold text-charcoal">{f.vessel_class}</td>
                             <td className="py-2.5">
                               {f.draft_pass ? (
-                                <span className="text-forest-ink">✓ Pass</span>
+                                <span className="inline-flex items-center gap-1 text-forest-ink">
+                                  <Check className="size-3 shrink-0" /> Pass
+                                </span>
                               ) : (
-                                <span className="text-alarm-red">✗ Restricted</span>
+                                <span className="inline-flex items-center gap-1 text-alarm-red">
+                                  <X className="size-3 shrink-0" /> Restricted
+                                </span>
                               )}
                             </td>
                             <td className="py-2.5">
                               {f.loa_pass ? (
-                                <span className="text-forest-ink">✓ Pass</span>
+                                <span className="inline-flex items-center gap-1 text-forest-ink">
+                                  <Check className="size-3 shrink-0" /> Pass
+                                </span>
                               ) : (
-                                <span className="text-alarm-red">✗ Fail</span>
+                                <span className="inline-flex items-center gap-1 text-alarm-red">
+                                  <X className="size-3 shrink-0" /> Fail
+                                </span>
                               )}
                             </td>
                             <td className="py-2.5">

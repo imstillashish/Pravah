@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity, Anchor, Clock, Fuel, Ship, TrendingDown } from "lucide-react";
+import { Activity, Anchor, Clock, Fuel, Ship, TrendingDown, ArrowUp, ArrowDown } from "lucide-react";
 import { cx } from "../lib/cn";
 
 /**
@@ -134,8 +134,12 @@ function RailRow({ row }: { row: Row }) {
               row.deltaTone === "up" ? "font-medium text-spruce" : "font-semibold text-alarm-red",
             )}
           >
-            <span aria-hidden="true" className="text-[8px] leading-none">
-              {row.deltaTone === "up" ? "▲" : "▼"}
+            <span aria-hidden="true" className="leading-none">
+              {row.deltaTone === "up" ? (
+                <ArrowUp className="size-2.5 inline" />
+              ) : (
+                <ArrowDown className="size-2.5 inline" />
+              )}
             </span>
             {row.delta}
           </div>

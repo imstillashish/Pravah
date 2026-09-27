@@ -1,4 +1,4 @@
-﻿import AnimatedCard from './animatedcard';
+import AnimatedCard from './animatedcard';
 import { easeInOut, motion } from 'framer-motion';
 import { useState } from 'react';
 

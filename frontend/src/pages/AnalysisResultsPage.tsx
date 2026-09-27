@@ -764,8 +764,9 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
                   </td>
                   <td className="py-3 px-4 text-slate">
                     {row.failure_reason ? (
-                      <span className="font-medium text-alarm-red">
-                        ⚠️ {row.failure_reason}
+                      <span className="inline-flex items-center gap-1.5 font-medium text-alarm-red">
+                        <AlertTriangle className="size-3.5 shrink-0" />
+                        {row.failure_reason}
                       </span>
                     ) : (
                       <span className="text-forest-ink">
