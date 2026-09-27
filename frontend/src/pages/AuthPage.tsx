@@ -63,6 +63,40 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
     }
   };
 
+  const DEMO_ACCOUNTS = [
+    {
+      roleName: "Freight Planner",
+      code: "FR8-PLN",
+      email: "demo@sail.gov.in",
+      password: "Password123",
+      icon: "🚢",
+      desc: "Voyage planning & forecasting",
+    },
+    {
+      roleName: "Port Operator",
+      code: "PRT-OPS",
+      email: "portops@sail.gov.in",
+      password: "Password123",
+      icon: "⚓",
+      desc: "Berth clearance & draft alerts",
+    },
+    {
+      roleName: "Admin",
+      code: "ADM-EXEC",
+      email: "admin@sail.gov.in",
+      password: "Password123",
+      icon: "🛡️",
+      desc: "System management & logs",
+    },
+  ];
+
+  const fillDemoAccount = (demoEmail: string, demoPass: string) => {
+    setIsRegister(false);
+    setEmail(demoEmail);
+    setPassword(demoPass);
+    setErrorMsg(null);
+  };
+
   const deskOptions = [
     {
       value: "logistics_planner" as const,
@@ -292,6 +326,53 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
               <ArrowRight className="size-4" aria-hidden="true" />
             </PrimaryButton>
           </form>
+
+          {/* Quick Demo Accounts Selection */}
+          {!isRegister && (
+            <div className="mt-6 border-t border-pebble pt-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate">
+                  Quick Demo Access
+                </span>
+                <span className="text-[11px] text-charcoal/70">Click to fill</span>
+              </div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                {DEMO_ACCOUNTS.map((acc) => {
+                  const isSelected = email === acc.email;
+                  return (
+                    <button
+                      key={acc.email}
+                      type="button"
+                      onClick={() => fillDemoAccount(acc.email, acc.password)}
+                      className={cx(
+                        "group flex flex-col justify-between rounded-card border p-2.5 text-left transition-all duration-150 hover:border-forest-ink",
+                        isSelected
+                          ? "border-forest-ink bg-linen-mist ring-1 ring-forest-ink/20"
+                          : "border-pebble bg-paper hover:bg-fog"
+                      )}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-base" role="img" aria-label={acc.roleName}>
+                          {acc.icon}
+                        </span>
+                        <span className="font-mono text-[9px] font-semibold text-slate uppercase tracking-wide">
+                          {acc.code}
+                        </span>
+                      </div>
+                      <div className="mt-2">
+                        <div className="text-xs font-semibold text-forest-ink leading-tight">
+                          {acc.roleName}
+                        </div>
+                        <div className="text-[10px] text-charcoal/80 font-mono mt-0.5 truncate">
+                          {acc.email}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="mt-6 border-t border-pebble pt-5 text-center">
             <TextButton

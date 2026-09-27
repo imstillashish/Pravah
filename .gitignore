@@ -30,6 +30,7 @@ backend/logistics.db
 .geminirules
 MICROSCOPIC_TASK_BREAKDOWN_PROMPT.md
 .superpowers/
+.freebuff/
 
 # Internal design & task docs (not for end users)
 DESIGN.md
