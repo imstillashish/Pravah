@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "test:tour": "node tests/verify_tour.cjs",
+    "test:screenshots": "node tests/capture_tour_screenshots.cjs",
     "preview": "vite preview"
   },
   "dependencies": {
