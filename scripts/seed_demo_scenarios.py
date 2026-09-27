@@ -34,24 +34,36 @@ from app.models.cargo_request import CargoRequest
 
 
 def create_demo_user(db) -> User:
-    """Task 257: Inserts demo user demo@sail.gov.in."""
-    user = db.query(User).filter(User.email == "demo@sail.gov.in").first()
-    if not user:
-        user = User(
-            email="demo@sail.gov.in",
-            full_name="SAIL Demo Officer",
-            hashed_password=get_password_hash("SailDemo2026!"),
-            role="PROCUREMENT_OFFICER",
-            is_active=True,
-            created_at=datetime.now(timezone.utc),
-        )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        print("  [x] Created demo user: demo@sail.gov.in")
-    else:
-        print("  [.] Demo user demo@sail.gov.in already exists")
-    return user
+    """Task 257: Inserts demo user demo@sail.gov.in, portops@sail.gov.in, admin@sail.gov.in."""
+    demo_accounts = [
+        {"email": "demo@sail.gov.in", "full_name": "SAIL Freight Planner", "role": "logistics_planner"},
+        {"email": "portops@sail.gov.in", "full_name": "SAIL Port Operations Officer", "role": "port_operator"},
+        {"email": "admin@sail.gov.in", "full_name": "SAIL System Administrator", "role": "admin"},
+    ]
+    primary_user = None
+    for acc in demo_accounts:
+        user = db.query(User).filter(User.email == acc["email"]).first()
+        if not user:
+            user = User(
+                email=acc["email"],
+                full_name=acc["full_name"],
+                hashed_password=get_password_hash("Password123"),
+                role=acc["role"],
+                is_active=True,
+                created_at=datetime.now(timezone.utc),
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            print(f"  [x] Created demo user: {acc['email']}")
+        else:
+            # Update password hash so Password123 works
+            user.hashed_password = get_password_hash("Password123")
+            db.commit()
+            print(f"  [.] Updated password for demo user: {acc['email']}")
+        if acc["email"] == "demo@sail.gov.in":
+            primary_user = user
+    return primary_user or user
 
 
 def seed_golden_demo_analysis(db, user_id: int) -> Analysis:

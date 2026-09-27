@@ -12,3 +12,14 @@ def test_token_lifecycle():
     payload = decode_access_token(token)
     assert payload["sub"] == "planner@sail.gov.in"
     assert payload["role"] == "logistics_planner"
+
+def test_demo_logins():
+    from fastapi.testclient import TestClient
+    from app.main import app
+    client = TestClient(app)
+    for email in ["demo@sail.gov.in", "portops@sail.gov.in", "admin@sail.gov.in"]:
+        res = client.post("/api/auth/login", json={"email": email, "password": "Password123"})
+        assert res.status_code == 200, f"Login failed for {email}: {res.text}"
+        data = res.json()
+        assert "access_token" in data
+        assert data["user"]["email"] == email
