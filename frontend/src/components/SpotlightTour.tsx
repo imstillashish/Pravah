@@ -67,6 +67,7 @@ export const SpotlightTour: React.FC = () => {
     endTour,
   } = useTour();
 
+  const [isAdvancing, setIsAdvancing] = useState(false);
   const [targetRect, setTargetRect] = useState<RectBounds | null>(null);
   const [viewport, setViewport] = useState({ width: window.innerWidth, height: window.innerHeight });
   const cardRef = useRef<HTMLDivElement>(null);
@@ -458,10 +459,19 @@ export const SpotlightTour: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={nextStep}
-              className="flex items-center gap-1 rounded-full bg-forest-ink px-3.5 py-1 text-xs font-semibold text-paper hover:bg-forest-ink/90 active:scale-95 transition-all cursor-pointer shadow-xs"
+              disabled={isAdvancing}
+              onClick={async () => {
+                if (isAdvancing) return;
+                setIsAdvancing(true);
+                try {
+                  await nextStep();
+                } finally {
+                  setIsAdvancing(false);
+                }
+              }}
+              className="flex items-center gap-1 rounded-full bg-forest-ink px-3.5 py-1 text-xs font-semibold text-paper hover:bg-forest-ink/90 active:scale-95 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
             >
-              <span>{currentStepIndex === totalSteps - 1 ? "Finish Tour" : "Next"}</span>
+              <span>{isAdvancing ? "Loading…" : currentStepIndex === totalSteps - 1 ? "Finish Tour" : "Next"}</span>
               <ChevronRight className="size-3.5" />
             </button>
           </div>

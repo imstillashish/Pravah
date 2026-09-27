@@ -2,16 +2,18 @@ import React, { createContext, useContext, useState, useEffect, useCallback, typ
 import { TOUR_STEPS, type TourStep } from "../data/tourSteps";
 import { useAuth } from "./AuthContext";
 
+import { API_BASE } from "../api";
+
 interface TourContextType {
   isTourActive: boolean;
   currentStepIndex: number;
   currentStep: TourStep;
   totalSteps: number;
-  startTour: (initialStepIndex?: number) => void;
+  startTour: (initialStepIndex?: number) => void | Promise<void>;
   endTour: () => void;
-  nextStep: () => void;
-  prevStep: () => void;
-  jumpToStep: (index: number) => void;
+  nextStep: () => void | Promise<void>;
+  prevStep: () => void | Promise<void>;
+  jumpToStep: (index: number) => void | Promise<void>;
 }
 
 const TourContext = createContext<TourContextType | null>(null);
@@ -35,21 +37,44 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const ensureDemoAuthIfGuest = useCallback((index: number) => {
+  const ensureDemoAuthIfGuest = useCallback(async (index: number) => {
     if (!user && index > 0) {
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: "demo@sail.gov.in", password: "Password123" }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          login(data.access_token, data.user);
+          return;
+        }
+      } catch (err) {
+        console.warn("Tour auto-login network error:", err);
+      }
+      // Fallback for offline environments
       login("demo-token", {
         id: 1,
         email: "demo@sail.gov.in",
-        full_name: "Arjun Verma",
+        full_name: "SAIL Demo Planner",
         role: "logistics_planner",
         is_active: true,
       });
     }
   }, [user, login]);
 
-  const startTour = useCallback((initialStepIndex: number = 0) => {
+  const jumpToStep = useCallback(async (index: number) => {
+    if (index >= 0 && index < totalSteps) {
+      await ensureDemoAuthIfGuest(index);
+      setCurrentStepIndex(index);
+      navigateToStepRoute(TOUR_STEPS[index]);
+    }
+  }, [totalSteps, ensureDemoAuthIfGuest, navigateToStepRoute]);
+
+  const startTour = useCallback(async (initialStepIndex: number = 0) => {
     const validIndex = Math.max(0, Math.min(initialStepIndex, totalSteps - 1));
-    ensureDemoAuthIfGuest(validIndex);
+    await ensureDemoAuthIfGuest(validIndex);
     setCurrentStepIndex(validIndex);
     setIsTourActive(true);
     navigateToStepRoute(TOUR_STEPS[validIndex]);
@@ -59,25 +84,17 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
     setIsTourActive(false);
   }, []);
 
-  const jumpToStep = useCallback((index: number) => {
-    if (index >= 0 && index < totalSteps) {
-      ensureDemoAuthIfGuest(index);
-      setCurrentStepIndex(index);
-      navigateToStepRoute(TOUR_STEPS[index]);
-    }
-  }, [totalSteps, ensureDemoAuthIfGuest, navigateToStepRoute]);
-
-  const nextStep = useCallback(() => {
+  const nextStep = useCallback(async () => {
     if (currentStepIndex < totalSteps - 1) {
-      jumpToStep(currentStepIndex + 1);
+      await jumpToStep(currentStepIndex + 1);
     } else {
       endTour();
     }
   }, [currentStepIndex, totalSteps, jumpToStep, endTour]);
 
-  const prevStep = useCallback(() => {
+  const prevStep = useCallback(async () => {
     if (currentStepIndex > 0) {
-      jumpToStep(currentStepIndex - 1);
+      await jumpToStep(currentStepIndex - 1);
     }
   }, [currentStepIndex, jumpToStep]);
 
