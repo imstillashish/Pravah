@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useTour } from "../context/TourContext";
 import { TOUR_STEPS } from "../data/tourSteps";
 import {
@@ -18,6 +18,42 @@ interface RectBounds {
   height: number;
 }
 
+
+// Smart context-aware scrolling so the target element is positioned with maximum clearance
+function scrollTargetWithClearance(element: Element) {
+  const rect = element.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const topNavHeight = 64;
+  const desiredCardHeight = 330;
+
+  const modalScroll = element.closest(".overflow-y-auto");
+
+  // Effective height capped to what spotlight will highlight
+  const effectiveHeight = Math.min(rect.height, Math.floor(vh * 0.40));
+  const spaceBelow = vh - (rect.top + effectiveHeight + 16);
+  const spaceAbove = rect.top - topNavHeight - 16;
+
+  // If already plenty of space below (>= 340px) and target top is below nav, no extra scroll needed
+  if (spaceBelow >= desiredCardHeight && rect.top >= 70) {
+    return;
+  }
+  // If already plenty of space above, no scroll needed
+  if (spaceAbove >= desiredCardHeight && spaceBelow < 120) {
+    return;
+  }
+
+  // Otherwise, scroll target top into upper viewport (~76px from top), giving maximum room below
+  const currentScrollY = modalScroll ? modalScroll.scrollTop : window.scrollY;
+  const targetOffsetTop = rect.top + currentScrollY;
+  const idealScrollTop = Math.max(0, targetOffsetTop - 76);
+
+  if (modalScroll) {
+    modalScroll.scrollTo({ top: idealScrollTop, behavior: "auto" });
+  } else {
+    window.scrollTo({ top: idealScrollTop, behavior: "auto" });
+  }
+}
+
 export const SpotlightTour: React.FC = () => {
   const {
     isTourActive,
@@ -31,7 +67,6 @@ export const SpotlightTour: React.FC = () => {
   } = useTour();
 
   const [targetRect, setTargetRect] = useState<RectBounds | null>(null);
-  const [cardHeight, setCardHeight] = useState<number>(300);
   const [viewport, setViewport] = useState({ width: window.innerWidth, height: window.innerHeight });
   const cardRef = useRef<HTMLDivElement>(null);
   const targetElementRef = useRef<Element | null>(null);
@@ -51,13 +86,6 @@ export const SpotlightTour: React.FC = () => {
     }
   }, []);
 
-  // Update card height dynamically
-  useLayoutEffect(() => {
-    if (cardRef.current) {
-      const h = cardRef.current.offsetHeight;
-      if (h > 0) setCardHeight(h);
-    }
-  }, [currentStepIndex, isTourActive]);
 
   // Handle locating target with polling and smooth scroll centering
   useEffect(() => {
@@ -79,7 +107,7 @@ export const SpotlightTour: React.FC = () => {
         const rect = element.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           targetElementRef.current = element;
-          element.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+          scrollTargetWithClearance(element);
           updateTargetBounds();
           return;
         }
@@ -148,33 +176,91 @@ export const SpotlightTour: React.FC = () => {
   const cutoutX = Math.max(0, targetRect.left - pad);
   const cutoutY = Math.max(0, targetRect.top - pad);
   const cutoutW = Math.max(20, targetRect.width + pad * 2);
-  const cutoutH = Math.max(20, targetRect.height + pad * 2);
+  // Cap spotlight height so oversized elements (tables, maps) don't cover the whole screen
+  const maxCutoutH = Math.min(380, Math.max(200, Math.floor(viewport.height * 0.40)));
+  const cutoutH = Math.min(Math.max(20, targetRect.height + pad * 2), maxCutoutH);
 
-  // Viewport-clamped floating card coordinates
-  const cardWidth = Math.min(440, viewport.width - 32);
-  const spaceBelow = viewport.height - (cutoutY + cutoutH + 16);
-  const spaceAbove = cutoutY - 16;
+  const cutout = {
+    left: cutoutX,
+    top: cutoutY,
+    width: cutoutW,
+    height: cutoutH,
+  };
 
-  let cardTop: number;
-  let isDockedBottom = false;
+  const cardWidth = Math.min(420, viewport.width - 32);
+  const topNavLimit = 64;
 
-  if (spaceBelow >= cardHeight + 12 || spaceBelow >= spaceAbove) {
-    // Position below
-    cardTop = Math.min(viewport.height - cardHeight - 16, cutoutY + cutoutH + 14);
-  } else if (spaceAbove >= cardHeight + 12) {
-    // Position above
-    cardTop = Math.max(16, cutoutY - cardHeight - 14);
+  // Strict 4-way collision-free placement solver with directional edge anchoring
+  const spaceBelow = viewport.height - (cutout.top + cutout.height + 14) - 16;
+  const spaceAbove = cutout.top - 14 - topNavLimit;
+  const spaceRight = viewport.width - (cutout.left + cutout.width + 14) - 16;
+  const spaceLeft = cutout.left - 14 - 16;
+
+  let cardStyle: React.CSSProperties;
+
+  // Horizontal centering for above/below placements
+  const centerLeft = Math.max(16, Math.min(viewport.width - cardWidth - 16, cutout.left + (cutout.width - cardWidth) / 2));
+
+  if (spaceBelow >= 260) {
+    // 1. Below Target: anchor TOP at cutout.bottom + 14 (grows downwards away from target)
+    cardStyle = {
+      position: "fixed",
+      left: `${centerLeft}px`,
+      top: `${cutout.top + cutout.height + 14}px`,
+      width: `${cardWidth}px`,
+      maxHeight: `${Math.max(160, spaceBelow)}px`,
+    };
+  } else if (spaceAbove >= 260) {
+    // 2. Above Target: anchor BOTTOM at cutout.top - 14 (grows upwards away from target)
+    cardStyle = {
+      position: "fixed",
+      left: `${centerLeft}px`,
+      bottom: `${viewport.height - (cutout.top - 14)}px`,
+      width: `${cardWidth}px`,
+      maxHeight: `${Math.max(160, spaceAbove)}px`,
+    };
+  } else if (spaceRight >= 360) {
+    // 3. Right of Target: anchor LEFT at cutout.right + 14
+    const top = Math.max(topNavLimit, Math.min(viewport.height - 340 - 16, cutout.top));
+    cardStyle = {
+      position: "fixed",
+      left: `${cutout.left + cutout.width + 14}px`,
+      top: `${top}px`,
+      width: `${Math.min(cardWidth, spaceRight)}px`,
+      maxHeight: `${viewport.height - top - 16}px`,
+    };
+  } else if (spaceLeft >= 360) {
+    // 4. Left of Target: anchor RIGHT at cutout.left - 14
+    const top = Math.max(topNavLimit, Math.min(viewport.height - 340 - 16, cutout.top));
+    cardStyle = {
+      position: "fixed",
+      right: `${viewport.width - (cutout.left - 14)}px`,
+      top: `${top}px`,
+      width: `${Math.min(cardWidth, spaceLeft)}px`,
+      maxHeight: `${viewport.height - top - 16}px`,
+    };
   } else {
-    // Viewport too tight: dock at bottom
-    isDockedBottom = true;
-    cardTop = viewport.height - cardHeight - 16;
+    // 5. Fallback: whichever vertical direction has more space, safely clamped inside viewport
+    if (spaceBelow >= spaceAbove) {
+      const top = Math.max(topNavLimit, Math.min(viewport.height - 240, cutout.top + cutout.height + 8));
+      cardStyle = {
+        position: "fixed",
+        left: `${centerLeft}px`,
+        top: `${top}px`,
+        width: `${cardWidth}px`,
+        maxHeight: `${Math.max(160, viewport.height - top - 16)}px`,
+      };
+    } else {
+      const bottom = Math.max(16, Math.min(viewport.height - topNavLimit - 180, viewport.height - (cutout.top - 8)));
+      cardStyle = {
+        position: "fixed",
+        left: `${centerLeft}px`,
+        bottom: `${bottom}px`,
+        width: `${cardWidth}px`,
+        maxHeight: `${Math.max(160, viewport.height - bottom - topNavLimit)}px`,
+      };
+    }
   }
-
-  // Horizontal clamping
-  const idealLeft = cutoutX + cutoutW / 2 - cardWidth / 2;
-  const cardLeft = isDockedBottom
-    ? Math.max(16, (viewport.width - cardWidth) / 2)
-    : Math.max(16, Math.min(viewport.width - cardWidth - 16, idealLeft));
 
   const progressPct = Math.round(((currentStepIndex + 1) / totalSteps) * 100);
 
@@ -231,21 +317,16 @@ export const SpotlightTour: React.FC = () => {
         className="pointer-events-none rounded-[10px] border-2 border-lime-voltage shadow-[0_0_24px_rgba(200,255,0,0.50)] transition-all duration-150"
       />
 
-      {/* Viewport-Clamped Floating Explanation Card */}
+      {/* Viewport-Clamped Floating Explanation Card with Zero-Collision Invariant */}
       <div
         ref={cardRef}
-        style={{
-          position: "fixed",
-          left: `${cardLeft}px`,
-          top: `${cardTop}px`,
-          width: `${cardWidth}px`,
-        }}
-        className="z-[9999] rounded-2xl border border-pebble bg-paper p-5 shadow-2xl transition-all duration-200"
+        style={cardStyle}
+        className="z-[9999] flex flex-col rounded-2xl border border-pebble bg-paper p-4 shadow-2xl transition-all duration-200"
       >
         {/* Header Bar */}
-        <div className="flex items-center justify-between gap-2 border-b border-pebble pb-3">
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-pebble pb-2.5">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-full bg-forest-ink/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-forest-ink">
+            <span className="inline-flex items-center gap-1 rounded-full bg-forest-ink/10 px-2 py-0.5 font-mono text-[11px] font-semibold text-forest-ink">
               <Compass className="size-3" />
               <span>Step {currentStepIndex + 1} of {totalSteps}</span>
             </span>
@@ -257,66 +338,66 @@ export const SpotlightTour: React.FC = () => {
             type="button"
             onClick={endTour}
             aria-label="Close feature tour"
-            className="flex size-7 items-center justify-center rounded-full text-slate hover:bg-fog hover:text-charcoal transition-colors cursor-pointer"
+            className="flex size-6 items-center justify-center rounded-full text-slate hover:bg-fog hover:text-charcoal transition-colors cursor-pointer"
           >
-            <X className="size-4" />
+            <X className="size-3.5" />
           </button>
         </div>
 
         {/* Feature Title */}
-        <div className="mt-3">
+        <div className="mt-2.5 shrink-0">
           <div className="flex items-center gap-2">
             <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-lime-voltage font-mono text-[10px] font-bold text-forest-ink">
               #{currentStep.featureNumber}
             </span>
-            <h3 className="font-sans text-base font-bold text-obsidian leading-snug">
+            <h3 className="font-sans text-sm font-bold text-obsidian leading-snug">
               {currentStep.title}
             </h3>
           </div>
         </div>
 
-        {/* 3 Layman Explanations */}
-        <div className="mt-3.5 space-y-2.5 text-xs text-charcoal">
+        {/* 3 Layman Explanations (Scrollable if height constrained) */}
+        <div className="mt-2.5 space-y-2 text-xs text-charcoal overflow-y-auto pr-1 flex-1 min-h-0">
           {/* 1. What You See */}
-          <div className="flex items-start gap-2.5 rounded-card bg-fog/80 p-2.5">
-            <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-paper text-forest-ink border border-pebble">
-              <Eye className="size-3" />
+          <div className="flex items-start gap-2 rounded-card bg-fog/80 p-2">
+            <div className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-paper text-forest-ink border border-pebble">
+              <Eye className="size-2.5" />
             </div>
             <div>
-              <div className="font-semibold text-forest-ink uppercase tracking-wide text-[10px]">
+              <div className="font-semibold text-forest-ink uppercase tracking-wide text-[9px]">
                 On Screen
               </div>
-              <p className="mt-0.5 leading-relaxed text-charcoal/90">
+              <p className="mt-0.5 leading-relaxed text-[11px] text-charcoal/90">
                 {currentStep.whatYouSee}
               </p>
             </div>
           </div>
 
           {/* 2. Under The Hood */}
-          <div className="flex items-start gap-2.5 rounded-card bg-fog/80 p-2.5">
-            <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-paper text-signal-blue border border-pebble">
-              <Cpu className="size-3" />
+          <div className="flex items-start gap-2 rounded-card bg-fog/80 p-2">
+            <div className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-paper text-signal-blue border border-pebble">
+              <Cpu className="size-2.5" />
             </div>
             <div>
-              <div className="font-semibold text-signal-blue uppercase tracking-wide text-[10px]">
+              <div className="font-semibold text-signal-blue uppercase tracking-wide text-[9px]">
                 Under The Hood
               </div>
-              <p className="mt-0.5 leading-relaxed text-charcoal/90">
+              <p className="mt-0.5 leading-relaxed text-[11px] text-charcoal/90">
                 {currentStep.underTheHood}
               </p>
             </div>
           </div>
 
           {/* 3. Why It Matters To SAIL */}
-          <div className="flex items-start gap-2.5 rounded-card bg-linen-mist/70 p-2.5 border border-forest-ink/15">
-            <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-paper text-emerald-profit border border-emerald-profit/30">
-              <Building2 className="size-3" />
+          <div className="flex items-start gap-2 rounded-card bg-linen-mist/70 p-2 border border-forest-ink/15">
+            <div className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-paper text-emerald-profit border border-emerald-profit/30">
+              <Building2 className="size-2.5" />
             </div>
             <div>
-              <div className="font-semibold text-forest-ink uppercase tracking-wide text-[10px]">
+              <div className="font-semibold text-forest-ink uppercase tracking-wide text-[9px]">
                 Why it matters to SAIL
               </div>
-              <p className="mt-0.5 leading-relaxed text-charcoal">
+              <p className="mt-0.5 leading-relaxed text-[11px] text-charcoal">
                 {currentStep.whyItMatters}
               </p>
             </div>
@@ -324,15 +405,15 @@ export const SpotlightTour: React.FC = () => {
         </div>
 
         {/* Quick Jump Selector */}
-        <div className="mt-3 flex items-center gap-2 border-t border-pebble pt-3">
-          <label htmlFor="tour-jump-select" className="text-[11px] font-medium text-slate shrink-0">
+        <div className="mt-2 flex shrink-0 items-center gap-2 border-t border-pebble pt-2">
+          <label htmlFor="tour-jump-select" className="text-[10px] font-medium text-slate shrink-0">
             Jump to:
           </label>
           <select
             id="tour-jump-select"
             value={currentStepIndex}
             onChange={(e) => jumpToStep(Number(e.target.value))}
-            className="flex-1 rounded-card border border-pebble bg-paper py-1 px-2 text-xs font-medium text-charcoal focus:border-forest-ink focus:outline-none cursor-pointer"
+            className="flex-1 rounded-card border border-pebble bg-paper py-0.5 px-2 text-[11px] font-medium text-charcoal focus:border-forest-ink focus:outline-none cursor-pointer"
           >
             {TOUR_STEPS.map((s, idx) => (
               <option key={s.id} value={idx}>
@@ -343,12 +424,12 @@ export const SpotlightTour: React.FC = () => {
         </div>
 
         {/* Footer Navigation Controls */}
-        <div className="mt-3 flex items-center justify-between border-t border-pebble pt-3">
+        <div className="mt-2.5 flex shrink-0 items-center justify-between border-t border-pebble pt-2">
           <button
             type="button"
             disabled={currentStepIndex === 0}
             onClick={prevStep}
-            className="flex items-center gap-1 rounded-full border border-pebble bg-paper px-3 py-1.5 text-xs font-semibold text-charcoal hover:bg-fog disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
+            className="flex items-center gap-1 rounded-full border border-pebble bg-paper px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-fog disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
           >
             <ChevronLeft className="size-3.5" />
             <span>Previous</span>
@@ -358,14 +439,14 @@ export const SpotlightTour: React.FC = () => {
             <button
               type="button"
               onClick={endTour}
-              className="rounded-full px-2.5 py-1 text-xs text-slate hover:text-charcoal transition-colors cursor-pointer"
+              className="rounded-full px-2 py-1 text-xs text-slate hover:text-charcoal transition-colors cursor-pointer"
             >
               Skip
             </button>
             <button
               type="button"
               onClick={nextStep}
-              className="flex items-center gap-1 rounded-full bg-forest-ink px-4 py-1.5 text-xs font-semibold text-paper hover:bg-forest-ink/90 active:scale-95 transition-all cursor-pointer shadow-xs"
+              className="flex items-center gap-1 rounded-full bg-forest-ink px-3.5 py-1 text-xs font-semibold text-paper hover:bg-forest-ink/90 active:scale-95 transition-all cursor-pointer shadow-xs"
             >
               <span>{currentStepIndex === totalSteps - 1 ? "Finish Tour" : "Next"}</span>
               <ChevronRight className="size-3.5" />
@@ -374,7 +455,7 @@ export const SpotlightTour: React.FC = () => {
         </div>
 
         {/* Bottom Progress Bar */}
-        <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-fog">
+        <div className="mt-2 h-1 w-full shrink-0 overflow-hidden rounded-full bg-fog">
           <div
             className="h-full bg-lime-voltage transition-all duration-200"
             style={{ width: `${progressPct}%` }}

@@ -253,7 +253,7 @@ export const LiveMapPage: React.FC = () => {
           distanceNm={route.estimated_distance_nm}
           shipProgress={progressPct}
           shipPositionText={`MV OCEAN PRIDE (${Math.round(progressPct * 100)}% • ${currentLat.toFixed(1)}°, ${currentLon.toFixed(1)}°)`}
-          className="min-h-[520px] w-full"
+          className="min-h-[460px] w-full"
         />
       </div>
 

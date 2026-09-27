@@ -119,6 +119,23 @@ async function verifyAllTourSteps() {
     }
     console.log(`  Floating card: top=${Math.round(cardRect.top)}, left=${Math.round(cardRect.left)}, w=${Math.round(cardRect.width)}, h=${Math.round(cardRect.height)}`);
 
+    // STRICT ZERO-COLLISION INVARIANT CHECK
+    const overlaps = !(
+      cardRect.left >= cutoutRect.x + cutoutRect.width ||
+      cardRect.left + cardRect.width <= cutoutRect.x ||
+      cardRect.top >= cutoutRect.y + cutoutRect.height ||
+      cardRect.top + cardRect.height <= cutoutRect.y
+    );
+
+    if (overlaps) {
+      throw new Error(
+        `CRITICAL COLLISION ERROR on Step ${stepNum} ("${title}"):\n` +
+        `Card [left=${Math.round(cardRect.left)}, top=${Math.round(cardRect.top)}, w=${Math.round(cardRect.width)}, h=${Math.round(cardRect.height)}] ` +
+        `overlaps Target Spotlight [x=${Math.round(cutoutRect.x)}, y=${Math.round(cutoutRect.y)}, w=${Math.round(cutoutRect.width)}, h=${Math.round(cutoutRect.height)}]!`
+      );
+    }
+    console.log(`  ✓ ZERO OVERLAP VERIFIED: Card is 100% clear of spotlight target.`);
+
     // Advance to next step (or finish if step 28)
     if (stepNum < 28) {
       // Press ArrowRight key to advance
@@ -126,7 +143,7 @@ async function verifyAllTourSteps() {
       await page.waitForTimeout(500);
     } else {
       // Step 28: Click "Finish Tour"
-      const finishBtn = await page.$('text=Finish Tour');
+      const finishBtn = await page.$('button:has-text("Finish Tour")');
       if (finishBtn) {
         await finishBtn.click();
       } else {

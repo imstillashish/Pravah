@@ -124,8 +124,18 @@ async function captureMicroscopicTourScreenshots() {
     const cardHorizontalFit = metrics.card.left >= 16 && (metrics.card.left + metrics.card.w) <= (metrics.innerW - 16);
     // 3. Card must fit vertically within viewport
     const cardVerticalFit = metrics.card.top >= 16 && (metrics.card.top + metrics.card.h) <= (metrics.innerH - 8);
+    // 4. Card must NEVER overlap spotlight mask cutout
+    const overlaps = !(
+      metrics.card.left >= metrics.mask.x + metrics.mask.w ||
+      metrics.card.left + metrics.card.w <= metrics.mask.x ||
+      metrics.card.top >= metrics.mask.y + metrics.mask.h ||
+      metrics.card.top + metrics.card.h <= metrics.mask.y
+    );
+    if (overlaps) {
+      throw new Error(`CRITICAL OVERLAP DETECTED on step ${item.stepNum} (${metrics.title})!`);
+    }
 
-    console.log(`  Checks: MaskValid=${maskValid} | CardHFit=${cardHorizontalFit} | CardVFit=${cardVerticalFit}\n`);
+    console.log(`  Checks: MaskValid=${maskValid} | CardHFit=${cardHorizontalFit} | CardVFit=${cardVerticalFit} | ZeroOverlap=true\n`);
 
     results.push({
       step: item.stepNum,

@@ -245,7 +245,7 @@ export const HistoryPage: React.FC = () => {
 
       {/* Task 384: Table of Analyses */}
       <div data-tour="history-library" className="overflow-hidden rounded-card border border-pebble bg-paper">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[480px] overflow-y-auto">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-pebble bg-linen-mist/40 font-mono text-[10px] uppercase tracking-wider text-slate">
               <tr>
