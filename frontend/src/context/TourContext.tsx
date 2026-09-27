@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { TOUR_STEPS, type TourStep } from "../data/tourSteps";
+import { useAuth } from "./AuthContext";
 
 interface TourContextType {
   isTourActive: boolean;
@@ -20,6 +21,7 @@ export interface TourProviderProps {
 }
 
 export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
+  const { user, login } = useAuth();
   const [isTourActive, setIsTourActive] = useState<boolean>(false);
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
@@ -32,12 +34,25 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
     }
   }, []);
 
+  const ensureDemoAuthIfGuest = useCallback((index: number) => {
+    if (!user && index > 0) {
+      login("demo-token", {
+        id: 1,
+        email: "demo@sail.gov.in",
+        full_name: "Arjun Verma",
+        role: "logistics_planner",
+        is_active: true,
+      });
+    }
+  }, [user, login]);
+
   const startTour = useCallback((initialStepIndex: number = 0) => {
     const validIndex = Math.max(0, Math.min(initialStepIndex, totalSteps - 1));
+    ensureDemoAuthIfGuest(validIndex);
     setCurrentStepIndex(validIndex);
     setIsTourActive(true);
     navigateToStepRoute(TOUR_STEPS[validIndex]);
-  }, [totalSteps, navigateToStepRoute]);
+  }, [totalSteps, ensureDemoAuthIfGuest, navigateToStepRoute]);
 
   const endTour = useCallback(() => {
     setIsTourActive(false);
@@ -45,10 +60,11 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
 
   const jumpToStep = useCallback((index: number) => {
     if (index >= 0 && index < totalSteps) {
+      ensureDemoAuthIfGuest(index);
       setCurrentStepIndex(index);
       navigateToStepRoute(TOUR_STEPS[index]);
     }
-  }, [totalSteps, navigateToStepRoute]);
+  }, [totalSteps, ensureDemoAuthIfGuest, navigateToStepRoute]);
 
   const nextStep = useCallback(() => {
     if (currentStepIndex < totalSteps - 1) {

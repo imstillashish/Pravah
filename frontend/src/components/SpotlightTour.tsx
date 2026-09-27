@@ -62,8 +62,8 @@ export const SpotlightTour: React.FC = () => {
   // Handle locating target with polling and smooth scroll centering
   useEffect(() => {
     if (!isTourActive) {
-      setTargetRect(null);
       targetElementRef.current = null;
+      setTargetRect((prev) => (prev ? null : prev));
       return;
     }
 
@@ -181,6 +181,7 @@ export const SpotlightTour: React.FC = () => {
   return (
     <div
       role="dialog"
+      data-tour-overlay="true"
       aria-label={`Feature Tour: ${currentStep.title}`}
       aria-modal="true"
       className="fixed inset-0 z-[9990] overflow-hidden select-none pointer-events-auto"

@@ -19,6 +19,8 @@ import { AdminReferencePage } from "./pages/AdminReferencePage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { AuditLogPage } from "./pages/AuditLogPage";
 import { NewAnalysisModal } from "./components/NewAnalysisModal";
+import { TourProvider } from "./context/TourContext";
+import { SpotlightTour } from "./components/SpotlightTour";
 import { Agentation } from "agentation";
 
 function MainApp() {
@@ -131,6 +133,17 @@ function MainApp() {
     // When popup modal is open, preserve whichever view was actively being viewed underneath!
     const effectiveView = currentView === "new-analysis" ? (prevView || "dashboard") : currentView;
 
+    // Page 2: Login / Auth Demo (accessible even during active session or tour Step 1)
+    if (effectiveView === "login") {
+      return (
+        <AuthPage
+          onNavigateToSignUp={() => {
+            window.location.hash = "#signup";
+            setCurrentView("signup");
+          }}
+        />
+      );
+    }
     // Page 4: Dashboard
     if (effectiveView === "dashboard" || effectiveView === "") {
       return <Dashboard />;
@@ -185,16 +198,17 @@ function MainApp() {
   };
 
   const underlyingView = currentView === "new-analysis" ? (prevView || "dashboard") : currentView;
+  const isLoginView = underlyingView === "login";
 
   return (
     <div className="min-h-screen bg-paper">
-      <IconRail currentView={currentView} />
-      <TopBar currentView={currentView} />
+      {!isLoginView && <IconRail currentView={currentView} />}
+      {!isLoginView && <TopBar currentView={currentView} />}
       <div className="flex">
-        <div className="min-w-0 flex-1 md:pl-14">
+        <div className={`min-w-0 flex-1 ${!isLoginView ? "md:pl-14" : ""}`}>
           {renderContent()}
         </div>
-        {underlyingView === "dashboard" && (
+        {underlyingView === "dashboard" && !isLoginView && (
           <RightRail desk={isPlanner ? "planner" : "operator"} />
         )}
       </div>
@@ -217,7 +231,10 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <TourProvider>
+        <MainApp />
+        <SpotlightTour />
+      </TourProvider>
     </AuthProvider>
   );
 }

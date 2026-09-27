@@ -9,11 +9,14 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { PravahLogo } from "../components/PravahLogo";
+import { useTour } from "../context/TourContext";
 
 export const LandingPage: React.FC<{
   onNavigateToLogin: () => void;
   onNavigateToSignUp: () => void;
 }> = ({ onNavigateToLogin, onNavigateToSignUp }) => {
+  const { startTour } = useTour();
+
   return (
     <div className="min-h-screen bg-paper text-charcoal">
       {/* Top Navbar */}
@@ -28,15 +31,23 @@ export const LandingPage: React.FC<{
           <div className="flex items-center gap-3">
             <button
               type="button"
+              onClick={() => startTour()}
+              className="flex items-center gap-1.5 rounded-full border border-forest-ink/20 bg-lime-voltage/30 px-3.5 py-2 text-xs font-semibold text-forest-ink hover:bg-lime-voltage transition-all cursor-pointer"
+            >
+              <Sparkles className="size-3.5" />
+              <span>Feature Tour</span>
+            </button>
+            <button
+              type="button"
               onClick={onNavigateToLogin}
-              className="rounded-full border border-forest-ink bg-paper px-4 py-2 text-xs font-medium text-forest-ink hover:bg-fog transition-colors"
+              className="rounded-full border border-forest-ink bg-paper px-4 py-2 text-xs font-medium text-forest-ink hover:bg-fog transition-colors cursor-pointer"
             >
               Sign In
             </button>
             <button
               type="button"
               onClick={onNavigateToSignUp}
-              className="flex items-center gap-1.5 rounded-full bg-lime-voltage px-4 py-2 text-xs font-medium text-forest-ink hover:brightness-95 active:scale-95 transition-all"
+              className="flex items-center gap-1.5 rounded-full bg-lime-voltage px-4 py-2 text-xs font-medium text-forest-ink hover:brightness-95 active:scale-95 transition-all cursor-pointer"
             >
               <span>Get Started</span>
               <ArrowRight className="size-3.5" />
@@ -64,8 +75,16 @@ export const LandingPage: React.FC<{
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
               type="button"
+              onClick={() => startTour()}
+              className="flex items-center gap-2 rounded-full border border-forest-ink/30 bg-lime-voltage/30 px-6 py-3 text-sm font-semibold text-forest-ink hover:bg-lime-voltage hover:border-forest-ink active:scale-95 transition-all cursor-pointer shadow-xs"
+            >
+              <Sparkles className="size-4" />
+              <span>Explore 28 Features Tour</span>
+            </button>
+            <button
+              type="button"
               onClick={onNavigateToSignUp}
-              className="flex items-center gap-2 rounded-full bg-lime-voltage px-6 py-3 text-sm font-medium text-forest-ink hover:brightness-95 active:scale-95 transition-all"
+              className="flex items-center gap-2 rounded-full bg-lime-voltage px-6 py-3 text-sm font-medium text-forest-ink hover:brightness-95 active:scale-95 transition-all cursor-pointer"
             >
               <span>Access SAIL Portal</span>
               <ArrowRight className="size-4" />
@@ -73,7 +92,7 @@ export const LandingPage: React.FC<{
             <button
               type="button"
               onClick={onNavigateToLogin}
-              className="rounded-full border border-forest-ink bg-paper px-6 py-3 text-sm font-medium text-forest-ink hover:bg-fog transition-colors"
+              className="rounded-full border border-forest-ink bg-paper px-6 py-3 text-sm font-medium text-forest-ink hover:bg-fog transition-colors cursor-pointer"
             >
               Officer Login
             </button>

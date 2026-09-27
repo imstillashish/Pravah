@@ -1,4 +1,4 @@
-import { TOUR_STEPS, getTourStep, getTotalSteps, getStepByFeatureId } from "./tourSteps";
+import { TOUR_STEPS, getTourStep, getTotalSteps, getStepByFeatureId, type TourStep } from "./tourSteps";
 
 // Self-contained verification assertion suite for Tour Steps
 function runAssertions() {
@@ -12,7 +12,7 @@ function runAssertions() {
   const ids = new Set<string>();
   const featureNumbers = new Set<number>();
 
-  TOUR_STEPS.forEach((step, idx) => {
+  TOUR_STEPS.forEach((step: TourStep, idx: number) => {
     if (!step.id) throw new Error(`Step at index ${idx} missing id`);
     if (ids.has(step.id)) throw new Error(`Duplicate step id: ${step.id}`);
     ids.add(step.id);
@@ -33,6 +33,7 @@ function runAssertions() {
     if (getStepByFeatureId(step.featureNumber) !== step) throw new Error(`getStepByFeatureId(${step.featureNumber}) mismatch`);
   });
 
+  console.log("All 28 tour steps verified successfully with complete data contract!");
   return true;
 }
 

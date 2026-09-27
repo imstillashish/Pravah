@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useTour } from "../context/TourContext";
 import {
   Search,
   ArrowLeftRight,
@@ -21,6 +22,7 @@ import {
   Shield,
   Users,
   FileText,
+  Sparkles,
 } from "lucide-react";
 
 export interface TopBarProps {
@@ -35,6 +37,7 @@ export interface TopBarProps {
  */
 export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => {
   const { user, switchRole, logout } = useAuth();
+  const { isTourActive, startTour, endTour } = useTour();
   const [switching, setSwitching] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -164,6 +167,22 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          {/* Feature Tour Pill */}
+          <button
+            type="button"
+            onClick={() => (isTourActive ? endTour() : startTour())}
+            data-tour-trigger="start"
+            aria-label="Start Microscopic Feature Tour"
+            className={`flex h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-semibold transition duration-150 cursor-pointer ${
+              isTourActive
+                ? "border-forest-ink bg-lime-voltage text-forest-ink shadow-xs"
+                : "border-forest-ink/20 bg-lime-voltage/30 text-forest-ink hover:bg-lime-voltage hover:border-forest-ink"
+            }`}
+          >
+            <Sparkles className="size-3.5 text-forest-ink" aria-hidden="true" />
+            <span className="hidden sm:inline">{isTourActive ? "In Tour" : "Feature Tour"}</span>
+          </button>
+
           {/* Desk pill — Wise segmented style, mono desk code */}
           <div className="hidden h-8 items-center gap-2.5 rounded-full border border-pebble bg-fog px-3 md:flex">
             <div className="leading-tight">
@@ -218,6 +237,22 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
         <div className="border-t border-pebble bg-paper px-4 py-4 md:hidden shadow-lg animate-in fade-in slide-in-from-top-2 duration-150">
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              if (isTourActive) {
+                endTour();
+              } else {
+                startTour();
+              }
+            }}
+            className="mb-3 w-full flex items-center justify-center gap-2 rounded-full border border-forest-ink/30 bg-lime-voltage py-2 text-xs font-bold text-forest-ink shadow-xs"
+          >
+            <Sparkles className="size-4" />
+            <span>{isTourActive ? "Exit Feature Tour" : "Start Feature Tour (28 Steps)"}</span>
+          </button>
+
           <div className="mb-3 flex items-center justify-between border-b border-pebble pb-3">
             <div>
               <div className="font-sans text-sm font-semibold text-forest-ink">{user.full_name}</div>
