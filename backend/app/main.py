@@ -204,7 +204,7 @@ def post_root_analysis_decision_reject(analysis_id: int, payload: dict):
 
 @app.get("/health")
 @app.get("/api/health")
-def health_check():
-    return {"status": "ok", "service": "Pravah Core API"}
+def get_health():
+    return {"status": "ok", "service": "pravah-backend"}
 
 
