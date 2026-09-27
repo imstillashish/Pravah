@@ -31,6 +31,7 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children }) => {
   const navigateToStepRoute = useCallback((step: TourStep) => {
     if (window.location.hash !== step.route) {
       window.location.hash = step.route;
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }
   }, []);
 

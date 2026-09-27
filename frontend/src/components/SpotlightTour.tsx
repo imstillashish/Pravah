@@ -19,38 +19,39 @@ interface RectBounds {
 }
 
 
-// Smart context-aware scrolling so the target element is positioned with maximum clearance
-function scrollTargetWithClearance(element: Element) {
+// Smart context-aware smooth scrolling that handles any nested scroll container
+function scrollTargetIntoView(element: Element) {
   const rect = element.getBoundingClientRect();
   const vh = window.innerHeight;
-  const topNavHeight = 64;
-  const desiredCardHeight = 330;
+  const topNavHeight = 70;
 
-  const modalScroll = element.closest(".overflow-y-auto");
+  // If already comfortably within view with room for the card, don't scroll
+  const isComfortablyVisible =
+    rect.top >= topNavHeight &&
+    rect.bottom <= vh - 20 &&
+    (vh - rect.bottom >= 260 || rect.top - topNavHeight >= 260);
 
-  // Effective height capped to what spotlight will highlight
-  const effectiveHeight = Math.min(rect.height, Math.floor(vh * 0.40));
-  const spaceBelow = vh - (rect.top + effectiveHeight + 16);
-  const spaceAbove = rect.top - topNavHeight - 16;
-
-  // If already plenty of space below (>= 340px) and target top is below nav, no extra scroll needed
-  if (spaceBelow >= desiredCardHeight && rect.top >= 70) {
-    return;
-  }
-  // If already plenty of space above, no scroll needed
-  if (spaceAbove >= desiredCardHeight && spaceBelow < 120) {
+  if (isComfortablyVisible) {
     return;
   }
 
-  // Otherwise, scroll target top into upper viewport (~76px from top), giving maximum room below
-  const currentScrollY = modalScroll ? modalScroll.scrollTop : window.scrollY;
-  const targetOffsetTop = rect.top + currentScrollY;
-  const idealScrollTop = Math.max(0, targetOffsetTop - 76);
+  // Ensure scroll margin so sticky top nav doesn't cover element when block is 'start'
+  const htmlEl = element as HTMLElement;
+  if (htmlEl.style && !htmlEl.style.scrollMarginTop) {
+    htmlEl.style.scrollMarginTop = "80px";
+  }
 
-  if (modalScroll) {
-    modalScroll.scrollTo({ top: idealScrollTop, behavior: "auto" });
-  } else {
-    window.scrollTo({ top: idealScrollTop, behavior: "auto" });
+  // If the element is tall, align to start; otherwise center
+  const isTall = rect.height > 350;
+
+  try {
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: isTall ? "start" : "center",
+      inline: "nearest",
+    });
+  } catch {
+    element.scrollIntoView();
   }
 }
 
@@ -86,7 +87,6 @@ export const SpotlightTour: React.FC = () => {
     }
   }, []);
 
-
   // Handle locating target with polling and smooth scroll centering
   useEffect(() => {
     if (!isTourActive) {
@@ -107,8 +107,21 @@ export const SpotlightTour: React.FC = () => {
         const rect = element.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           targetElementRef.current = element;
-          scrollTargetWithClearance(element);
+          scrollTargetIntoView(element);
           updateTargetBounds();
+
+          // Active smooth-scroll tracking loop: continuously track target bounds
+          // during smooth scroll animation (up to 30 frames / 500ms)
+          let trackFrames = 0;
+          const trackAnimation = () => {
+            if (isCancelled) return;
+            updateTargetBounds();
+            trackFrames++;
+            if (trackFrames < 30) {
+              requestAnimationFrame(trackAnimation);
+            }
+          };
+          requestAnimationFrame(trackAnimation);
           return;
         }
       }
@@ -168,7 +181,7 @@ export const SpotlightTour: React.FC = () => {
       if (observer) observer.disconnect();
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isTourActive, updateTargetBounds]);
+  }, [isTourActive, currentStepIndex, updateTargetBounds]);
 
   if (!isTourActive || !targetRect) return null;
 

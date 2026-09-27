@@ -78,7 +78,7 @@ async function captureMicroscopicTourScreenshots() {
       }
     }, item.stepNum - 1);
 
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(1200);
 
     // Wait for tour dialog
     await page.waitForSelector('div[data-tour-overlay="true"]', { timeout: 5000 });
