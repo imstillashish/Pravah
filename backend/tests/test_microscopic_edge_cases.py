@@ -43,10 +43,10 @@ class MockCargo:
 def test_database_url_edge_cases(monkeypatch):
     """Test URL normalization across varied PostgreSQL connection formats."""
     test_cases = [
-        ("postgres://user:secret@db.render.com:5432/prod", "postgresql://user:secret@db.render.com:5432/prod"),
-        ("postgresql://user:secret@db.render.com:5432/prod", "postgresql://user:secret@db.render.com:5432/prod"),
+        ("postgres://user:secret@db.render.com:5432/prod", "postgresql+psycopg2://user:secret@db.render.com:5432/prod"),
+        ("postgresql://user:secret@db.render.com:5432/prod", "postgresql+psycopg2://user:secret@db.render.com:5432/prod"),
         ("sqlite:///custom/path.db", "sqlite:///custom/path.db"),
-        ("postgres://user:p%40ssword@host:5432/db?sslmode=require", "postgresql://user:p%40ssword@host:5432/db?sslmode=require"),
+        ("postgres://user:p%40ssword@host:5432/db?sslmode=require", "postgresql+psycopg2://user:p%40ssword@host:5432/db?sslmode=require"),
     ]
     for raw_url, expected in test_cases:
         monkeypatch.setenv("DATABASE_URL", raw_url)

@@ -16,5 +16,7 @@ def test_health_endpoint():
 def test_database_url_normalization(monkeypatch):
     monkeypatch.setenv("DATABASE_URL", "postgres://user:pass@host:5432/dbname")
     custom_settings = Settings()
-    assert custom_settings.DATABASE_URL.startswith("postgresql://")
+    # Must use psycopg2 dialect explicitly (not bare postgresql:// which SQLAlchemy
+    # maps to psycopg3 on Python 3.14+)
+    assert custom_settings.DATABASE_URL.startswith("postgresql+psycopg2://")
     assert not custom_settings.DATABASE_URL.startswith("postgres://")
