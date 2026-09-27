@@ -21,13 +21,14 @@ import { AuditLogPage } from "./pages/AuditLogPage";
 import { NewAnalysisModal } from "./components/NewAnalysisModal";
 import { TourProvider } from "./context/TourContext";
 import { SpotlightTour } from "./components/SpotlightTour";
+import { WalkthroughWelcomeModal } from "./components/WalkthroughWelcomeModal";
 import { Agentation } from "agentation";
 
 function MainApp() {
   const { user, isLoading } = useAuth();
   const initialHash = window.location.hash.replace("#", "");
   const [currentView, setCurrentView] = useState<string>(
-    initialHash || (user ? "dashboard" : "landing")
+    initialHash || (user ? "dashboard" : "login")
   );
   const [prevView, setPrevView] = useState<string>(
     initialHash && initialHash !== "new-analysis" ? initialHash : "dashboard"
@@ -36,14 +37,20 @@ function MainApp() {
   const isAnalysisModalOpen = currentView === "new-analysis";
 
   useEffect(() => {
+    if (!window.location.hash) {
+      window.location.hash = user ? "#dashboard" : "#login";
+    }
+  }, [user]);
+
+  useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.replace("#", "");
       if (hash && hash !== "new-analysis") {
         setPrevView(hash);
       } else if (!hash) {
-        setPrevView(user ? "dashboard" : "landing");
+        setPrevView(user ? "dashboard" : "login");
       }
-      setCurrentView(hash || (user ? "dashboard" : "landing"));
+      setCurrentView(hash || (user ? "dashboard" : "login"));
     };
     window.addEventListener("hashchange", handleHash);
     return () => window.removeEventListener("hashchange", handleHash);
@@ -67,18 +74,21 @@ function MainApp() {
 
   // Public / Unauthenticated Views (Pages 1, 2, 3)
   if (!user) {
-    if (currentView === "landing" || currentView === "" || currentView === "dashboard") {
+    if (currentView === "landing") {
       return (
-        <LandingPage
-          onNavigateToLogin={() => {
-            window.location.hash = "#login";
-            setCurrentView("login");
-          }}
-          onNavigateToSignUp={() => {
-            window.location.hash = "#signup";
-            setCurrentView("signup");
-          }}
-        />
+        <div className="min-h-screen bg-paper">
+          <LandingPage
+            onNavigateToLogin={() => {
+              window.location.hash = "#login";
+              setCurrentView("login");
+            }}
+            onNavigateToSignUp={() => {
+              window.location.hash = "#signup";
+              setCurrentView("signup");
+            }}
+          />
+          <WalkthroughWelcomeModal currentView={currentView} />
+        </div>
       );
     }
 
@@ -105,6 +115,7 @@ function MainApp() {
             setCurrentView("signup");
           }}
         />
+        <WalkthroughWelcomeModal currentView={currentView} />
         {import.meta.env.DEV && <Agentation />}
       </div>
     );

@@ -38,6 +38,12 @@ async function captureMicroscopicTourScreenshots() {
   await page.goto('http://localhost:5173/#login', { waitUntil: 'networkidle' });
   await page.waitForTimeout(1000);
 
+  const welcomeDismiss = await page.$('text=Explore on My Own');
+  if (welcomeDismiss) {
+    await welcomeDismiss.click();
+    await page.waitForTimeout(400);
+  }
+
   const plannerButton = await page.$('text=Freight Planner');
   if (plannerButton) {
     await plannerButton.click();

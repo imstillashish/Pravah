@@ -27,6 +27,14 @@ async function verifyAllTourSteps() {
   }
   console.log('✓ Found [data-tour="auth-demo-accounts"] on Auth page');
 
+  // Check if Walkthrough Welcome Modal is displayed on login
+  const welcomeDismiss = await page.$('text=Explore on My Own');
+  if (welcomeDismiss) {
+    console.log('✓ Found Walkthrough Welcome Modal on #login. Dismissing modal...');
+    await welcomeDismiss.click();
+    await page.waitForTimeout(400);
+  }
+
   // Click Freight Planner demo button to log in
   console.log('2. Logging in via Freight Planner demo account...');
   const plannerButton = await page.$('text=Freight Planner');
