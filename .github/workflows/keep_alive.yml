@@ -1,0 +1,17 @@
+name: Keep Render Backend Awake
+
+on:
+  schedule:
+    - cron: "*/12 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping Render Health
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Keep-Alive HTTP Ping
+        run: |
+          TARGET="${{ secrets.RENDER_BACKEND_URL || 'https://astitva-api.onrender.com' }}/health"
+          echo "Pinging $TARGET"
+          curl -sSf -m 20 "$TARGET" || echo "Ping attempt completed with non-200 status"
