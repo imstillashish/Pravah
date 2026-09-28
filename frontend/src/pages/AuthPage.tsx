@@ -55,6 +55,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
         setErrorMsg(data.detail || "Something didn't work. Please check your details and try again.");
       } else {
         login(data.access_token, data.user);
+        window.location.hash = "#dashboard";
       }
     } catch {
       setErrorMsg("Unable to reach the server right now. Please try again in a moment.");

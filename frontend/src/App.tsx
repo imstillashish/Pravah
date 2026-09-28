@@ -37,7 +37,7 @@ function MainApp() {
   const isAnalysisModalOpen = currentView === "new-analysis";
 
   useEffect(() => {
-    if (!window.location.hash) {
+    if (!window.location.hash || (user && window.location.hash === "#login")) {
       window.location.hash = user ? "#dashboard" : "#login";
     }
   }, [user]);
