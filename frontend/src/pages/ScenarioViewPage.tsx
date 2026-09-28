@@ -114,6 +114,15 @@ export const ScenarioViewPage: React.FC = () => {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* What this page is for, in plain words */}
+      <section className="rounded-card border border-pebble bg-linen-mist/40 p-5">
+        <h1 className="text-xl font-semibold text-forest-ink">Scenario Studio</h1>
+        <p className="mt-2 text-sm text-charcoal">
+          Change a rate, a date or a ship size and see how the recommendation moves. Nothing here affects live
+          bookings.
+        </p>
+      </section>
+
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-pebble pb-4">
         <div>

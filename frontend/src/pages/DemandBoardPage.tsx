@@ -188,6 +188,14 @@ export const DemandBoardPage: React.FC = () => {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* What this page is for, in plain words */}
+      <section className="rounded-card border border-pebble bg-linen-mist/40 p-5">
+        <h1 className="text-xl font-semibold text-forest-ink">Demand Board</h1>
+        <p className="mt-2 text-sm text-charcoal">
+          What each plant needs delivered, and by when. Rows at risk of running short are listed first.
+        </p>
+      </section>
+
       {/* Toast Notification */}
       {toastMessage && (
         <div

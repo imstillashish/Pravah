@@ -170,6 +170,16 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* Plain summary above the formal record */}
+      <section className="rounded-card border border-pebble bg-paper p-5">
+        <h2 className="text-base font-semibold text-forest-ink">What was decided, in plain words</h2>
+        <p className="mt-2 text-sm text-charcoal">
+          {chosenVessel
+            ? `A ${chosenVessel} was chosen for this shipment.`
+            : "No final vessel choice has been recorded for this shipment yet."}
+        </p>
+      </section>
+
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-pebble pb-4">
         <div>

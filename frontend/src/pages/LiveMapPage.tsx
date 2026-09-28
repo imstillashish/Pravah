@@ -121,6 +121,14 @@ export const LiveMapPage: React.FC = () => {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* What this page is for, in plain words */}
+      <section className="rounded-card border border-pebble bg-linen-mist/40 p-5">
+        <h1 className="text-xl font-semibold text-forest-ink">Live Map</h1>
+        <p className="mt-2 text-sm text-charcoal">
+          Where your ships are and how far they have to go. Fast routes cut days; cheap routes cut cost.
+        </p>
+      </section>
+
       {/* Task 400: Persistent Non-Dismissible Simulation Banner */}
       <div className="flex items-start gap-3 rounded-card border border-pebble bg-linen-mist/50 p-4 text-forest-ink">
         <AlertTriangle className="mt-0.5 size-5 shrink-0 text-forest-ink" />

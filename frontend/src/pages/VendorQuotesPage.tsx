@@ -105,6 +105,14 @@ export const VendorQuotesPage: React.FC = () => {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* What this page is for, in plain words */}
+      <section className="rounded-card border border-pebble bg-linen-mist/40 p-5">
+        <h1 className="text-xl font-semibold text-forest-ink">Vendor Quotes</h1>
+        <p className="mt-2 text-sm text-charcoal">
+          What shipping suppliers are quoting. The cheapest quote per route is marked; the rest stay for comparison.
+        </p>
+      </section>
+
       {/* Task 396: Persistent Non-Dismissible Amber Sample Data Banner */}
       <div className="flex items-start gap-3 rounded-card border border-amber-300 bg-amber-50 p-4 text-amber-900">
         <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-warning" />
