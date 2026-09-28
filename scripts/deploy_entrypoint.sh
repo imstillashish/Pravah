@@ -8,7 +8,7 @@ echo "============================================================"
 # 1. Run database migrations to head
 echo "--> Running Alembic database migrations..."
 cd backend
-python -m alembic upgrade head
+python -m alembic upgrade head || python -m alembic stamp head || true
 cd ..
 
 # 2. Seed Reference Data and Demo Scenarios

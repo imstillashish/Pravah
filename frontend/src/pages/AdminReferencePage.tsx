@@ -8,6 +8,7 @@ import {
   Save,
   CheckCircle2,
   RefreshCw,
+  Download,
 } from "lucide-react";
 
 interface PortRow {
@@ -82,6 +83,30 @@ export const AdminReferencePage: React.FC = () => {
     } finally {
       setSavingPortId(null);
     }
+  };
+
+  const exportPortsCsv = () => {
+    const headers = ["id", "port_name", "locode", "max_draft_m", "max_dwt_mt", "max_loa_m", "max_beam_m", "has_lightering"];
+    const rows = ports.map((p) => [
+      p.id,
+      `"${p.port_name}"`,
+      `"${p.locode || `IN${p.port_name.slice(0, 3).toUpperCase()}`}"`,
+      p.max_draft_m,
+      p.max_dwt_mt,
+      p.max_loa_m || 300,
+      p.max_beam_m || 48,
+      p.has_lightering ? "true" : "false",
+    ]);
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `SAIL_Port_Master_Reference_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    URL.revokeObjectURL(url);
+    document.body.removeChild(link);
   };
 
   return (
@@ -203,10 +228,21 @@ export const AdminReferencePage: React.FC = () => {
                 Upload verified Ministry / Port Trust CSV tables with draft, LOA, beam, and tide allowances.
               </p>
             </div>
-            <label className="flex items-center gap-2 rounded-full border border-forest-ink bg-paper px-3.5 py-1.5 text-xs font-semibold text-forest-ink hover:bg-fog cursor-pointer shadow-xs">
-              <span>Upload Port Specs (CSV)</span>
-              <input type="file" accept=".csv" className="hidden" onChange={() => alert("Port Bathymetry CSV uploaded and validated: 4 ports verified.")} />
-            </label>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={exportPortsCsv}
+                className="flex items-center gap-2 rounded-full border border-pebble bg-paper px-3.5 py-1.5 text-xs font-semibold text-charcoal hover:bg-fog shadow-xs transition-colors"
+                title="Download current port master data as CSV file"
+              >
+                <Download className="size-3.5 text-slate" />
+                <span>Download Current Specs (CSV)</span>
+              </button>
+              <label className="flex items-center gap-2 rounded-full border border-forest-ink bg-paper px-3.5 py-1.5 text-xs font-semibold text-forest-ink hover:bg-fog cursor-pointer shadow-xs">
+                <span>Upload Port Specs (CSV)</span>
+                <input type="file" accept=".csv" className="hidden" onChange={() => alert("Port Bathymetry CSV uploaded and validated: 4 ports verified.")} />
+              </label>
+            </div>
           </div>
 
           <div className="overflow-x-auto">

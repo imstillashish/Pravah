@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { apiClient } from "../api/client";
 import { useAuth } from "../context/AuthContext";
-import { API_BASE } from "../api";
+import { downloadDecisionPdf } from "../utils/pdfGenerator";
 import {
   FileCheck2,
   CheckCircle2,
@@ -126,21 +126,12 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
     }
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!data) return;
     try {
-      const response = await fetch(`${API_BASE}/analyses/${data.id}/export`);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `SAIL_FR8_${data.id}_Decision_Record.txt`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      downloadDecisionPdf(data);
     } catch {
-      alert("Failed to export decision record.");
+      alert("Failed to export decision record PDF.");
     }
   };
 
@@ -206,7 +197,7 @@ export const DecisionRecordPage: React.FC<{ analysisId?: number | string }> = ({
           onClick={handleDownload}
           className="flex items-center gap-2 rounded-full border border-forest-ink bg-paper px-4 py-2 text-xs font-medium text-forest-ink hover:bg-fog transition-colors"
         >
-          <Download className="size-4" /> Download Final Record (.TXT)
+          <Download className="size-4" /> Download Final Record (.PDF)
         </button>
       </div>
 
