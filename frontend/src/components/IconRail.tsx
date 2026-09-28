@@ -17,10 +17,10 @@ import { PravahLogo } from "./PravahLogo";
  * Bottom cluster: settings and sign-out.
  */
 const RAIL_ITEMS = [
-  { icon: LayoutGrid, label: "Overview", hash: "#dashboard" },
-  { icon: BarChart3, label: "Analysis", hash: "#results" },
-  { icon: Ship, label: "Live Fleet Map", hash: "#live-map" },
-  { icon: BookOpen, label: "Historical Records", hash: "#history" },
+  { icon: LayoutGrid, label: "Overview", hint: "Overview: the freight desk at a glance", hash: "#dashboard" },
+  { icon: BarChart3, label: "Analysis", hint: "Analyses: past and current shipment recommendations", hash: "#results" },
+  { icon: Ship, label: "Live Fleet Map", hint: "Live Map: where your ships are right now", hash: "#live-map" },
+  { icon: BookOpen, label: "Historical Records", hint: "History: every analysis you have run", hash: "#history" },
 ];
 
 export interface IconRailProps {
@@ -56,7 +56,7 @@ export const IconRail: React.FC<IconRailProps> = ({ currentView = "dashboard" })
         </div>
 
         <nav aria-label="Workspace sections" className="flex flex-col items-center gap-2">
-          {RAIL_ITEMS.map(({ icon: Icon, label, hash }) => {
+          {RAIL_ITEMS.map(({ icon: Icon, label, hint, hash }) => {
             const active = isHashActive(hash);
             return (
               <button
@@ -65,7 +65,7 @@ export const IconRail: React.FC<IconRailProps> = ({ currentView = "dashboard" })
                 onClick={() => { window.location.hash = hash; }}
                 aria-current={active ? "page" : undefined}
                 aria-label={label}
-                title={label}
+                title={hint}
                 className={`flex size-10 items-center justify-center rounded-full transition-colors duration-150 ${
                   active
                     ? "bg-linen-mist text-forest-ink font-semibold"

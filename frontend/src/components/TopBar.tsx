@@ -44,7 +44,6 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
   if (!user) return null;
 
   const isPlanner = user.role === "logistics_planner";
-  const deskCode = isPlanner ? "FR8-PLN" : "PRT-OPS";
   const targetRole = isPlanner ? "port_operator" : "logistics_planner";
 
   const handleSwitch = async () => {
@@ -186,7 +185,9 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
           {/* Desk pill — Wise segmented style, mono desk code */}
           <div className="hidden h-8 items-center gap-2.5 rounded-full border border-pebble bg-fog px-3 md:flex">
             <div className="leading-tight">
-              <div className="font-mono text-[11px] font-semibold tabular-nums text-forest-ink">{deskCode}</div>
+              <div className="text-[11px] font-semibold text-forest-ink">
+                {isPlanner ? "Freight Planner" : "Port Operator"}
+              </div>
               <div className="max-w-[160px] truncate text-[10px] text-charcoal">
                 {user.full_name}
               </div>
@@ -228,7 +229,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
             ) : (
               <Anchor className="size-4 text-forest-ink" aria-hidden="true" />
             )}
-            <span className="font-mono text-[11px] tabular-nums">{deskCode}</span>
+            <span className="text-[11px] font-medium">{isPlanner ? "Freight Planner" : "Port Operator"}</span>
             <ChevronDown className="size-3 text-slate" aria-hidden="true" />
           </button>
         </div>
@@ -256,7 +257,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
           <div className="mb-3 flex items-center justify-between border-b border-pebble pb-3">
             <div>
               <div className="font-sans text-sm font-semibold text-forest-ink">{user.full_name}</div>
-              <div className="font-mono text-xs text-slate">{user.email} · {deskCode}</div>
+              <div className="font-mono text-xs text-slate">{user.email}</div>
             </div>
             <button
               type="button"
