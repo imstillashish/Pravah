@@ -2,6 +2,16 @@ import React, { useState, useEffect } from "react";
 import { apiClient } from "../api/client";
 import { RouteMap } from "../components/RouteMap";
 import {
+  BookNowAction,
+  CompareOptionsAction,
+  ExpertDisclosure,
+  PriceStoryChart,
+  ShipComparisonCards,
+  VerdictCard,
+} from "../components/verdict";
+import { deriveAlternatives, deriveBookWindow, deriveShipPicks, deriveVerdict } from "../lib/verdict";
+import { API_BASE } from "../api";
+import {
   Ship,
   TrendingDown,
   AlertTriangle,
@@ -254,6 +264,27 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
     };
   }, [analysisId]);
 
+  // Freight history for the price story. Index-based on purpose: there is no
+  // dated series endpoint, so the chart plots the returned series in order.
+  const [freightHistory, setFreightHistory] = useState<number[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/metrics/global`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((metrics) => {
+        if (!cancelled && metrics?.series?.freight) {
+          setFreightHistory(metrics.series.freight);
+        }
+      })
+      .catch(() => {
+        /* Chart falls back to the known rates; nothing to report to the user. */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const handleDecisionSubmit = async (isOverride: boolean) => {
     if (!data) return;
     try {
@@ -316,6 +347,12 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
     total_score: 0.756,
   };
 
+  const verdict = deriveVerdict(data);
+  const bookWindow = deriveBookWindow(data);
+  const shipPicks = deriveShipPicks(data);
+  const alternatives = deriveAlternatives(data);
+  const cheapestRate = Math.min(data.forecast.p50_usd_per_mt, verdict.currentRate);
+
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Top Header Banner */}
@@ -338,6 +375,11 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             {data.title}
           </h1>
+          <p className="mt-1 text-sm text-charcoal">
+            {data.commodity.replace(/_/g, " ")} · {(data.parcel_tonnage / 1000).toLocaleString()}k tons ·{" "}
+            {data.origin_port} →{" "}
+            {data.destination_port}
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -423,12 +465,72 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
         </div>
       </section>
 
-      {/* Interactive Maritime Route Map (Task 251) */}
-      <RouteMap
-        originName={data.origin_port}
-        destinationName={data.destination_port}
-        distanceNm={data.context.route_distance_nm}
+      {/* VERDICT STACK — the answer first, expert detail later (design spec §4) */}
+      <VerdictCard
+        result={verdict}
+        primaryAction={<BookNowAction analysisId={data.id} />}
+        secondaryAction={
+          <CompareOptionsAction
+            onCompare={() => {
+              document.getElementById("ship-picks-heading")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          />
+        }
+        footnote={`Based on 90 days of rates and a 30-day forecast (model: ${data.forecast.model_used}).`}
       />
+
+      <PriceStoryChart
+        history={freightHistory}
+        todayRate={data.benchmark_spot_pmt}
+        forecast={{
+          p10: data.forecast.p10_usd_per_mt,
+          p50: data.forecast.p50_usd_per_mt,
+          p90: data.forecast.p90_usd_per_mt,
+        }}
+        windowStartDay={bookWindow.daysUntilStart}
+        windowEndDay={bookWindow.daysUntilEnd}
+      />
+
+      {bookWindow.label && (
+        <section className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-pebble bg-linen-mist/40 p-5">
+          <div>
+            <h2 className="text-base font-semibold text-forest-ink">Best dates to book</h2>
+            <p className="mt-1 text-sm text-charcoal">
+              Booking between <strong>{bookWindow.label}</strong> ({bookWindow.daysUntilStart}–{bookWindow.daysUntilEnd}{" "}
+              days from today) should land near <strong>${cheapestRate.toFixed(2)}/ton</strong>.
+            </p>
+          </div>
+          <BookNowAction analysisId={data.id} />
+        </section>
+      )}
+
+      <ShipComparisonCards picks={shipPicks} />
+
+      {alternatives.length > 0 && (
+        <section aria-labelledby="alternatives-heading" className="rounded-card border border-pebble bg-paper p-5">
+          <h2 id="alternatives-heading" className="text-base font-semibold text-forest-ink">
+            Other options worth knowing
+          </h2>
+          <ul className="mt-3 space-y-2">
+            {alternatives.map((alt) => (
+              <li key={alt.title} className="rounded-card border border-pebble bg-fog p-3">
+                <p className="text-sm font-semibold text-charcoal">{alt.title}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-charcoal">{alt.detail}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <ExpertDisclosure label="Show expert detail (full analysis)" className="space-y-6">
+        {/* Interactive Maritime Route Map (Task 251) */}
+        <RouteMap
+          originName={data.origin_port}
+          destinationName={data.destination_port}
+          distanceNm={data.context.route_distance_nm}
+        />
+
+        {/* Everything below is engine output — expert material, kept intact. */}
 
       {/* SECTION 5: Stock-Out Alert (Rendered conditionally with Red/Green border per Task 238 & 313) */}
       {data.stockout_alert && (
@@ -1156,6 +1258,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
           </div>
         )}
       </section>
+      </ExpertDisclosure>
     </div>
   );
 };
