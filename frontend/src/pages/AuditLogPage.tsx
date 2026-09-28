@@ -130,6 +130,9 @@ export const AuditLogPage: React.FC = () => {
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             Audit Trails & Regulatory Governance
           </h1>
+          <p className="mt-1 text-sm text-charcoal">
+            A record of who changed what, for when something needs explaining.
+          </p>
           <p className="mt-0.5 text-xs text-slate">
             Tamper-evident record of all freight forecasts, chartering decisions, overrides, and administrative modifications.
           </p>

@@ -100,6 +100,9 @@ export const AdminReferencePage: React.FC = () => {
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             Maritime & Industrial Reference Master Data
           </h1>
+          <p className="mt-1 text-sm text-charcoal">
+            Reference data admins use to keep calculations correct. Changes here affect every new analysis.
+          </p>
           <p className="mt-0.5 text-xs text-slate">
             Configure authoritative terminal constraints, ship technical limits, commodity densities, and plant profiles.
           </p>

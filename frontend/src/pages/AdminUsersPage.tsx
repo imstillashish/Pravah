@@ -126,6 +126,9 @@ export const AdminUsersPage: React.FC = () => {
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-obsidian sm:text-3xl">
             User Access & Authority Management
           </h1>
+          <p className="mt-1 text-sm text-charcoal">
+            People with access to the freight desk, and what each of them can do.
+          </p>
           <p className="mt-0.5 text-xs text-slate">
             Manage authorized credentials for SAIL procurement officers, logistics planners, and plant managers.
           </p>
