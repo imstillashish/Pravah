@@ -53,3 +53,9 @@ Thumbs.db
 .idea/
 screenshots/
 *.pdf
+.vercel
+.env*
+.env.deploy
+
+# Graphify code-graph output
+graphify-out/
