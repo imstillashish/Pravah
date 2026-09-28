@@ -66,7 +66,6 @@ export const Dashboard: React.FC = () => {
   const dateLabel = new Date()
     .toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" })
     .toUpperCase();
-  const deskCode = isPlanner ? "FR8-PLN" : "PRT-OPS";
 
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
@@ -74,9 +73,7 @@ export const Dashboard: React.FC = () => {
       <section aria-labelledby="page-title" className="pb-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-              {deskCode} · {dateLabel}
-            </div>
+            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.08em] text-slate">{dateLabel}</div>
             <h1 id="page-title" className="text-4xl font-bold tracking-tight text-obsidian">
               {daypart}, {firstName}
             </h1>
@@ -148,9 +145,15 @@ export const Dashboard: React.FC = () => {
             </p>
           </div>
         </div>
-        <span className="hidden sm:inline-block rounded-full bg-amber-200/80 px-2.5 py-1 font-mono text-[10px] font-semibold text-amber-900 shrink-0">
-          SURCHARGE IMPACT: $0.00 PMT
-        </span>
+        <button
+          type="button"
+          onClick={() => {
+            window.location.hash = "#scenario";
+          }}
+          className="hidden shrink-0 rounded-full bg-amber-200/80 px-2.5 py-1 font-mono text-[10px] font-semibold text-amber-900 hover:brightness-95 sm:inline-block"
+        >
+          What does this mean for me?
+        </button>
       </div>
 
       {/* Primary indicator row — dense 4-up tiles */}
@@ -160,54 +163,53 @@ export const Dashboard: React.FC = () => {
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-                  SPOT VS PERIOD GAP
+                  SHORT-TERM VS DAILY MARKET
                 </span>
                 <span className="inline-flex items-center gap-1 rounded bg-emerald-wash px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-profit">
-                  SAVINGS OPPORTUNITY
+                  SAVES MONEY
                 </span>
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums text-emerald-profit">
                 -14.2%
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
-                Short-term voyage contracts currently show significant cost advantage over daily
-                spot market exploration.
+                Booking a short-term contract today costs about 14% less than buying at the daily
+                market rate.
               </p>
             </Card>
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-                  FORECASTED WINDOW
+                  CHEAPEST BOOKING WINDOW
                 </span>
                 <span className="inline-flex items-center gap-1 rounded bg-linen-mist px-2 py-0.5 font-mono text-[10px] font-semibold text-signal-blue">
-                  AI RECOMMENDATION
+                  BEST TIME TO BOOK
                 </span>
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums text-forest-ink">
                 OCT 05–18
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
-                Capesize rates on Hay Point / Gladstone to Paradip route expected to dip to 90-day
-                low.
+                Rates for coal from Australia to Paradip are expected to hit a 90-day low between
+                these dates.
               </p>
             </Card>
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-                  VESSEL PARCEL PAIRING
+                  RECOMMENDED SHIP SIZE
                 </span>
                 <span className="inline-flex items-center gap-1 rounded bg-amber-wash px-2 py-0.5 font-mono text-[10px] font-semibold text-amber-warning">
-                  BERTH OPTIMAL
+                  FITS YOUR BERTHS
                 </span>
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums text-forest-ink">
-                PMX 75K
+                ~75,000 tons
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
-                Complies with current 14.5m draft constraints at Haldia Lock Gate and Paradip Berth
-                #2.
+                A ship this size clears the 14.5 m depth limit at Haldia and berths at Paradip.
               </p>
             </Card>
 
@@ -215,17 +217,17 @@ export const Dashboard: React.FC = () => {
             <Card data-tour="stockout-alert" tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate">
-                  PLANT COAL RESERVES
+                  COAL LEFT AT THE PLANT
                 </span>
                 <span className="inline-flex items-center gap-1 rounded bg-amber-wash px-2 py-0.5 font-mono text-[10px] font-semibold text-amber-warning">
                   15 DAYS LEFT
                 </span>
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums text-forest-ink">
-                15d / 22d Lead
+                15 days / 22 to deliver
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
-                Bhilai stockpile requires fixture closure within 3 days to avoid critical depletion before arrival.
+                Bhilai would run short before a new shipment arrives — book within 3 days to be safe.
               </p>
             </Card>
           </>
@@ -234,7 +236,7 @@ export const Dashboard: React.FC = () => {
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
-                  BERTH AVAILABILITY
+                  BERTHS FREE NOW
                 </span>
                 <Anchor className="size-4 text-forest-ink" aria-hidden="true" />
               </div>
@@ -242,15 +244,14 @@ export const Dashboard: React.FC = () => {
                 3 READY
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
-                Mechanized Coal Berths at Paradip &amp; Vizag Outer Harbor open for immediate
-                discharge.
+                Three berths are open for immediate discharge at Paradip and Vizag Outer Harbor.
               </p>
             </Card>
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
-                  DRAFT ADVISORY
+                  WATER DEPTH LIMIT
                 </span>
                 <ShieldAlert className="size-4 text-signal-blue" aria-hidden="true" />
               </div>
@@ -258,20 +259,20 @@ export const Dashboard: React.FC = () => {
                 14.5M MAX
               </div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
-                Sagar-Sandheads transshipment advisory active for incoming Capesize bulk carriers.
+                Ships drawing more than 14.5 m cannot berth right now, so cargo is transshipped.
               </p>
             </Card>
 
             <Card tone="fog" className={METRIC_CARD}>
               <div className="mb-2 flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
-                  AVG TURNAROUND
+                  AVERAGE TIME IN PORT
                 </span>
                 <Clock className="size-4 text-forest-ink" aria-hidden="true" />
               </div>
               <div className="font-mono text-2xl font-semibold tabular-nums text-forest-ink">41.8H</div>
               <p className="mt-2 text-xs leading-relaxed text-charcoal">
-                Idle waiting time reduced by 6.4 hours with automated tender pre-dispatch.
+                Ships spend about 41.8 hours in port on average, down 6.4 hours with pre-dispatch.
               </p>
             </Card>
           </>
