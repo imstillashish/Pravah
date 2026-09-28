@@ -155,6 +155,22 @@ export const BookingPage: React.FC<{ bookingId?: number | string }> = ({
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* Plain-language summary — the first thing a newcomer should read */}
+      <section className="rounded-card border border-pebble bg-paper p-5">
+        <h1 className="text-xl font-semibold text-forest-ink">Finish your booking</h1>
+        <p className="mt-2 text-sm leading-relaxed text-charcoal">
+          {booking?.chosen_vessel_class ? `${booking.chosen_vessel_class} · ` : ""}
+          {booking?.origin_port ?? "origin"} → {booking?.destination_port ?? "destination"} ·{" "}
+          {booking?.parcel_tonnage ? `${booking.parcel_tonnage.toLocaleString()} tons` : "parcel size pending"} ·{" "}
+          {booking?.predicted_rate_pmt !== undefined
+            ? `$${Number(booking.predicted_rate_pmt).toFixed(2)}/ton`
+            : "rate pending"}
+        </p>
+        <p className="mt-1 text-sm text-charcoal">
+          Work through the steps below — nothing is charged until the final confirmation.
+        </p>
+      </section>
+
       {/* Task 389: Persistent Non-Dismissible Manual Tracking Banner */}
       <div className="flex items-start gap-3 rounded-card border border-amber-300 bg-amber-50 p-4 text-amber-900">
         <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-warning" />
