@@ -9,6 +9,8 @@ import {
   Anchor,
 } from "lucide-react";
 
+import { VerdictChip } from "../components/verdict/VerdictChip";
+
 interface AnalysisRecord {
   id: number;
   title: string;
@@ -19,6 +21,7 @@ interface AnalysisRecord {
   origin_country?: string;
   destination_port: string;
   predicted_rate_pmt: number;
+  benchmark_spot_pmt?: number;
   recommended_vessel: string;
   created_at: string;
 }
@@ -308,9 +311,14 @@ export const HistoryPage: React.FC = () => {
                     </td>
 
                     <td className="px-5 py-3.5 text-center">
-                      <span className="inline-flex items-center rounded-full bg-linen-mist px-2.5 py-0.5 font-mono text-[10px] font-bold text-forest-ink">
-                        {a.status}
-                      </span>
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="inline-flex items-center rounded-full bg-linen-mist px-2.5 py-0.5 font-mono text-[10px] font-bold text-forest-ink">
+                          {a.status}
+                        </span>
+                        {typeof a.benchmark_spot_pmt === "number" && (
+                          <VerdictChip verdict={a.predicted_rate_pmt < a.benchmark_spot_pmt ? "book" : "wait"} />
+                        )}
+                      </div>
                     </td>
 
                     <td className="px-5 py-3.5 text-right">

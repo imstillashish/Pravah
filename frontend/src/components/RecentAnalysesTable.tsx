@@ -3,6 +3,8 @@ import { RefreshCw, Layers, ArrowUp, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../api";
 import { Card, Pill, SecondaryButton, SectionHeader, Skeleton } from "./ui";
+import { VerdictChip } from "./verdict/VerdictChip";
+import type { Verdict } from "../lib/verdict";
 import type { AnalysisObject } from "../types/analysis";
 
 /**
@@ -80,6 +82,13 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
     }
   };
 
+  /**
+   * Row-level verdict for the list view. `AnalysisObject` carries no forecast
+   * band, so a row is "book" when it already beats spot, otherwise "wait".
+   */
+  const rowVerdict = (item: AnalysisObject): Verdict =>
+    item.predicted_rate_pmt < item.benchmark_spot_pmt ? "book" : "wait";
+
   const renderStatusBadge = (status: AnalysisObject["status"]) => {
     switch (status) {
       case "finalized":
@@ -115,7 +124,7 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
 
   return (
     <section aria-labelledby="recent-analyses-heading">
-      <SectionHeader title="Recent Procurement & Freight Forecasts" />
+      <SectionHeader title="Recent shipments and what we recommended" />
       <p className="mt-1 text-sm text-charcoal">
         Historical voyage simulations, vessel parcel allocations, and realized cost savings. Click any row to review full decision details.
       </p>
@@ -148,11 +157,12 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
           <table className="w-full min-w-[760px] border-collapse text-left">
             <thead>
               <tr className="border-b border-pebble bg-fog font-mono text-[10px] uppercase tracking-[0.08em] text-charcoal">
-                <th scope="col" className="py-2.5 pl-4 pr-3 font-medium">Trade Route</th>
-                <th scope="col" className="px-3 py-2.5 font-medium">Cargo &amp; Parcel</th>
+                <th scope="col" className="py-2.5 pl-4 pr-3 font-medium">Route</th>
+                <th scope="col" className="px-3 py-2.5 font-medium">Cargo</th>
                 <th scope="col" className="px-3 py-2.5 font-medium">Vessel</th>
-                <th scope="col" className="px-3 py-2.5 font-medium">Forecast vs. Spot</th>
+                <th scope="col" className="px-3 py-2.5 font-medium">Our rate vs spot</th>
                 <th scope="col" className="px-3 py-2.5 font-medium">Savings</th>
+                <th scope="col" className="px-3 py-2.5 font-medium">Verdict</th>
                 <th scope="col" className="px-3 py-2.5 font-medium">Status</th>
                 <th scope="col" className="px-3 py-2.5 font-medium">Run Time</th>
                 <th scope="col" className="py-2.5 pl-3 pr-4 text-right font-medium">Action</th>
@@ -167,6 +177,7 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                     <td className="px-3 py-3.5"><Skeleton className="h-4 w-20" /></td>
                     <td className="px-3 py-3.5"><Skeleton className="h-4 w-24" /></td>
                     <td className="px-3 py-3.5"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-3 py-3.5"><Skeleton className="h-4 w-16" /></td>
                     <td className="px-3 py-3.5"><Skeleton className="h-4 w-16" /></td>
                     <td className="px-3 py-3.5"><Skeleton className="h-4 w-16" /></td>
                     <td className="py-3.5 pl-3 pr-4"><Skeleton className="ml-auto h-4 w-14" /></td>
@@ -237,6 +248,11 @@ export const RecentAnalysesTable: React.FC<RecentAnalysesTableProps> = ({
                         <ArrowUp className="size-3.5 stroke-[2.5]" aria-hidden="true" />
                         <span>+${Math.round(item.estimated_savings_usd).toLocaleString()}</span>
                       </span>
+                    </td>
+
+                    {/* Verdict — the plain answer, before the workflow status */}
+                    <td className="px-3 py-3.5">
+                      <VerdictChip verdict={rowVerdict(item)} />
                     </td>
 
                     {/* Status */}
