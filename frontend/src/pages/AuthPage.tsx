@@ -176,12 +176,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onNavigateToSignUp }) => {
 
         <Card className="mx-auto w-full max-w-md p-6 sm:p-8">
           <h2 className="text-xl font-semibold leading-tight text-forest-ink">
-            {isRegister ? "Create your operations account" : "Access the freight terminal"}
+            {isRegister ? "Create your freight desk account" : "Sign in to the freight desk"}
           </h2>
           <p className="mt-1.5 text-sm leading-relaxed text-charcoal">
             {isRegister
-              ? "Sign up to track freight indices, forecast charter rates, and plan berthing at Indian East Coast ports."
-              : "Sign in to access your freight forecasting desk and port operations panel."}
+              ? "Takes a minute. You can invite your team later."
+              : "Use a demo account below, or your work email."}
           </p>
 
           {errorMsg && (

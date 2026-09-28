@@ -61,15 +61,15 @@ export const LandingPage: React.FC<{
         <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8 space-y-6">
           <div className="inline-flex items-center gap-2 rounded-full border border-forest-ink/20 bg-linen-mist px-3.5 py-1 text-xs font-medium text-forest-ink">
             <Sparkles className="size-3.5 text-forest-ink" />
-            <span>Intelligent Ocean Freight Decision Support Platform</span>
+            <span>Freight rate forecasting for SAIL's coal imports</span>
           </div>
 
           <h1 className="font-sans text-3xl font-black tracking-[-0.03em] text-obsidian sm:text-5xl lg:text-6xl leading-[1.08]">
-            Empowering SAIL with predictive freight forecasting & vessel chartering intelligence.
+            Know what your coal shipment should cost — and when to book it.
           </h1>
 
           <p className="mx-auto max-w-2xl text-sm sm:text-base text-charcoal leading-relaxed">
-            Helps SAIL procurement officers decide which ship to hire, when to charter, and at what rate for optimal landed cost across India’s East Coast ports.
+            See what a coal shipment costs today, when it will be cheaper, and which ship to use. Built for SAIL's freight desk.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">

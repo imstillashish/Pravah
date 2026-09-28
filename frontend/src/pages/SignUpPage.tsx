@@ -155,10 +155,10 @@ export const SignUpPage: React.FC<SignUpPageProps> = ({ onSwitchToLogin }) => {
 
         <Card className="mx-auto w-full max-w-md p-6 sm:p-8">
           <h2 className="text-xl font-semibold leading-tight text-forest-ink">
-            Create your operations account
+            Create your freight desk account
           </h2>
           <p className="mt-1.5 text-sm leading-relaxed text-charcoal">
-            Register your credentials to access SAIL&apos;s freight forecasting desk and port operations.
+            Takes a minute. You can invite your team later.
           </p>
 
           {errorMsg && (
