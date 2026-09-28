@@ -434,7 +434,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
       {/* SECTION 1: Context Summary */}
       <section className="grid grid-cols-2 gap-4 rounded-card border border-pebble bg-paper p-5 sm:grid-cols-4">
         <div>
-          <span className="text-xs text-slate">Route Corridor</span>
+          <span className="text-xs text-slate">Route</span>
           <p className="mt-0.5 font-semibold text-charcoal">
             {data.origin_port} → {data.destination_port}
           </p>
@@ -443,25 +443,25 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
           </span>
         </div>
         <div>
-          <span className="text-xs text-slate">Cargo & Parcel Size</span>
+          <span className="text-xs text-slate">Cargo size</span>
           <p className="mt-0.5 font-semibold text-charcoal">
             {data.parcel_tonnage.toLocaleString()} MT
           </p>
           <span className="text-[11px] text-slate">{data.commodity}</span>
         </div>
         <div>
-          <span className="text-xs text-slate">Inferred Optimal Class</span>
+          <span className="text-xs text-slate">Best ship type for this route</span>
           <p className="mt-0.5 font-semibold text-forest-ink">
             {data.context.inferred_vessel_class}
           </p>
           <span className="text-[11px] text-slate">Draft-checked for Paradip</span>
         </div>
         <div>
-          <span className="text-xs text-slate">Resolution Timestamp</span>
+          <span className="text-xs text-slate">Analysis run at</span>
           <p className="mt-0.5 font-mono text-xs text-charcoal">
             {new Date(data.created_at).toLocaleString()}
           </p>
-          <span className="text-[11px] text-emerald-600">Model Quantile v1 Validated</span>
+          <span className="text-[11px] text-emerald-600">Backtested on the last 90 days</span>
         </div>
       </section>
 
@@ -476,7 +476,7 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
             }}
           />
         }
-        footnote={`Based on 90 days of rates and a 30-day forecast (model: ${data.forecast.model_used}).`}
+        footnote="Based on 90 days of rates and a 30-day forecast."
       />
 
       <PriceStoryChart

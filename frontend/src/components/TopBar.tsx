@@ -208,7 +208,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
               ) : (
                 <ArrowLeftRight className="size-3" aria-hidden="true" />
               )}
-              <span className="hidden xl:inline">{isPlanner ? "OPS" : "FRT"}</span>
+              <span className="hidden xl:inline">{isPlanner ? "Port Ops" : "Freight"}</span>
             </button>
           </div>
 
@@ -266,7 +266,7 @@ export const TopBar: React.FC<TopBarProps> = ({ currentView = "dashboard" }) => 
               className="flex items-center gap-1 rounded-full bg-lime-voltage px-2.5 py-1 font-mono text-[11px] font-semibold text-forest-ink"
             >
               {switching ? <Loader2 className="size-3 animate-spin" /> : <ArrowLeftRight className="size-3" />}
-              <span>Switch to {isPlanner ? "OPS" : "FR8"}</span>
+              <span>Switch to {isPlanner ? "Port Operations" : "the Freight Desk"}</span>
             </button>
           </div>
 
