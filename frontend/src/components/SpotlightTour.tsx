@@ -21,6 +21,15 @@ interface RectBounds {
 
 // Smart context-aware smooth scrolling that handles any nested scroll container
 function scrollTargetIntoView(element: Element) {
+  // Ensure any collapsed <details> ancestor is expanded so the target is in the scrollable document layout
+  let parent = element.parentElement;
+  while (parent) {
+    if (parent.tagName === "DETAILS" && !(parent as HTMLDetailsElement).open) {
+      (parent as HTMLDetailsElement).open = true;
+    }
+    parent = parent.parentElement;
+  }
+
   const rect = element.getBoundingClientRect();
   const vh = window.innerHeight;
   const topNavHeight = 70;
@@ -42,11 +51,11 @@ function scrollTargetIntoView(element: Element) {
   }
 
   // If the element is tall, align to start; otherwise center
-  const isTall = rect.height > 350;
+  const isTall = rect.height > 200;
 
   try {
     element.scrollIntoView({
-      behavior: "smooth",
+      behavior: "auto",
       block: isTall ? "start" : "center",
       inline: "nearest",
     });
@@ -90,9 +99,10 @@ export const SpotlightTour: React.FC = () => {
 
   // Handle locating target with polling and smooth scroll centering
   useEffect(() => {
+    targetElementRef.current = null;
+    setTargetRect(null);
+
     if (!isTourActive) {
-      targetElementRef.current = null;
-      setTargetRect((prev) => (prev ? null : prev));
       return;
     }
 
@@ -105,6 +115,15 @@ export const SpotlightTour: React.FC = () => {
 
       const element = document.querySelector(currentStep.selector);
       if (element) {
+        // Expand any collapsed <details> ancestor immediately so element dimensions are measurable
+        let parent = element.parentElement;
+        while (parent) {
+          if (parent.tagName === "DETAILS" && !(parent as HTMLDetailsElement).open) {
+            (parent as HTMLDetailsElement).open = true;
+          }
+          parent = parent.parentElement;
+        }
+
         const rect = element.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           targetElementRef.current = element;
@@ -128,7 +147,7 @@ export const SpotlightTour: React.FC = () => {
       }
 
       if (Date.now() - pollStart < timeoutMs) {
-        animFrameRef.current = requestAnimationFrame(findAndLockTarget);
+        animFrameRef.current = window.setTimeout(findAndLockTarget, 30);
       } else {
         // Fallback center if element missing on target page
         targetElementRef.current = null;
@@ -141,16 +160,13 @@ export const SpotlightTour: React.FC = () => {
       }
     };
 
-    // Give router 50ms to switch views before polling
-    const timer = setTimeout(() => {
-      findAndLockTarget();
-    }, 60);
+    // Run findAndLockTarget immediately; will poll via setTimeout if not mounted yet
+    findAndLockTarget();
 
     return () => {
       isCancelled = true;
-      clearTimeout(timer);
       if (animFrameRef.current) {
-        cancelAnimationFrame(animFrameRef.current);
+        clearTimeout(animFrameRef.current);
       }
     };
   }, [isTourActive, currentStepIndex, currentStep.selector, currentStep.route, updateTargetBounds]);
@@ -180,7 +196,6 @@ export const SpotlightTour: React.FC = () => {
       window.removeEventListener("scroll", onScrollOrResize, true);
       window.removeEventListener("resize", onScrollOrResize);
       if (observer) observer.disconnect();
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
   }, [isTourActive, currentStepIndex, updateTargetBounds]);
 
@@ -217,21 +232,23 @@ export const SpotlightTour: React.FC = () => {
 
   if (spaceBelow >= 260) {
     // 1. Below Target: anchor TOP at cutout.bottom + 14 (grows downwards away from target)
+    const top = Math.max(topNavLimit, Math.min(viewport.height - 180, cutout.top + cutout.height + 14));
     cardStyle = {
       position: "fixed",
       left: `${centerLeft}px`,
-      top: `${cutout.top + cutout.height + 14}px`,
+      top: `${top}px`,
       width: `${cardWidth}px`,
-      maxHeight: `${Math.max(160, spaceBelow)}px`,
+      maxHeight: `${Math.max(160, viewport.height - top - 16)}px`,
     };
   } else if (spaceAbove >= 260) {
     // 2. Above Target: anchor BOTTOM at cutout.top - 14 (grows upwards away from target)
+    const bottom = Math.max(16, Math.min(viewport.height - topNavLimit - 180, viewport.height - (cutout.top - 14)));
     cardStyle = {
       position: "fixed",
       left: `${centerLeft}px`,
-      bottom: `${viewport.height - (cutout.top - 14)}px`,
+      bottom: `${bottom}px`,
       width: `${cardWidth}px`,
-      maxHeight: `${Math.max(160, spaceAbove)}px`,
+      maxHeight: `${Math.max(160, viewport.height - bottom - topNavLimit)}px`,
     };
   } else if (spaceRight >= 360) {
     // 3. Right of Target: anchor LEFT at cutout.right + 14

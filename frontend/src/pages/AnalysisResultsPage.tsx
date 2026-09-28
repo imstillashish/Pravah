@@ -11,6 +11,7 @@ import {
 } from "../components/verdict";
 import { deriveAlternatives, deriveBookWindow, deriveShipPicks, deriveVerdict } from "../lib/verdict";
 import { API_BASE } from "../api";
+import { useTour } from "../context/TourContext";
 import {
   Ship,
   TrendingDown,
@@ -218,6 +219,7 @@ const GOLDEN_DEMO_FALLBACK: AnalysisDetail = {
 export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = ({
   analysisId = 1,
 }) => {
+  const { isTourActive } = useTour();
   const [data, setData] = useState<AnalysisDetail | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -522,7 +524,12 @@ export const AnalysisResultsPage: React.FC<{ analysisId?: number | string }> = (
         </section>
       )}
 
-      <ExpertDisclosure label="Show expert detail (full analysis)" className="space-y-6">
+      <ExpertDisclosure
+        label="Show expert detail (full analysis)"
+        className="space-y-6"
+        defaultOpen={isTourActive}
+        open={isTourActive ? true : undefined}
+      >
         {/* Interactive Maritime Route Map (Task 251) */}
         <RouteMap
           originName={data.origin_port}

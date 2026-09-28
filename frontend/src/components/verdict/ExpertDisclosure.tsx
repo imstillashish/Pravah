@@ -9,14 +9,21 @@ import { cx } from "../../lib/cn";
 export function ExpertDisclosure({
   label = "Show expert detail",
   className,
+  open,
+  defaultOpen,
   children,
 }: {
   label?: string;
   className?: string;
+  open?: boolean;
+  defaultOpen?: boolean;
   children: ReactNode;
 }) {
   return (
-    <details className={cx("group rounded-card border border-pebble bg-paper", className)}>
+    <details
+      open={open ?? defaultOpen}
+      className={cx("group rounded-card border border-pebble bg-paper", className)}
+    >
       <summary
         className={cx(
           "flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3",

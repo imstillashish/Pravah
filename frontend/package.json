@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "test:unit": "vitest run",
     "test:tour": "node tests/verify_tour.cjs",
+    "test:governance": "node tests/verify_governance_flow.cjs",
     "test:screenshots": "node tests/capture_tour_screenshots.cjs",
     "preview": "vite preview"
   },
